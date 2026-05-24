@@ -102,7 +102,7 @@ class PostController extends Controller
     $post = Post::published()->whereSlug( $slug)->firstOrFail();
     $this->authorize('update', $post);
 
-    $dto = UpdatePostDTO::fromAppRequest($request);
+    $dto = UpdatePostDTO::fromAppRequest($request, $post);
     $this->service->update($post,$dto);
 
     toastr()->success('Post updated successfully',['timeOut'=>1000]);

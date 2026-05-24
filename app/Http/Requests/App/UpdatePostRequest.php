@@ -28,10 +28,10 @@ class UpdatePostRequest extends FormRequest
         'title' => 'nullable|string|regex:/^[A-Za-z0-9\s]+$/|max:50|min:6',
         'description' => 'required|string',
         'categories' => 'sometimes|nullable|array|min:1|max:4', 
-        'categories.*' => 'exists:categories,id',
+        'categories.*' => 'integer|exists:categories,id',
         'hashtag' => ['nullable', 'string', new ValidHashtag(5)],
-        'enabled' => 'nullable|boolean',
-        'featured' => 'nullable|boolean'
+        'enabled' => 'sometimes|nullable|boolean',
+        'featured' => 'sometimes|nullable|boolean'
         ];
     }
     public function messages()

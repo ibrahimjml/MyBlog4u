@@ -3,6 +3,7 @@
 namespace App\DTOs;
 
 use App\Enums\ReportReason;
+use App\Http\Requests\App\ReportRequest;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Enum;
 
@@ -14,21 +15,20 @@ class ReportsDTO
       public readonly ?string $other = null
 
     ){}
-     public static function fromRequest(Request $request): self
+     public static function fromRequest(ReportRequest $request): self
     {
-        $validated = $request->validate([
-            'report_reason' => ['required', new Enum(ReportReason::class)],
-            'other' => [
-                 'nullable',
-                 'string',
-                 'required_if:report_reason,' . ReportReason::Other->value
-                ],
-        ]);
-
         return new self(
             userId: auth()->id(),
-            reason: ReportReason::from($validated['report_reason']),
-            other: $validated['report_reason'] === ReportReason::Other->value ? $validated['other'] : null
+            reason: ReportReason::from($request->validated('report_reason')),
+            other: $request->validated('report_reason') === ReportReason::Other->value ? $request->validated('other') : null
         );
+    }
+    public function toArray()
+    {
+      return [
+        'user_id' => $this->userId,
+        'reason' => $this->reason,
+        'other' => $this->other
+      ];
     }
 }

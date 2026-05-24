@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\DTOs\ReportsDTO;
 use App\Http\Middleware\CheckIfBlocked;
+use App\Http\Requests\App\ReportRequest;
 use App\Models\Post;
 use App\Services\ReportsService;
 use Illuminate\Http\Request;
@@ -14,7 +15,7 @@ class ReportPostController extends Controller
   public function __construct(protected ReportsService $service){
       $this->middleware(['auth', 'verified', CheckIfBlocked::class]);
   }
-      public function report_post(Post $post,Request $request)
+      public function report_post(Post $post,ReportRequest $request)
   {
     $this->authorize('report',$post);
      if ($post->status !== \App\Enums\PostStatus::PUBLISHED) {

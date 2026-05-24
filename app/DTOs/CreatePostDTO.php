@@ -35,4 +35,14 @@ class CreatePostDTO
            isFeatured: $featured,
        );
     }
+    public function toArray()
+    {
+      return [
+        'title'          => $this->title,
+        'description'    => $this->description,
+        'allow_comments' => $this->allowComments,
+        'user_id'        => $this->userId,
+        'is_featured'    => $this->isFeatured,
+    ];
+    }
 }

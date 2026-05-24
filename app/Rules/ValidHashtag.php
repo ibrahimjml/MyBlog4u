@@ -7,10 +7,10 @@ use Illuminate\Contracts\Validation\ValidationRule;
 
 class ValidHashtag implements ValidationRule
 {
-    protected $max = 5;
+    protected int $max = 5;
 
 
-    public function __construct(int $max = 5)
+    public function __construct($max )
     {
         $this->max = $max;
     }
@@ -34,10 +34,11 @@ class ValidHashtag implements ValidationRule
               $fail("Hashtags only contain letters, numbers, dashes, or underscores");
             }
 
-             $exists = \App\Models\Hashtag::where('name', $tag)
-                         ->where('status', \App\Enums\TagStatus::ACTIVE)
+             $exists = \App\Models\Hashtag::query()
+                         ->where('name', $tag)
+                         ->disabled()
                          ->exists();
-                    if(!$exists){
+                if($exists){
                       $fail("The hashtag '{$tag}' is disabled.");
                     }
           }

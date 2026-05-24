@@ -78,13 +78,14 @@
 
        $notifyUser = $notifiedUsers[$username] ?? null;
   
-       $avatar = $notifyUser?->avatar_url ?? asset('storage/avatars/default.jpg');
+       $avatar = $notifyUser?->avatar_url;
       @endphp
-    
+
+    @if($notifyUser)
     <a href="{{ route('profile', $username) }}">
         <img src="{{ $avatar }}?v={{ $notifyUser?->updated_at->timestamp ?? time() }}" class="w-8 h-8 rounded-full object-cover" alt="">
-
     </a>
+    @endif
 
       <div class="flex-1">
           <a href="{{ $url }}" class="text-sm text-gray-700 hover:text-black font-medium block">

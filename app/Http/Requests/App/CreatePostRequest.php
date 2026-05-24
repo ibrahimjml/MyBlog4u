@@ -28,7 +28,7 @@ class CreatePostRequest extends FormRequest
         'title' => 'required|string|regex:/^[A-Za-z0-9\s]+$/|max:50|min:6',
         'description' => 'required|string',
         'categories' => 'nullable|array|min:1|max:4', 
-        'categories.*' => 'exists:categories,id',
+        'categories.*' => 'integer|exists:categories,id',
         'hashtag' => ['nullable', 'string',new ValidHashtag(5)],
         'image' => 'required|image|mimes:jpg,png,jpeg|max:5120',
         'enabled' => 'nullable|boolean',

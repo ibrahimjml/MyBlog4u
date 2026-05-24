@@ -153,7 +153,7 @@
             const urlParams = new URLSearchParams(window.location.search);
             const sortOption = urlParams.get('sort') || 'latest';
 
-            const response = await fetch(`/blog?page=${currentPage + 1}&sort=${sortOption}`, {
+            const response = await fetch(`/blog?blog_page=${currentPage + 1}&sort=${sortOption}`, {
               method: 'GET',
               headers: {
                 'X-Requested-With': 'XMLHttpRequest',

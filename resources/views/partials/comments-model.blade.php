@@ -153,7 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
             loadingSpinner.classList.remove('hidden');
             loadMoreContainer.classList.add('hidden');
 
-            fetch(`/posts/${postId}/comments?page=${nextPage}`, {
+            fetch(`/posts/${postId}/comments?comments_page=${nextPage}`, {
                 method: 'GET',
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest',

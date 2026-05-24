@@ -10,6 +10,9 @@ class PostPolicy
 {
   public function before(User $user, string $ability,?Post $model): bool|null
     {   
+      if($ability === 'report'){
+        return null;
+      }
         if ($user->hasRole(\App\Enums\UserRole::ADMIN->value) ) {
             return true; 
         }

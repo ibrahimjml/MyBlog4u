@@ -2,6 +2,7 @@
     'checked' => false,
     'label' => null,
     'name' => null,
+    'value' => null,
     'disabled' => false,
     'onchange' => null,
     'wrapperClass' => 'inline-flex items-center cursor-pointer',
@@ -13,9 +14,11 @@
         type="checkbox"
         class="sr-only peer"
         @if($name) name="{{ $name }}" @endif
+        @if($value) value="{{ $value }}" @endif
         @if($disabled) disabled @endif
         @checked($checked)
         @if($onchange) onchange="{{ $onchange }}" @endif
+        {{ $attributes }}
     >
 
     <div  class="{{ $toggleClass }} bg-blueGray-200 peer-checked:bg-black peer-focus:outline-none peer-focus:ring-4

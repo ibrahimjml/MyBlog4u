@@ -97,6 +97,10 @@ class Post extends Model
   {
     return  $query->where('is_featured', true);
   }
+  public function scopeEnabled($query)
+  {
+    return  $query->where('allow_comments', true);
+  }
   public function scopeStatus($query, $status)
   {
     return  $query->where('status', $status);

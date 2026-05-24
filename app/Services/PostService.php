@@ -25,7 +25,7 @@ class PostService
       ){}
     public function handleBlogPage(Request $request)
     {
-       $page = $request->get('page', 1);
+       $page = $request->get('blog_page', 1);
         $perPage = $request->get('perpage', 5);
         $sort = $request->get('sort', 'latest');
 
@@ -99,15 +99,14 @@ class PostService
 
             $newimage = $this->uploadImage($dto->image, $imageslug);
 
-            $post = Post::create([
-                'title'          => $dto->title,
-                'description'    => $dto->description,
-                'image_path'     => $newimage,
-                'allow_comments' => $dto->allowComments,
-                'user_id'        => $dto->userId,
-                'status'         => \App\Enums\PostStatus::PUBLISHED,
-                'is_featured'    => $dto->isFeatured,
-            ]);
+           $post = Post::create(array_merge(
+            $dto->toArray(),
+                    [
+                        'image_path' => $newimage,
+                        'status'     => \App\Enums\PostStatus::PUBLISHED,
+                    ]
+                )
+            );
 
             if ($dto->hashtags) {
                 $this->tagservice->attachhashtags($post, $dto->hashtags);
@@ -138,12 +137,7 @@ class PostService
 
     public function update(Post $post,UpdatePostDTO $dto): Post
     {
-      $post->update([
-        'title' => $dto->title,
-        'description' => $dto->description,
-        'allow_comments' => $dto->allowComments,
-        'is_featured' => $dto->isFeatured
-    ]);
+      $post->update($dto->toArray());
         $this->tagservice->syncHashtags($post, $dto->hashtags);
         $post->categories()->sync($dto->categories);
        return $post;

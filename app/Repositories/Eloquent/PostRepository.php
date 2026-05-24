@@ -17,7 +17,7 @@ class PostRepository implements PostInterface
                   ->with(['user:id,username,avatar', 'hashtags:id,name,is_featured', 'categories:id,name,is_featured'])
                   ->withCount('likes', 'totalcomments')
                   ->blogSort($sort)
-                  ->paginate($perPage, ['*'], 'blog', $page)
+                  ->paginate($perPage, ['*'], 'blog_page', $page)
                   ->withQueryString();
     }
     public function getBySearch( $dto,int $page, int $perpage): LengthAwarePaginator
@@ -141,6 +141,6 @@ class PostRepository implements PostInterface
                       ->where('post_id', $post->id)
                       ->whereNull('parent_id') 
                       ->latest()
-                      ->paginate($perPage, ['*'], 'page', $page);
+                      ->paginate($perPage, ['*'], 'comments_page', $page);
    }
 } 

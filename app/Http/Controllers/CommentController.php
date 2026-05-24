@@ -21,7 +21,7 @@ class CommentController extends Controller
   }
    public function loadMore(Post $post, PostInterface $repo)
 {
-    $page = request()->get('page', 1);
+    $page = request()->get('comments_page', 1);
     $comments = $repo->getPaginatedComments($post, $page, 5);
     
     if (request()->ajax()) {

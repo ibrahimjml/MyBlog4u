@@ -31,8 +31,8 @@ class PostsController extends Controller
   }
 public function featuredPage(){
   return view('admin.featuredposts',[
-    'allhashtags' => Hashtag::pluck('name'),
-    'categories' => Category::select('id','name')->get()
+    'allhashtags' => Hashtag::query()->active()->pluck('name'),
+    'categories' => Category::query()->select('id','name')->get(),
   ]);
 }
 

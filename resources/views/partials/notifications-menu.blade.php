@@ -53,7 +53,7 @@
                       <div class="flex-1">
                       <a href="{{$url}}"
                          class="text-sm text-gray-700 hover:text-black font-medium block">
-                          {{$message}}
+                          {!! $message !!}
                       </a>
                       <div class="flex justify-center items-center gap-4">
                         <small class="text-xs text-gray-400">{{ $notification->created_at->diffForHumans() }}</small>

@@ -20,13 +20,10 @@ class ReportsService
                  ->exists();
     if ($exists) return false;
     
-     PostReport::create([
-            'user_id' => $dto->userId,
+     PostReport::create(array_merge($dto->toArray(),[
             'post_id' => $post->id,
-            'reason' => $dto->reason,
             'status'  => ReportStatus::Pending,
-            'other' => $dto->other
-        ]);
+        ]));
         
         return true;
     }

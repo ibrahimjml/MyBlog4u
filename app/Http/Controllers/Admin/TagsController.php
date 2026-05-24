@@ -76,6 +76,9 @@ public function edit(Hashtag $hashtag, Request $request){
   public function delete(Hashtag $hashtag){
     $name = $hashtag->name;
     $hashtag->delete();
+      $hashtag->posts->each(function ($post) {
+    app(ClearCacheService::class)->clearPostCaches($post);
+});
     return response()->json([
       'deleted' => true,
       'message' => "Hashtag {$name} deleted"
@@ -85,6 +88,9 @@ public function edit(Hashtag $hashtag, Request $request){
   public function toggle(Hashtag $hashtag)
   {
       $hashtag->update(['is_featured'=>!$hashtag->is_featured]);
+        $hashtag->posts->each(function ($post) {
+    app(ClearCacheService::class)->clearPostCaches($post);
+});
       if($hashtag->is_featured){
        toastr()->success('hashtag featured success',['timeOut'=>1000]);
       }else{

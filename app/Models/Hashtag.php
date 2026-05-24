@@ -41,4 +41,8 @@ class Hashtag extends Model
     {
       return $query->where('status',TagStatus::ACTIVE->value);
     }
+    public function scopeDisabled($query)
+    {
+      return $query->where('status',TagStatus::DISABLED->value);
+    }
 }
