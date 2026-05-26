@@ -33,7 +33,7 @@ class CreateUserRequest extends FormRequest
               "name" => ["required", "min:5", "max:50", "alpha"],
               "username" => ["required", "min:5", "max:15", "alpha_num", Rule::unique(User::class)],
               "phone" => ["required", Rule::unique(User::class)],
-              "password" => ["required", "confirmed",new PasswordRule()],
+              "password" => ["required", "confirmed", new PasswordRule()],
               "age" => ["required", "numeric", "between:18,64"],
               "roles" => ["required", new Enum(UserRole::class)],
               "permissions" => ["nullable", "array"],

@@ -14,19 +14,21 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
 {
   public function registerpage()
   {
-  
+    abort_unless_require_registration();
     return view('auth.register');
     
   }
 
   public function register(RegisterRequest $request,RegisterUserService $service)
   {
+    abort_unless_require_registration();
     $service->register($request->validated());
     toastr()->success('Account created successfully',['timeOut'=>1000]);
     return to_route('home');
@@ -44,7 +46,7 @@ class AuthController extends Controller
     $fields = $request->validate([
       "email" => 'required|email',
       "password" => 'required',
-      // "g-recaptcha-response" => [new Recaptcha]
+      "g-recaptcha-response" => [new Recaptcha]
     ]);  
 
     if (! auth()->validate([
@@ -184,6 +186,10 @@ class AuthController extends Controller
 
       public function verify_notice()
       {
+        $user = auth()->user();
+        if ($user->hasVerifiedEmail()) {
+          return redirect()->route('blog');
+        }
         return view('auth.verifyemail',['message'=>session('message')]);
       }
   
@@ -194,7 +200,26 @@ class AuthController extends Controller
       }
       public function verify_notification(Request $request) 
       {
-        $request->user()->sendEmailVerificationNotification();
+        $user = $request->user();
+
+        if (! $user) {
+          return redirect()->route('login');
+        }
+
+        if ($user->hasVerifiedEmail()) {
+          return redirect('/')->with('message', 'Your email is already verified.');
+        }
+
+        try {
+          $user->sendEmailVerificationNotification();
+        } catch (\Throwable $exception) {
+          Log::error('Unable to send verification email.', [
+            'user_id' => $user->id,
+            'message' => $exception->getMessage(),
+          ]);
+
+          return back()->with('message', 'Unable to send verification email. Please check your mail settings.');
+        }
       
         return back()->with('message', 'Verification link sent!');
       }

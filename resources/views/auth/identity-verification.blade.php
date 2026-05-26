@@ -25,7 +25,16 @@
             {{ $message }}
         </p>
           @enderror
-                     
+        <!-- Google reCAPTCHA v2 checkbox -->
+        @recaptcha_enabled
+        <div class="g-recaptcha mt-2" data-sitekey="{{config('services.captcha.sitekey')}}">
+        </div>
+          @error('g-recaptcha-response')
+            <p class="text-red-500 text-xs italic mt-4">
+                {{ $message }}
+            </p>
+            @enderror
+        @endrecaptcha_enabled                 
           </div>
           <button 
           class='px-6 py-2 rounded-lg bg-slate-700 dark:bg-slate-900 text-white '

@@ -13,7 +13,7 @@
     'bg-white shadow-[0_2px_5px_rgba(0,0,0,0.1)] fixed top-0 z-50' => Route::is(['blog']),
   ])>
     <div class="flex justify-between items-center ">
-      <div class=" text-2xl font-bold flex">
+      <div class=" text-2xl font-bold flex cursor-pointer" onclick="window.location.href='/'">
         <span class="bg-white text-black pr-1 pl-1 rounded-l-md border border-t-3 border-b-3">Blog</span>
         <span class="text-white bg-black pl-1 pr-1 rounded-r-md ">Post</span>
       </div>
@@ -38,20 +38,15 @@
             @endif
           @endauth
           @if(!auth()->user())
-            <li @class([
-              'font-bold text-xl' => Route::is('login'),
-              'text-white text-lg pt-2' => Route::is(['profile', 'home']),
-              'text-gray-700 text-lg  pt-2' => !Route::is(['profile', 'home'])
-            ])>
-              <a href="{{route('login')}}">Login</a>
-            </li>
-            <li @class([
-              'font-bold text-xl' => Route::is('register'),
-              'text-white text-lg pt-2' => Route::is(['profile', 'home']),
-              'text-gray-700 text-lg  pt-2' => !Route::is(['profile', 'home'])
-            ])>
-              <a href="{{route('register')}}">Register</a>
-            </li>
+            @unless(request()->routeIs('login'))
+              <li @class([
+                'font-bold text-lg p-1 px-4 pt-2 uppercase rounded-xl font-semibold',
+                'text-black bg-white' => Route::is(['profile', 'home']),
+                'text-white text-lg  bg-black ' => !Route::is(['profile', 'home'])
+              ])>
+                <a href="{{route('login')}}">sign in</a>
+              </li>
+            @endunless
           @else
             @if(hasCompleted2FA())
               <li @class([
@@ -62,7 +57,7 @@
                 <a href="/blog">Blog</a>
               </li>
               @unless(request()->is('admin*'))
-                <li id="hover-notification" class="text-lg relative pt-2 cursor-pointer text-gray-700 ">
+                <li id="hover-notification" data-notification-trigger class="text-lg relative pt-2 cursor-pointer text-gray-700 ">
                   <span
                     class="absolute top-2 left-3 h-4 w-4 bg-red-500 text-white flex justify-center items-center rounded-full p-1 text-xs font-semibold">
                     {{ auth()->user()->unreadNotifications->count() }}
@@ -106,14 +101,28 @@
         </ul>
       </div>
       @if(hasCompleted2FA())
-      <button id="mobile-btn" class="md:hidden @if(Route::is(['profile', 'home'])) text-white @endif">
-        <i class="fas fa-bars"></i>
-      </button>
-    </div>
 
-    {{-- Burger Menu --}}
-    <div class="md:hidden">
-      @include('partials.burger-menu')
-    </div>
-    @endif
+          <div class="lg:hidden flex items-center gap-6">
+            @unless(request()->is('admin*'))
+                <div data-notification-trigger class="text-lg  relative  cursor-pointer text-gray-700 ">
+                  <span
+                    class="absolute -top-0 left-3 h-4 w-4 bg-red-500 text-white flex justify-center items-center rounded-full p-1 text-xs font-semibold">
+                    {{ auth()->user()->unreadNotifications->count() }}
+                  </span>
+                  <i class="fas fa-bell {{Route::is(['profile', 'home']) ? 'text-white' : 'text-gray-700'}}"></i>
+                </div>
+
+                @include('partials.notifications-menu')
+              @endunless
+             <img id="mobile-btn" src="{{auth()->user()->avatar_url}}"   class="md:hidden w-[26px] h-[26px] overflow-hidden flex justify-center items-center  shrink-0 grow-0 rounded-full " >
+
+          </div>
+
+        </div>
+
+        {{-- Burger Menu --}}
+        <div class="md:hidden">
+          @include('partials.burger-menu')
+        </div>
+      @endif
   </nav>

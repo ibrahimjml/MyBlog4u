@@ -40,8 +40,8 @@ class UpdateAccountRequest extends FormRequest
             Rule::unique(User::class)->ignore($user->id),
             new EmailProviders()
           ],
-            "password" => [ "nullable","confirmed",new PasswordRule()],
-            "current_password"=>["nullable","current_password"]
+            "password" => ["nullable", "confirmed", new PasswordRule()],
+            "current_password" => ["required_with:password", "current_password"]
         ];
     }
 }

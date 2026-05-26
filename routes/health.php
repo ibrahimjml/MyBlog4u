@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\DB;
 use  Illuminate\Support\Facades\Route;
 
 Route::prefix('health')
-       ->middleware('role:Admin')
+       ->middleware('can:makeAdminActions')
        ->group(function(){
 
   Route::get('/check',function(){

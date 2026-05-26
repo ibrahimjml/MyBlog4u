@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Middleware\CheckIfBlocked;
 use App\Models\IdentityVerification;
+use App\Rules\Recaptcha;
 use Illuminate\Http\Request;
 
 class IdentityVerificationController extends Controller
@@ -20,7 +21,10 @@ class IdentityVerificationController extends Controller
 
 public function verifyCode(Request $request)
 {
-    $request->validate(['code' => 'required|string']);
+    $request->validate([
+      'code' => 'required|string',
+      "g-recaptcha-response" => [new Recaptcha]
+      ]);
 
     $verification = IdentityVerification::where('user_id', auth()->id())
         ->where('code', $request->code)

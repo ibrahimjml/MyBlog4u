@@ -19,6 +19,7 @@ use App\Http\Controllers\{
     ReportProfileController,
     TinyMCEController,
 };
+use App\Http\Controllers\Admin\CustomPageController;
 use App\Http\Controllers\Auth\TwoFactorController;
 
 /*
@@ -42,7 +43,8 @@ Route::get('/post/{post:slug}',[PostController::class,'viewPost'])->name('single
 Route::get('/hashtag/{hashtag:name}',[Hashtagcontroller::class,'viewhashtag'])->name('viewhashtag');
 //recent posts page by category
 Route::get('/category/{category:name}',[CategoryController::class,'viewcategory'])->name('viewcategory');
-
+// custom pages
+Route::get('/c/{page:slug}', [CustomPageController::class, 'show'])->name('custom.page');
 // Create Post
 Route::get('/createpage',[PostController::class,'createpage'])->name('createpage');
 Route::post('/create',[PostController::class,'create'])->name('create');
@@ -126,4 +128,3 @@ Route::get('/notifications/{id}/read', [NotificationController::class, 'markasre
 Route::get('/notifications/read/all', [NotificationController::class, 'markallasread'])->name('notifications.readall');
 Route::delete('/notifications/{id}/delete', [NotificationController::class, 'delete'])->name('notifications.delete');
 Route::delete('/notifications/deleteAll', [NotificationController::class, 'deleteAll'])->name('notifications.deleteAll');
-

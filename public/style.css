@@ -61,8 +61,8 @@ html,body{
  margin-top: 28px;
 }
 
-#hidden-notification {
-  display: block;
+.notification-menu {
+  display: none;
   position: absolute;
   top: 50px;
   box-shadow: 0 5px 25px 0 rgb(0 0 0 / 60%);
@@ -74,6 +74,23 @@ html,body{
   text-align: center;
   min-width: 140px;
   z-index: 70;
+}
+
+.notification-menu.is-open {
+  display: block !important;
+}
+
+@media only screen and (max-width: 640px) {
+  .notification-menu {
+    position: fixed;
+    top: 4.75rem;
+    left: 0.5rem;
+    right: 0.5rem;
+    transform: none;
+    max-height: calc(100vh - 5.5rem);
+    overflow: hidden;
+    z-index: 9999;
+  }
 }
 
 

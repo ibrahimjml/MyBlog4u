@@ -8,27 +8,29 @@ use Illuminate\Validation\Rules\Password;
 
 class PasswordRule implements ValidationRule
 {
-    /**
-     * Run the validation rule.
-     *
-     * @param  \Closure(string): \Illuminate\Translation\PotentiallyTranslatedString  $fail
-     */
-    public function validate(string $attribute, mixed $value, Closure $fail): void
-    {
-        $rule = Password::min(8)
-               ->mixedCase()
-               ->letters()
-               ->numbers()
-               ->symbols()
-               ->uncompromised();
-               
-      $validator = validator(
-    [$attribute => $value],
-   [$attribute => [$rule]]
-        );
+  /**
+   * Run the validation rule.
+   *
+   * @param  \Closure(string): \Illuminate\Translation\PotentiallyTranslatedString  $fail
+   */
+  public function validate(string $attribute, mixed $value, Closure $fail): void
+  {
+    $rule = app()->isProduction()
+      ? Password::min(8)
+        ->mixedCase()
+        ->letters()
+        ->numbers()
+        ->symbols()
+        ->uncompromised()
+      : Password::min(8);
 
-        if ($validator->fails()) {
-            $fail($validator->errors()->first($attribute));
-        }
+    $validator = validator(
+      [$attribute => $value],
+      [$attribute => [$rule]]
+    );
+
+    if ($validator->fails()) {
+      $fail($validator->errors()->first($attribute));
     }
+  }
 }

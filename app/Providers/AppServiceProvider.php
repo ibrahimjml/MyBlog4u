@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use App\Enums\FollowerStatus;
 use App\Models\{Category, Comment, Hashtag, Like, Permission, Post, PostReport, Role, SmtpSetting, User};
 use App\Observers\{CommentObserver, LikeObserver, PostObserver, PostReportObserver, TagObserver, CategoryObserver, PermissionObserver, RoleObserver, UserObserver};
 use App\Repositories\Caches\CategoryCacheDecorator;
@@ -26,6 +25,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        
         $this->app->bind(PostInterface::class, function ($app) {
         if (config('cache.enabled')) {
             return new PostCacheDecorator($app->make(PostRepository::class));
@@ -53,6 +53,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+       $this->bootEvents();
+       $this->bootBladeDirectives();
+       $this->bootDynamicConfigSmtp();
+       $this->bootDynamicConfigRecaptcha();
+     }
+    public function bootEvents(){
       Post::observe(PostObserver::class);
       Comment::observe(CommentObserver::class);
       Like::observe(LikeObserver::class);
@@ -62,14 +68,25 @@ class AppServiceProvider extends ServiceProvider
       Category::observe(CategoryObserver::class);
       Permission::observe(PermissionObserver::class);
       Role::observe(RoleObserver::class);
-      
+    }
+    public function bootBladeDirectives(){
+      // Custom Blade component for post card
       Blade::component('partials.postcard', 'postcard');
+
+      // Custom Blade directive to check status of following relationship
       Blade::if('following', function ($status) {
            return $status instanceof \App\Enums\FollowerStatus
                 && $status === \App\Enums\FollowerStatus::ACCEPTED;
             });
-            
-  if ( app()->runningInConsole() || ! Schema::hasTable('smtpsettings'))
+
+      // Custom Blade directive to check if reCAPTCHA is enabled
+      Blade::if('recaptcha_enabled', function () {
+        $authSecurityRule = \App\Models\AuthSecurityRule::first();
+        return $authSecurityRule && $authSecurityRule->require_captcha;
+    });
+    }
+    public function bootDynamicConfigSmtp(){
+       if ( app()->runningInConsole() || ! Schema::hasTable('smtpsettings'))
      {
         return;
       }
@@ -98,6 +115,17 @@ class AppServiceProvider extends ServiceProvider
         Config::set('mail.mailers', $data['mailers']);
         Config::set('mail.default', $data['default']);
         Config::set('mail.from', $data['from']);
+    }
+    }
+    public function bootDynamicConfigRecaptcha(){
+        if(app()->runningInConsole() || ! Schema::hasColumn('auth_security_rules', 'require_captcha'))
+    {
+      return;
+    }
+    $authSecurityRule = \App\Models\AuthSecurityRule::first();
+    if ($authSecurityRule && $authSecurityRule->require_captcha) {
+        Config::set('services.captcha.sitekey', $authSecurityRule->recaptcha_sitekey);
+        Config::set('services.captcha.secretkey', $authSecurityRule->recaptcha_secretkey);
     }
     }
 }

@@ -20,20 +20,22 @@ class AdminSeeder extends Seeder
   {
 
     $modules = [
-      'User'            => ['Access', 'user.view', 'user.create', 'user.delete', 'user.block', 'user.role', 'user.updateImage', 'user.deleteSocial', 'user.update', 'user.edit'],
-      'Posts'           => ['post.view', 'post.update', 'post.feature', 'post.delete'],
-      'Tags'            => ['tag.create', 'tag.view', 'tag.update', 'tag.delete', 'tag.feature'],
-      'Categories'      => ['category.create', 'category.view', 'category.update', 'category.delete', 'category.feature'],
-      'Comments'        => ['comment.edit', 'comment.delete'],
-      'Post Reports'    => ['postreport.view', 'postreport.delete', 'postreport.status'],
-      'Profile Reports' => ['profilereport.view',  'profilereport.delete', 'profilereport.status'],
-      'Comment Reports' => ['commentreport.view', 'commentreport.delete', 'commentreport.status'],
-      'Roles'           => ['role.create', 'role.view', 'role.update', 'role.delete'],
-      'Permissions'     => ['permission.create',  'permission.view',  'permission.update', 'permission.delete'],
-      'Slides'          => ['slide.create',  'slide.view',  'slide.update', 'slide.delete'],
-      'Notifications'   => ['notifications.view', 'notifications.update'],
-      'SMTP'            => ['smtp.view', 'smtp.update'],
-      'Backups'         => ['backup.view', 'backup.download', 'backup.delete'],
+      'User'              => ['Access', 'user.view', 'user.create', 'user.delete', 'user.block', 'user.role', 'user.updateImage', 'user.deleteSocial', 'user.update', 'user.edit'],
+      'Posts'             => ['post.view', 'post.update', 'post.feature', 'post.delete'],
+      'Tags'              => ['tag.create', 'tag.view', 'tag.update', 'tag.delete', 'tag.feature'],
+      'Categories'        => ['category.create', 'category.view', 'category.update', 'category.delete', 'category.feature'],
+      'Comments'          => ['comment.edit', 'comment.delete'],
+      'Post Reports'      => ['postreport.view', 'postreport.delete', 'postreport.status'],
+      'Profile Reports'   => ['profilereport.view',  'profilereport.delete', 'profilereport.status'],
+      'Comment Reports'   => ['commentreport.view', 'commentreport.delete', 'commentreport.status'],
+      'Roles'             => ['role.create', 'role.view', 'role.update', 'role.delete'],
+      'Permissions'       => ['permission.create',  'permission.view',  'permission.update', 'permission.delete'],
+      'Slides'            => ['slide.create',  'slide.view',  'slide.update', 'slide.delete'],
+      'Notifications'     => ['notifications.view', 'notifications.update'],
+      'SMTP'              => ['smtp.view', 'smtp.update'],
+      'Auth and Security' => ['authsecurity.view', 'authsecurity.update'],
+      'Maintenance'       => ['maintenance.view', 'maintenance.update'],
+      'Backups'           => ['backup.view', 'backup.download', 'backup.delete'],
     ];
 
     foreach ($modules as $name => $permssions) {

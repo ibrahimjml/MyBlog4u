@@ -21,14 +21,16 @@
                     <input id="email" type="email"
                         class="rounded-sm p-2 border-2 form-input w-full @error('email') border-red-500 @enderror" name="email"
                         value="{{ old('email') }}" required autocomplete="email">
-                      <!-- Google reCAPTCHA v2 checkbox -->
-                    <div class="g-recaptcha mt-2" data-sitekey="{{env('GOOGLE_SITEKEY')}}">
+                    <!-- Google reCAPTCHA v2 checkbox -->
+                    @recaptcha_enabled
+                    <div class="g-recaptcha mt-2" data-sitekey="{{config('services.captcha.sitekey')}}">
                     </div>
                       @error('g-recaptcha-response')
                         <p class="text-red-500 text-xs italic mt-4">
                             {{ $message }}
                         </p>
                         @enderror
+                    @endrecaptcha_enabled    
                     @error('email')
                     <p class="text-red-500 text-xs italic mt-4">
                         {{ $message }}

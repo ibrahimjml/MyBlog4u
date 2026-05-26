@@ -4,8 +4,7 @@ const mobilemenu = document.querySelector("#mobile-menu");
 const hiddenul = document.getElementById("hiddenul2");
 const change = document.getElementById("dropdown");
 
-const notifications = document.getElementById('hidden-notification');
-const shownotification = document.getElementById('hover-notification'); 
+const notificationTriggers = document.querySelectorAll('[data-notification-trigger]');
 let   hideTimeout;
 // show burger menu
 if(mobilebtn){
@@ -52,35 +51,55 @@ if(change){
 }
   
     
-    
-  
+// show notification menu on click/tap and hover
+notificationTriggers.forEach((trigger) => {
+  const notifications = trigger.nextElementSibling;
 
+  if (!notifications || !notifications.classList.contains('notification-menu')) {
+    return;
+  }
 
-// show notification menu info
-if(shownotification){
-  shownotification.addEventListener('mousemove', function() {
-    notifications.style.display = "block";
-  });
-  
-  
-  shownotification.addEventListener('mouseout', function() {
-    setTimeout(function() {
-      if (!notifications.matches(':hover')) {
-        notifications.style.display = "none";
+  const showNotifications = () => {
+    notifications.classList.add('is-open');
+  };
+
+  const hideNotifications = () => {
+    notifications.classList.remove('is-open');
+  };
+
+  trigger.addEventListener('click', (event) => {
+    const isOpen = notifications.classList.contains('is-open');
+
+    event.stopPropagation();
+
+    document.querySelectorAll('.notification-menu.is-open').forEach((menu) => {
+      if (menu !== notifications) {
+        menu.classList.remove('is-open');
       }
-    }, 300); 
-  });
-  
-  
-  notifications.addEventListener('mousemove', function() {
-    notifications.style.display = "block";
-  });
-  
-  
-  notifications.addEventListener('mouseout', function() {
-    notifications.style.display = "none";
-  });
-}
+    });
 
+    notifications.classList.toggle('is-open', !isOpen);
+    console.log("Notification menu toggled");
+  });
 
+  if (window.matchMedia('(hover: hover)').matches) {
+    trigger.addEventListener('mousemove', showNotifications);
 
+    trigger.addEventListener('mouseout', function() {
+      setTimeout(function() {
+        if (!notifications.matches(':hover')) {
+          hideNotifications();
+        }
+      }, 300); 
+    });
+
+    notifications.addEventListener('mousemove', showNotifications);
+    notifications.addEventListener('mouseout', hideNotifications);
+  }
+
+  document.addEventListener('click', (event) => {
+    if (!trigger.contains(event.target) && !notifications.contains(event.target)) {
+      hideNotifications();
+    }
+  });
+});

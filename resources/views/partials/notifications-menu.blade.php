@@ -2,11 +2,11 @@
   use App\Enums\NotificationType;
 @endphp
 
-<div id="hidden-notification" style="display: none;" class="w-[500px] bg-white shadow-xl rounded-xl px-2 py-3 ">
+<div style="display: none;" class="notification-menu w-[calc(100vw-1rem)] max-w-[500px] bg-white shadow-xl rounded-xl px-2 py-3 sm:w-[500px]">
 
-<div class="p-2 h-24 border-b-2 border-b-gray-200">
+<div class="p-2 border-b-2 border-b-gray-200">
   <p class="text-xl font-bold text-left">Notifications</p>
-   <div id="notification-filters" class="flex gap-2 mt-4">
+   <div id="notification-filters" class="flex flex-wrap gap-2 mt-4">
       <button class="filter-btn active px-3 py-1 rounded-full bg-blue-500 text-white text-sm" data-type="all">All</button>
       <button class="filter-btn px-3 py-1 rounded-full bg-gray-200 hover:bg-blue-100 text-sm" data-type="{{NotificationType::LIKE->value}}">Like</button>
       <button class="filter-btn px-3 py-1 rounded-full bg-gray-200 hover:bg-blue-100 text-sm" data-type="{{NotificationType::COMMENTS->value}}">Comment</button>
@@ -16,7 +16,7 @@
     </div>
 </div>
   <!-- notification section -->
-  <ul id="notification-list" class=" max-h-[500px] overflow-y-auto space-y-3 ">
+  <ul id="notification-list" class="max-h-[60vh] overflow-y-auto space-y-3 sm:max-h-[500px]">
       
       @forelse($notifications as $notification)
       @php
@@ -34,7 +34,7 @@
         $avatar = $user?->avatar_url ?? asset('storage/avatars/default.jpg');
        @endphp
 
-      <li class="notification-item flex items-start gap-3 p-2 rounded-md hover:bg-gray-100 transition" data-type="{{$type}}">
+      <li class="notification-item flex items-start gap-2 p-2 rounded-md hover:bg-gray-100 transition sm:gap-3" data-type="{{$type}}">
       {{-- icon badge --}}
         <span class="mt-2 text-sm text-gray-500">
             @if($notification->read_at === null)
@@ -50,12 +50,12 @@
                        class="w-8 h-8 rounded-full object-cover" alt="">
                       </a>
                   @endif
-                      <div class="flex-1">
+                      <div class="min-w-0 flex-1 text-left">
                       <a href="{{$url}}"
-                         class="text-sm text-gray-700 hover:text-black font-medium block">
+                         class="text-sm text-gray-700 hover:text-black font-medium block leading-5 break-words">
                           {!! $message !!}
                       </a>
-                      <div class="flex justify-center items-center gap-4">
+                      <div class="flex flex-wrap items-center gap-2 sm:justify-center sm:gap-4">
                         <small class="text-xs text-gray-400">{{ $notification->created_at->diffForHumans() }}</small>
                         
                           <form action="{{ route('notifications.delete',$notification->id) }}" method="POST" class="text-right mb-2">
@@ -81,17 +81,19 @@
       @endforelse
   </ul>
   <!-- delete all / mark all as read -->
-    <div class="flex items-center p-4 h-20 border-t-2 border-t-black">
+    <div class="flex flex-col gap-3 p-3 border-t-2 border-t-black sm:h-20 sm:flex-row sm:items-center sm:p-4">
       <form id="marksall" action="{{ route('notifications.readall') }}" method="GET" class="text-right mb-2">
       </form> 
-      <span class="text-blue-500 p-2 rounded-full  hover:border border-blue-600 ">
+      <span class="text-blue-500 p-2 rounded-full hover:border border-blue-600 text-center">
         <i class="fas fa-check mr-1"></i>
       <button form="marksall" type="submit" >Mark all as read</button>
       </span>
-     <form action="{{ route('notifications.deleteAll') }}" method="POST" class="text-right mb-2 w-fit ml-auto">
+     <form action="{{ route('notifications.deleteAll') }}" method="POST" class="text-center mb-2 sm:text-right sm:w-fit sm:ml-auto">
           @csrf
           @method('DELETE')
-          <button type="submit" class="text-sm p-2 rounded-lg text-white bg-red-400 hover:bg-red-600 transition-colors duration-150 ease">Delete All</button>
+          <button type="submit" class="text-sm p-2 rounded-lg text-white bg-red-400 hover:bg-red-600 transition-colors duration-150 ease">
+            <i class="fas fa-trash mr-1"></i>
+            Clear</button>
       </form> 
   </div>
 </div>

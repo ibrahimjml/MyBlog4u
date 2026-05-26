@@ -131,7 +131,7 @@
 </div><!-- end container -->
 {{-- 3- post Image --}}
   <div class="relative mx-auto w-full max-w-6xl mt-2 h-[300px] md:h-[450px]">
-      <img class="absolute top-0 left-0 w-full h-full object-cover rounded-none shadow-lg hover:shadow-md" src="{{$post->image_url}}"  alt="{{$post->title}}">
+      <img class="absolute top-0 left-0 w-full h-full lg:object-cover  rounded-none shadow-lg hover:shadow-md" src="{{$post->image_url}}"  alt="{{$post->title}}">
     {{-- delete|edit model  --}}
       @can('update',$post)
       @include('partials.delete-edit-post-model')

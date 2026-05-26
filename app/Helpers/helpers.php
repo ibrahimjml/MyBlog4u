@@ -13,9 +13,17 @@ if (!function_exists('render_mentions')) {
   }
 }
 
-if(! function_exists('hasCompleted2FA')){
-   function hasCompleted2FA() {
+if (! function_exists('hasCompleted2FA')) {
+  function hasCompleted2FA()
+  {
     return auth()->check() && session()->get('2fa:passed', true);
+  }
 }
 
+if (! function_exists('abort_unless_require_registration')) {
+  function abort_unless_require_registration()
+  {
+    $allowedRegistration = \App\Models\AuthSecurityRule::first()->allow_registration;
+    abort_unless($allowedRegistration, 403, 'Registration is currently disabled contact support.');
+  }
 }

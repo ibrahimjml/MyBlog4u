@@ -2,7 +2,7 @@
 @section('title', 'manage mails | Dashboard')
 @section('content')
   <!-- Header -->
-  @include('admin.partials.header', ['linktext' => 'Admin Settings', 'route' => 'admin.settings.index', 'value' => request('search')])
+  @include('admin.partials.header', ['linktext' => 'Admin Settings', 'route' => 'admin.settings.smtp', 'value' => request('search')])
 
   <div class="md:ml-64 w-full mx-auto transform -translate-y-48">
     <div class="flex flex-wrap">

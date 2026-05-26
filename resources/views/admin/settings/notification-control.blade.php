@@ -2,7 +2,7 @@
 @section('title', 'notification control | Dashboard')
 @section('content')
   <!-- Header -->
-  @include('admin.partials.header', ['linktext' => 'Notification Control', 'route' => 'admin.settings.index', 'value' => request('search')])
+  @include('admin.partials.header', ['linktext' => 'Notification Control', 'route' => 'admin.settings.notification.view', 'value' => request('search')])
 
   <div class="md:ml-64 w-full mx-auto transform -translate-y-48">
     <div class="flex flex-col">
