@@ -98,7 +98,7 @@
     {{ $post->title }}
   </h2>
     <div class="text-gray-600 leading-relaxed text-sm line-clamp-3 mt-2">
-      {!! Str::words(strip_tags($post->description), 15) !!}
+      {{ $post->short_excerpt }}
     </div>
     </a>
     @if($post->hashtags->isNotEmpty())

@@ -11,7 +11,6 @@ use App\Mail\ForgotPassword;
 use App\Services\User\RegisterUserService;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
@@ -44,20 +43,22 @@ class AuthController extends Controller
   public function login(Request $request)
   {
     $fields = $request->validate([
-      "email" => 'required|email',
+      "login" => 'required|string',
       "password" => 'required',
       "g-recaptcha-response" => [new Recaptcha]
     ]);  
 
+    $loginType = filter_var($fields['login'], FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+
     if (! auth()->validate([
-        'email' => $fields['email'],
+        $loginType => $fields['login'],
         'password' => $fields['password'],
     ])) {
         toastr()->error('Wrong credentials', ['timeOut' => 1000]);
-        return redirect('/login');
+        return back()->withInput($request->only('login'));
     }
 
-    $user = User::where('email', $fields['email'])->first();
+    $user = User::where($loginType, $fields['login'])->first();
 
     if ($user->is_blocked) {
         return back();
@@ -74,7 +75,7 @@ class AuthController extends Controller
     toastr()->success('Logged in successfully', ['timeOut' => 1000]);
     return $user->is_admin
         ? redirect('/admin/panel')
-        : redirect('/');
+        : redirect('/dashboard');
   }
 
   public function forgot()

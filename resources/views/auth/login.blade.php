@@ -2,10 +2,10 @@
 
   <main class="sm:container mx-auto  max-w-fit mt-5 mb-20 sm:max-w-lg sm:mt-10">
     <div class="flex">
-      <div class="w-full">
-        <section class="flex flex-col break-words bg-white sm:border-1 sm:rounded-md  sm:shadow-lg">
+      <div class="w-[80%] lg:w-full mx-auto">
+        <section class="flex flex-col break-words bg-white sm:border-1 rounded-md  sm:shadow-lg">
 
-          <header class=" font-bold text-center bg-gray-200 text-gray-700 py-5 px-6 sm:py-6 sm:px-8 sm:rounded-t-md">
+          <header class=" font-bold text-center bg-gray-200 text-gray-700 py-5 px-6 sm:py-6 sm:px-8 rounded-t-md">
             Login
           </header>
 
@@ -14,15 +14,15 @@
             @csrf
             @method('POST')
             <div class="flex flex-wrap">
-              <label for="email" class="block text-gray-700 text-sm font-bold mb-2 sm:mb-4">
-                E-Mail Address:
+              <label for="login" class="block text-gray-700 text-sm font-bold mb-2 sm:mb-4">
+                Username or Email
               </label>
 
-              <input id="email" type="email"
-                class="rounded-sm p-2 border-2 form-input w-full @error('email') border-red-500 @enderror" name="email"
-                value="{{ old('email') }}" required autocomplete="email">
+              <input id="login" type="text"
+                class="rounded-sm p-2 border-2 form-input w-full @error('login') border-red-500 @enderror" name="login"
+                value="{{ old('login') }}" required autocomplete="username">
 
-              @error('email')
+              @error('login')
                 <p class="text-red-500 text-xs italic mt-4">
                   {{ $message }}
                 </p>

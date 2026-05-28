@@ -17,6 +17,7 @@ class Post extends Model
   protected $fillable = [
     'title',
     'slug',
+    'short_excerpt',
     'description',
     'status',
     'user_id',
@@ -108,6 +109,14 @@ class Post extends Model
   public function scopePublished($query)
   {
     return  $query->where('status', PostStatus::PUBLISHED->value);
+  }
+  public function scopeDraft($query)
+  {
+    return  $query->where('status', PostStatus::DRAFT->value);
+  }
+  public function scopePending($query)
+  {
+    return  $query->where('status', PostStatus::PENDING->value);
   }
   public function getImageUrlAttribute()
 {

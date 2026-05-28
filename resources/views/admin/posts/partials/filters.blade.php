@@ -10,8 +10,9 @@
           <option value="">All</option>
           <option value="latest" {{ request('sort') === 'latest' ? 'selected' : '' }}>Latest</option>
           <option value="oldest" {{ request('sort') === 'oldest' ? 'selected' : '' }}>Oldest</option>
+          <hr>
           @foreach (\App\Enums\PostStatus::cases() as $status)
-          <option value="{{$status->value}}" {{request('sort') === $status->value ? 'selected' : ''}}>{{$status->name}}</option>
+          <option value="{{$status->value}}" {{request('sort') === $status->value ? 'selected' : ''}}>{{$status->label()}}</option>
           @endforeach
         </select>
         <!-- Custom white arrow -->

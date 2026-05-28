@@ -2,13 +2,16 @@
 
 namespace App\Policies;
 
+use App\Enums\PostStatus;
 use App\Models\Post;
+use App\Models\PostModeration;
 use App\Models\User;
+use Illuminate\Auth\Access\Response;
 
 
 class PostPolicy
 {
-  public function before(User $user, string $ability,?Post $model): bool|null
+  public function before(User $user, string $ability, mixed $model = null): bool|null
     {   
       if($ability === 'report'){
         return null;
@@ -27,9 +30,25 @@ class PostPolicy
     }
     public function view(User $user, Post $post): bool
     {
-      return $user->hasPermission('post.viewAny') || $user->id === $post->user_id;
+        if ($post->status !== PostStatus::PUBLISHED) {
+        return $user->id === $post->user_id
+            || $user->hasPermission('post.viewAny');
+      }
+
+    return true;
     }
-    public function create(User $user, Post $post): bool
+    public function create(User $user, ?Post $post = null): bool
+    {
+      $rules = PostModeration::rules();
+
+      if ($rules->enable_post_submission) {
+        return true;
+      }
+
+      return $user->hasPermission('post.create');
+    }
+
+    public function bypassModeration(User $user): bool
     {
       return $user->hasPermission('post.create');
     }

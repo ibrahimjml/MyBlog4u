@@ -42,6 +42,7 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define("makeAdminActions", function ($user) {
           return  $user->hasPermission('Access') || $user->email === 'admin@mail.ru';
       });
+
   
     }
 }

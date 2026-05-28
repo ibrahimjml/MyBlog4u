@@ -22,6 +22,7 @@ class AdminSeeder extends Seeder
     $modules = [
       'User'              => ['Access', 'user.view', 'user.create', 'user.delete', 'user.block', 'user.role', 'user.updateImage', 'user.deleteSocial', 'user.update', 'user.edit'],
       'Posts'             => ['post.view', 'post.update', 'post.feature', 'post.delete'],
+      'Post Moderation'   => ['postmoderation.view', 'postmoderation.update'],
       'Tags'              => ['tag.create', 'tag.view', 'tag.update', 'tag.delete', 'tag.feature'],
       'Categories'        => ['category.create', 'category.view', 'category.update', 'category.delete', 'category.feature'],
       'Comments'          => ['comment.edit', 'comment.delete'],
@@ -35,6 +36,7 @@ class AdminSeeder extends Seeder
       'SMTP'              => ['smtp.view', 'smtp.update'],
       'Auth and Security' => ['authsecurity.view', 'authsecurity.update'],
       'Maintenance'       => ['maintenance.view', 'maintenance.update'],
+      'Custom Pages'      => ['custompage.view', 'custompage.create', 'custompage.update', 'custompage.delete'],
       'Backups'           => ['backup.view', 'backup.download', 'backup.delete'],
     ];
 

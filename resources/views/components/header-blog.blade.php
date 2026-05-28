@@ -79,7 +79,9 @@
                   'text-white text-lg pt-2' => Route::is(['profile', 'home']),
                   'text-gray-700 text-lg  pt-2' => !Route::is(['profile', 'home'])
                 ])>
-                  <a href="{{route('admin.panel')}}">Admin Panel</a>
+                  <a href="{{route('admin.panel')}}">
+                    Admin Panel
+                  </a>
                 </li>
               @endif
               @unless(request()->routeIs('home'))

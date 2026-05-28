@@ -23,7 +23,7 @@ if (! function_exists('hasCompleted2FA')) {
 if (! function_exists('abort_unless_require_registration')) {
   function abort_unless_require_registration()
   {
-    $allowedRegistration = \App\Models\AuthSecurityRule::first()->allow_registration;
+    $allowedRegistration = \App\Models\AuthSecurityRule::first()?->allow_registration ?? true;
     abort_unless($allowedRegistration, 403, 'Registration is currently disabled contact support.');
   }
 }

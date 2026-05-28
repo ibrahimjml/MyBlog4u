@@ -30,6 +30,7 @@ class FollowButton extends Component
             default                  => $state['default'] ?? '',
         };
     }
+    // for blog aside page
    public function icon(): string
     {
         return match ($this->status) {
@@ -38,12 +39,22 @@ class FollowButton extends Component
             default                  => 'plus',
         };
     }
+    // for profile page
     public function label(): string
     {
         return match ($this->status) {
             FollowerStatus::ACCEPTED => 'Following',
             FollowerStatus::PENDING  => 'Requested',
             default                  => 'Follow',
+        };
+    }
+    // for followers page
+    public function followersButtons(): string
+    {
+        return match ($this->status) {
+            FollowerStatus::ACCEPTED => 'UnFollow',
+            FollowerStatus::PENDING  => 'Requested',
+            default                  => 'Follow back',
         };
     }
 

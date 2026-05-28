@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Middleware\CheckIfBlocked;
 use App\Models\Category;
 use App\Repositories\Interfaces\CategoryInterface;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
 class CategoryController extends Controller
 {

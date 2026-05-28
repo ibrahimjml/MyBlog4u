@@ -1,6 +1,7 @@
 <?php
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\User\{
+    DashboardController,
     PinController,
     ProfileSettingsController,
   ProfileController,
@@ -52,10 +53,19 @@ Route::get('/post/edit/{slug}',[PostController::class,'editpost'])->name('edit.p
 Route::delete('/post/{slug}',[PostController::class,'delete'])->name('delete.post');
 Route::put('/post/update/{slug}',[PostController::class,'update'])->name('update.post');
 
-// Add and delete images inside TinyMCE editor
+// Rich editor handle upload
 Route::post('/upload-image', [TinyMCEController::class, 'uploadImage'])->name('tinymce.upload');
 Route::post('/image-delete', [TinyMCEController::class, 'deleteImage'])->name('tinymce.delete');
-
+// user dashboard
+Route::controller(DashboardController::class)
+       ->prefix('dashboard')
+       ->name('dashboard.')->group(function(){
+Route::get('/', 'overview')->name('index');
+Route::get('/posts', 'posts')->name('posts');
+Route::get('/followers', 'followers')->name('followers');
+Route::get('/pending-followers', 'pending_followers')->name('pending.followers');
+Route::get('/followings', 'followings')->name('followings');
+});
 // profile
 Route::controller(ProfileController::class)
     ->prefix('/@{user:username}')
@@ -101,7 +111,10 @@ Route::post('/toggle/{post}/pin',[PinController::class,'togglePin'])->name('togg
 Route::post('/post/{post}/like',[PublicController::class,'like']);
 // Follow
 Route::post('/user/{user}/togglefollow',[PublicController::class,'toggleFollow'])->name('toggle.follow');
-Route::post('/follow/accept/{follower}', [PublicController::class, 'accept'])->name('follow.accept');
+Route::post('/follow-request/accept/{follower}', [PublicController::class, 'accept'])->name('follow.accept');
+Route::delete('/follow-request/reject/{follower}', [PublicController::class, 'reject'])->name('follow.reject');
+Route::delete('/follower/remove/{follower}', [PublicController::class, 'removeFollower'])->name('follower.remove');
+Route::post('/following/unfollow/{user}', [PublicController::class,'unfollow'])->name('following.unfollow');
 
 // Search
 Route::get('/search',[PostController::class,'search'])->name('blog.search');
@@ -122,7 +135,7 @@ Route::prefix('/reports')->group(function(){
 // Save Post
 Route::post('/saved-post',[PublicController::class,'save']);
 // Saved Posts Page
-Route::get('/getsavedposts',[PublicController::class,'getsavedposts'])->name('bookmarks');
+Route::get('/bookmarks',[PublicController::class,'getsavedposts'])->name('bookmarks');
 // notifications
 Route::get('/notifications/{id}/read', [NotificationController::class, 'markasread'])->name('notifications.read');
 Route::get('/notifications/read/all', [NotificationController::class, 'markallasread'])->name('notifications.readall');

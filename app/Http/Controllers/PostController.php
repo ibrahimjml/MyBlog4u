@@ -47,6 +47,8 @@ class PostController extends Controller
   }
   public function createpage()
   {
+    $this->authorize('create', Post::class);
+
     $allhashtags = Hashtag::active()->pluck('name');
     $categories = Category::select('id','name')->get();
 
@@ -62,27 +64,29 @@ class PostController extends Controller
   }
   public function create(CreatePostRequest $request)
   {
+    $this->authorize('create', Post::class);
+
     $dto = CreatePostDTO::fromAppRequest($request);
      $this->service->create($dto);
     toastr()->success('posted successfuly',['timeOut'=>1000]);
 
-    return redirect('/blog');
+    return redirect()->route('dashboard.posts');
   }
 
   public function delete($slug)
   {
     
-    $post = Post::published()->whereSlug( $slug)->firstOrFail();
+    $post = Post::whereSlug( $slug)->firstOrFail();
     $this->authorize('delete', $post);
     $post->delete();
 
       toastr()->success('Post deleted successfully',['timeOut'=>1000]);
-      return redirect('/blog');
+      return redirect()->route('dashboard.posts');
     
   }
   public function editpost($slug)
   {
-    $post = Post::published()->whereSlug( $slug)->firstOrFail();
+    $post = Post::whereSlug( $slug)->firstOrFail();
     $this->authorize('view', $post);
 
     $hashtags = $post->hashtags()->pluck('name')->implode(', ');
@@ -99,14 +103,14 @@ class PostController extends Controller
 
   public function update($slug, UpdatePostRequest $request)
   {
-    $post = Post::published()->whereSlug( $slug)->firstOrFail();
+    $post = Post::whereSlug( $slug)->firstOrFail();
     $this->authorize('update', $post);
 
     $dto = UpdatePostDTO::fromAppRequest($request, $post);
     $this->service->update($post,$dto);
 
     toastr()->success('Post updated successfully',['timeOut'=>1000]);
-    return redirect('/blog');
+    return redirect()->route('dashboard.posts');
   }
   
 }

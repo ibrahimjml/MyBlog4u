@@ -11,12 +11,12 @@ class FollowService
 {
  public function toggle(User $follower, User $user): ?int
     {
-        $existing = $follower->followings()
+        $existing = $follower->allFollowings()
             ->where('user_id', $user->id)
             ->first();
 
         if ($existing) {
-            $follower->followings()->detach($user->id);
+            $follower->allFollowings()->detach($user->id);
             $this->deleteFollowNotification($follower, $user);
             return null;
         }
@@ -25,15 +25,16 @@ class FollowService
         ? FollowerStatus::ACCEPTED
         : FollowerStatus::PENDING;
 
-        $follower->followings()->attach($user->id, [
+        $follower->allFollowings()->attach($user->id, [
             'status' => $status->value,
+            'created_at' => now(),
         ]);
 
-        event(new FollowUserEvent($follower,$user,$status->value === FollowerStatus::ACCEPTED ? 'public' : 'private'));
+        event(new FollowUserEvent($follower,$user,$status->value === FollowerStatus::ACCEPTED->value ? 'public' : 'private'));
 
         return $status->value;
     }
-protected function deleteFollowNotification($follower, $user){
+public function deleteFollowNotification($follower, $user){
 
     $notifiableIds = User::where('is_admin', true)
     ->pluck('id')

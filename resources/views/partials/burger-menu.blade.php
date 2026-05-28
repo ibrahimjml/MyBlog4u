@@ -19,15 +19,19 @@
     </li>
     <li
       class="border-b-2 hover:border-b-red-500 text-gray-500 hover:text-black hover:font-semibold transition duration-300 flex justify-between  items-center gap-2 mb-2">
+      <a href="{{route('admin.panel')}}">Admin Panel</a>
+      <i class="fas fa-lock"></i>
+    </li>
+      <li class="border-b-2 text-gray-500 hover:text-black hover:font-semibold transition duration-300 hover:border-b-red-500 flex justify-between items-center mb-2 ">
+        <a href="{{route('dashboard.index')}}">My Dashboard</a>
+    <i class="fas fa-tachometer-alt mr-1"></i>
+  </li>
+    <li
+      class="border-b-2 hover:border-b-red-500 text-gray-500 hover:text-black hover:font-semibold transition duration-300 flex justify-between  items-center gap-2 mb-2">
       <a href="{{route('profile.account')}}">Account settings</a>
       <i class="fas fa-cog"></i>
     </li>
       @if(auth()->user()->hasAnyRole(['Admin','Moderator']) || auth()->user()->hasPermission('Access'))
-    <li
-      class="border-b-2 hover:border-b-red-500 text-gray-500 hover:text-black hover:font-semibold transition duration-300 flex justify-between  items-center gap-2 mb-2">
-      <a href="{{route('admin.panel')}}">Admin Panel</a>
-      <i class="fas fa-lock"></i>
-    </li>
       @endif
     <li
       class="border-b-2 hover:border-b-red-500 text-gray-500 hover:text-black hover:font-semibold transition duration-300 flex justify-between items-center gap-2 mb-2">

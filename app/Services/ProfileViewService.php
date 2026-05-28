@@ -13,11 +13,18 @@ class ProfileViewService
        
      if ($viewer->id === $profileowner->id || $viewer->is_admin) return;
      
-      ProfileView::firstOrCreate([
+      $profileView = ProfileView::firstOrCreate([
           'viewer_id' => auth()->id(),
           'profile_id' => $profileowner->id,
       ]);
-  
+      
+   if ( $profileView->last_notified_at && $profileView->last_notified_at->gt(now()->subDay()))  return;
+    
+
    event(new ProfileViewedEvent($profileowner, $viewer));
+
+   $profileView->update([
+        'last_notified_at' => now(),
+    ]);
     }
 }

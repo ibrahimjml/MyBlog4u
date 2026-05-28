@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Builders\UserBuilder;
+use App\Enums\FollowerStatus;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -47,7 +48,7 @@ class User extends Authenticatable implements MustVerifyEmail
         return new UserBuilder($query);
     }
   public function post(){
-    return $this->hasMany(Post::class)->published();
+    return $this->hasMany(Post::class);
   }
   
    public function identityVerification()
@@ -68,18 +69,33 @@ class User extends Authenticatable implements MustVerifyEmail
   public function replies(){
     return $this->comments()->whereNotNull('parent_id');
   }
+  public function profileViews()
+{
+    return $this->hasMany(ProfileView::class, 'profile_id');
+}
   public function mentioned()
 {
     return $this->belongsToMany(Comment::class, 'comment_mentions');
 }
   public function followings(){
     return $this->belongsToMany(User::class,'followers','follower_id','user_id')
-                ->withPivot('status');
+                ->withPivot('status')
+                ->wherePivot('status', FollowerStatus::ACCEPTED->value);
   }
   public function followers(){
     return $this->belongsToMany(User::class,'followers','user_id','follower_id')
-                ->withPivot('status');
+                ->withPivot('status')
+                ->wherePivot('status', FollowerStatus::ACCEPTED->value);
   }
+  public function pendingFollowers(){
+    return $this->belongsToMany(User::class,'followers','user_id','follower_id')
+                ->withPivot('status')
+                ->wherePivot('status', FollowerStatus::PENDING->value);
+  }
+  public function allFollowings()
+{
+    return $this->belongsToMany(User::class,'followers','follower_id','user_id')->withPivot('status');
+}
   public function isFollowing(User $user)
   {
       return $this->followings()->where('user_id', $user->id)->exists();

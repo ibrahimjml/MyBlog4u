@@ -1,17 +1,22 @@
 {{-- start trigger observer Interactions menu --}}
 <div id="action-bar-trigger" class="h-[1px] w-full"></div>
 <div id="action-bar" class=" container mx-auto mb-5 w-full sm:w-fit h-14 space-x-2 flex justify-center items-center gap-2 border-2 border-blueGray-200 rounded-full px-2 sm:px-6 py-3 text-md lg:text-2xl bg-white transition-all duration-300 z-50">
-<div class="flex items-center justify-center">
-    <span onclick="fetchLike(this)" class="cursor-pointer w-8 h-8 rounded-full flex justify-center items-center  hover:bg-gray-200 transition-bg duration-150 ">
-      <i class="fa-heart like-icon {{ $post->is_liked() ? 'fas text-red-500' : 'far' }}" data-id="{{ $post->id }}"></i>
-    </span>
+@if($post->status === \App\Enums\PostStatus::PUBLISHED)
 
-    <span title="view who liked" id="likes-count" class="open-view-model text-sm cursor-pointer">
-      {{ $post->likes_count}}
-    </span>
+<div class="flex items-center justify-center">
+  <span onclick="fetchLike(this)" class="cursor-pointer w-8 h-8 rounded-full flex justify-center items-center  hover:bg-gray-200 transition-bg duration-150 ">
+    <i class="fa-heart like-icon {{ $post->is_liked() ? 'fas text-red-500' : 'far' }}" data-id="{{ $post->id }}"></i>
+  </span>
+
+  <span title="view who liked" id="likes-count" class="open-view-model text-sm cursor-pointer">
+    {{ $post->likes_count}}
+  </span>
 
 </div>
-@if($post->allow_comments)
+@else
+<span class="text-sm text-gray-500">--</span>
+@endif
+@if($post->allow_comments || $post->status === \App\Enums\PostStatus::PUBLISHED)
 <div class="h-4 w-px bg-gray-400"></div>
 <div class="flex items-center justify-center">
   <span title="write a comment" id="openModel" class="cursor-pointer flex items-center justify-center  w-8 h-8 rounded-full   hover:bg-gray-200 transition-bg duration-150">
@@ -19,6 +24,8 @@
   </span>
   <span  class="text-sm">{{ $post->totalcomments_count }}</span>
 </div>
+@else
+<span class="text-sm text-gray-500">--</span>
 @endif
 @if(auth()->user()->is($post->user))
 <div class="h-4 w-px bg-gray-400"></div>

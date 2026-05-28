@@ -26,7 +26,6 @@ class PostsService
         match ($status) {
             PostStatus::PUBLISHED => $post->published_at = now(),
             PostStatus::BANNED    => $post->banned_at = now(),
-            PostStatus::TRASHED   => $post->trashed_at = now(),
             default               => null,
         };
 

@@ -10,9 +10,7 @@ class MetaHelpers{
     $hashtags = $post->hashtags->pluck('name')->implode(', ');
     $metaKeywords = $hashtags ?? '';
     
-    $description = $post->description ?? '';
-    $cleanDescription = str_replace(["\n", "\r", "\t"], '', $description);
-    $metaDescription = Str::limit(strip_tags(trim($cleanDescription)), 150);
+    $metaDescription = $post->short_excerpt;
 
     $author = $post->user->username ?? config('app.name', 'Blog-Post');
 

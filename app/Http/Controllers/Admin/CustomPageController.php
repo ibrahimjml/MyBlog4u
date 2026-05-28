@@ -9,6 +9,13 @@ use Illuminate\Http\Request;
 
 class CustomPageController extends Controller
 {
+      public function __construct()
+    {
+        $this->middleware('permission:custompage.view')->only('index', 'show');
+        $this->middleware('permission:custompage.create')->only('create', 'store');
+        $this->middleware('permission:custompage.update')->only('edit', 'update');
+        $this->middleware('permission:custompage.delete')->only('destroy');
+    }
     public function index()
     {
         $pages = CustomPage::orderBy('order')->paginate(10);

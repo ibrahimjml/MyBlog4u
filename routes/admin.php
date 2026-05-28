@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\{
     UsersController
 };
 use App\Http\Controllers\Admin\Optimization\MaintenanceController;
+use App\Http\Controllers\Admin\PostModeration\PostModerationController;
 use App\Http\Controllers\Admin\Settings\{
     AuthSecurityController,
     BackupsController,
@@ -24,7 +25,7 @@ use App\Http\Controllers\Admin\Settings\{
     SmtpController
 };
 Route::prefix('admin')
-    ->middleware('can:makeAdminActions')
+    ->middleware(['can:makeAdminActions','demo'])
     ->name('admin.')
     ->group(function () {
   
@@ -39,6 +40,14 @@ Route::prefix('admin')
   Route::post('/featured', 'createFeature')->name('featured.create');
   Route::put('/{post}/feature','toggleFeature')->name('featured.toggle');
   Route::put('/{post}/status','editStatus')->name('status');
+  });
+  // post moderation
+  Route::controller(PostModerationController::class)
+         ->prefix('post-moderation')
+         ->name('posts.moderation.')
+         ->group(function () {
+  Route::get('/', 'moderationPage')->name('index');
+  Route::put('/update-rules', 'updateRules')->name('update.rules');
   });
   // custom pages
   Route::controller(CustomPageController::class)

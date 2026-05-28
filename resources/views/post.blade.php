@@ -53,12 +53,25 @@
 
 </style>
 @endpush
-{{-- 1- history links --}}
-    <div class="flex  my-4 justify-center gap-3 text-blue-700 font-semibold uppercase ">
-    <a href="{{route('blog')}}" class="hover:underline"><i class="fas fa-home"></i> Home</a>
-    &sol;
-    <a href="{{route('blog')}}" class="hover:underline">Blog</a>
+
+@if($post->status === \App\Enums\PostStatus::DRAFT)
+<div class="text-xl text-center  p-4 text-white bg-orange-500 font-bold w-full">
+  Draft <small class="ml-2">- This Secure URL Only Visible To You <a class="text-blue-500 underline" href="{{ route('edit.post', $post->slug) }}" class="underline">edit to publish</a> to let others see ur post.</small>
+ <i class="fas fa-exclamation-triangle"></i>
+</div>
+@endif
+@if($post->status === \App\Enums\PostStatus::PENDING)
+<div class="text-xl text-center  p-4 text-white bg-orange-500 font-bold w-full">
+  <i class="fas fa-exclamation-triangle"></i>
+  Pending Review <small class="ml-2">- This Secure URL Only Visible To You - when approved will be published <a class="text-blue-500 underline" href="{{ route('dashboard.index') }}" class="underline">return to dashboard</a> </small>
   </div>
+@endif
+{{-- 1- history links --}}
+<div class="flex  my-4 justify-center gap-3 text-blue-700 font-semibold uppercase ">
+  <a href="{{route('blog')}}" class="hover:underline"><i class="fas fa-home"></i> Home</a>
+  &sol;
+  <a href="{{route('blog')}}" class="hover:underline">Blog</a>
+</div>
 {{-- sticky trigger observer --}}
 <div id="sticky-trigger"></div>
 {{-- sticky bar nav --}}
@@ -145,7 +158,11 @@
         @endforeach
       </div>
   </div>
-
+  <hr class="my-4 lg:max-w-4xl max-w-[12rem] mx-auto">
+<div  class="font-bold my-4 max-w-4xl  md:mx-auto mx-4">
+   {{ $post->short_excerpt }}
+</div>
+<hr class="my-2 lg:max-w-4xl max-w-[12rem] mx-auto">
 {{-- 4- post description --}}
 
 <div id="description" class="prose prose-lg published-content max-w-4xl  md:mx-auto mx-4">

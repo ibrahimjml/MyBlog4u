@@ -32,10 +32,11 @@
             <i @class([
                 "fas fa-circle  mr-2 text-xs",
                 'text-green-600' => $post->status === \App\Enums\PostStatus::PUBLISHED,
-                'text-orange-600' => $post->status === \App\Enums\PostStatus::BANNED,
-                'text-red-600' => $post->status === \App\Enums\PostStatus::TRASHED,
+                'text-orange-600' => $post->status === \App\Enums\PostStatus::DRAFT,
+                'text-red-600' => $post->status === \App\Enums\PostStatus::BANNED,
+                'text-yellow-500' => $post->status === \App\Enums\PostStatus::PENDING,
           ])></i>
-          {{$post->status->value}}
+          {{$post->status->label()}}
           </small>
         </td>
         <td class="p-2">

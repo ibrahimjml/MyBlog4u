@@ -69,9 +69,23 @@ class PostBuilder extends Builder
             'latest' => $this->latest(),
             'oldest' => $this->oldest(),
             'published' => $this->filterByStatus(PostStatus::PUBLISHED),
-            'under review' => $this->filterByStatus(PostStatus::UNDER_REVIEW),
             'banned' => $this->filterByStatus(PostStatus::BANNED),
-            'trashed' => $this->filterByStatus(PostStatus::TRASHED),
+            'draft' => $this->filterByStatus(PostStatus::DRAFT),
+            'pending' => $this->filterByStatus(PostStatus::PENDING),
+            default => $this->latest(),
+        };
+
+        return $this;
+    }
+    // my dashboard sort
+     public function forMyDashboardSort(string $sort): self
+    {
+       match ($sort) {
+            'latest' => $this->latest(),
+            'oldest' => $this->oldest(),
+            'published' => $this->filterByStatus(PostStatus::PUBLISHED),
+            'draft' => $this->filterByStatus(PostStatus::DRAFT),
+            'pending' => $this->filterByStatus(PostStatus::PENDING),
             default => $this->latest(),
         };
 
@@ -98,6 +112,10 @@ class PostBuilder extends Builder
             ->when($filter->sort, fn(PostBuilder $q, $sort) => $q->adminSort($sort))
             ->when($filter->featured, fn(PostBuilder $q) => $q->featured())
             ->when($filter->reported, fn(PostBuilder $q) => $q->reported());
+    }
+    public function DashboardFilter(Fluent $filter): self
+    {
+        return $this->when($filter->sort, fn(PostBuilder $q, $sort) => $q->forMyDashboardSort($sort));
     }
 
 }

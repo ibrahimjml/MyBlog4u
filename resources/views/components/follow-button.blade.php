@@ -10,5 +10,7 @@
         <i class="fas fa-{{ $icon() }}"></i>
     @elseif($type === 'label')
         {{ $label() }}
+    @elseif($type === 'followers')
+        {{ $followersButtons() }}
     @endif
 </button>

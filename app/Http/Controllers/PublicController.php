@@ -37,7 +37,10 @@ public function accept(User $follower)
 {
     $auth = auth()->user();
 
-    $auth->followers()->updateExistingPivot($follower->id, ['status' => FollowerStatus::ACCEPTED->value]);
+    $auth->pendingFollowers()->updateExistingPivot($follower->id, [
+      'status' => FollowerStatus::ACCEPTED->value,
+      'updated_at' => now()
+      ]);
 
     DatabaseNotification::where('type', FollowersNotification::class)
          ->where('notifiable_id', $auth->id)
@@ -54,7 +57,41 @@ if($admin && $this->allow($admin,NotificationType::FOLLOWACCEPT)){
     toastr()->success('Follow request accepted');
     return back();
 }
-
+// reject follow request
+public function reject(User $follower)
+{
+  $auth = auth()->user();
+  $auth->pendingFollowers()->detach($follower->id);
+  DatabaseNotification::where('type', FollowersNotification::class)
+       ->where('notifiable_id', $auth->id)
+       ->whereJsonContains('data->follower_id', $follower->id)
+       ->whereJsonContains('data->status', 'private')
+       ->delete();
+    toastr()->success('Follow request rejected');
+    return back(); 
+}
+// remove follower
+public function removeFollower(User $follower)
+{
+  $auth = auth()->user();
+  $auth->followers()->detach($follower->id);
+    DatabaseNotification::where('type', FollowAcceptNotification::class)
+       ->where('notifiable_id', $follower->id)
+       ->whereJsonContains('data->follower_id', $auth->id)
+       ->whereJsonContains('data->status', 'accepted')
+       ->delete();
+  toastr()->success('Follower removed');
+  return back();
+}
+// unfollowing a user
+public function unfollow(User $user, FollowService $service)
+{  
+  $follower = auth()->user();
+  $follower->followings()->detach($user->id);
+  $service->deleteFollowNotification($follower, $user);
+  toastr()->success('Unfollowed successfully');
+  return back();
+}
   public function like(Post $post)
   {
 
