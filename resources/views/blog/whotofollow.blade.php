@@ -19,7 +19,7 @@
     :user-id="$user->id"
     type="icon"
     onclick="follow(this)"
-    class="follow w-5 h-5 text-xs ml-auto text-white rounded-full flex items-center justify-center"
+    class="follows w-5 h-5 text-xs ml-auto text-white rounded-full flex items-center justify-center"
 />
         @endif
       </div>
@@ -43,7 +43,7 @@
       try {
         const res = await fetch(`/user/${userId}/togglefollow`, options);
         const data = await res.json();
-        document.querySelectorAll(`button.follow[data-id="${userId}"]`).forEach(btn => {
+        document.querySelectorAll(`button.follows[data-id="${userId}"]`).forEach(btn => {
           const icon = btn.querySelector('i');
           if (!icon) return;
           btn.classList.remove('bg-green-500', 'bg-yellow-500', 'bg-gray-500');
