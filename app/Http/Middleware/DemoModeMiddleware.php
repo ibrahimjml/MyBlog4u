@@ -8,28 +8,35 @@ use Symfony\Component\HttpFoundation\Response;
 
 class DemoModeMiddleware
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     */
-    public function handle(Request $request, Closure $next): Response
-    {
-         if (! config('demo.enabled')) {
-            return $next($request);
-        }
-
-        if ($request->isMethod('GET')) {
-            return $next($request);
-        }
-
-        if ($request->expectsJson() || $request->ajax()) {
-            return response()->json([
-                'demo_mode' => true,
-                'type' => 'error',
-                'message' => 'Demo mode: this action is disabled.',
-            ], 403);
-        }
-        return back();
+  /**
+   * Handle an incoming request.
+   *
+   * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+   */
+  public function handle(Request $request, Closure $next): Response
+  {
+    if (!config('demo.enabled')) {
+      return $next($request);
     }
+
+    if ($request->isMethod('GET')) {
+      return $next($request);
+    }
+
+    if (
+      $request->is('login') ||
+      $request->is('register') ||
+      $request->is('logout')
+    ) {
+      return $next($request);
+    }
+    if ($request->expectsJson() || $request->ajax()) {
+      return response()->json([
+        'demo_mode' => true,
+        'type' => 'error',
+        'message' => 'Demo mode: this action is disabled.',
+      ], 403);
+    }
+    return back();
+  }
 }

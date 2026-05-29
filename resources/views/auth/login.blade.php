@@ -20,7 +20,7 @@
 
               <input id="login" type="text"
                 class="rounded-sm p-2 border-2 form-input w-full @error('login') border-red-500 @enderror" name="login"
-                value="{{ old('login') }}" required autocomplete="username">
+                value="{{ old('login') }}" required >
 
               @error('login')
                 <p class="text-red-500 text-xs italic mt-4">
@@ -36,7 +36,7 @@
 
               <input id="password" type="password"
                 class="rounded-sm p-2 border-2 form-input w-full @error('password') border-red-500 @enderror"
-                name="password" required autocomplete="new-password">
+                name="password"  required >
 
               @error('password')
                 <p class="text-red-500 text-xs italic mt-4">

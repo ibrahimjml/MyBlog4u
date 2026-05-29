@@ -2,10 +2,28 @@
   use App\Enums\NotificationType;
 @endphp
 
-<div style="display: none;" class="notification-menu w-[calc(100vw-1rem)] max-w-[500px] bg-white shadow-xl rounded-xl px-2 py-3 sm:w-[500px]">
-
+<div style="display: none;" class="notification-menu w-[calc(100vw-1rem)] h-[400px] max-w-[500px] bg-white shadow-[0_10px_15px_rgba(0,0,0,0.4)] rounded-xl px-2 py-3 sm:w-[500px]">
+  <!-- delete all / mark all as read -->
+    <div class="flex gap-3 p-3 justify-between items-center">
+      <p class="text-xl font-bold text-left">Notifications</p>
+      <div class="flex justify-end items-center gap-2">
+  <form id="marksall" action="{{ route('notifications.readall') }}" method="GET" class="text-right mb-2">
+      </form> 
+      <span title="mark all read" class="text-blue-500 p-2 text-center">
+        
+      <button form="marksall" type="submit" ><i class="fas fa-check mr-1"></i></button>
+      </span>
+     <form action="{{ route('notifications.deleteAll') }}" method="POST" class="text-center  sm:text-right sm:w-fit sm:ml-auto">
+          @csrf
+          @method('DELETE')
+          <button title="delete all" type="submit" class="text-sm p-2 rounded-lg text-red-500 ">
+            <i class="fas fa-trash mr-1"></i>
+       </button>
+      </form> 
+      </div>
+    
+  </div>
 <div class="p-2 border-b-2 border-b-gray-200">
-  <p class="text-xl font-bold text-left">Notifications</p>
    <div id="notification-filters" class="flex flex-wrap gap-2 mt-4">
       <button class="filter-btn active px-3 py-1 rounded-full bg-blue-500 text-white text-sm" data-type="all">All</button>
       <button class="filter-btn px-3 py-1 rounded-full bg-gray-200 hover:bg-blue-100 text-sm" data-type="{{NotificationType::LIKE->value}}">Like</button>
@@ -16,7 +34,7 @@
     </div>
 </div>
   <!-- notification section -->
-  <ul id="notification-list" class="max-h-[60vh] overflow-y-auto space-y-3 sm:max-h-[500px]">
+  <ul id="notification-list" class="h-full overflow-y-auto space-y-3 sm:max-h-[500px]">
       
       @forelse($notifications as $notification)
       @php
@@ -80,22 +98,7 @@
         <li class="text-center text-gray-500 py-6">No new notifications.</li>
       @endforelse
   </ul>
-  <!-- delete all / mark all as read -->
-    <div class="flex flex-col gap-3 p-3 border-t-2 border-t-black sm:h-20 sm:flex-row sm:items-center sm:p-4">
-      <form id="marksall" action="{{ route('notifications.readall') }}" method="GET" class="text-right mb-2">
-      </form> 
-      <span class="text-blue-500 p-2 rounded-full hover:border border-blue-600 text-center">
-        <i class="fas fa-check mr-1"></i>
-      <button form="marksall" type="submit" >Mark all as read</button>
-      </span>
-     <form action="{{ route('notifications.deleteAll') }}" method="POST" class="text-center mb-2 sm:text-right sm:w-fit sm:ml-auto">
-          @csrf
-          @method('DELETE')
-          <button type="submit" class="text-sm p-2 rounded-lg text-white bg-red-400 hover:bg-red-600 transition-colors duration-150 ease">
-            <i class="fas fa-trash mr-1"></i>
-            Clear</button>
-      </form> 
-  </div>
+
 </div>
 @push('scripts')
 <script>

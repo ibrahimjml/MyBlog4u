@@ -58,14 +58,35 @@
       open2faBtn?.addEventListener('click', async () => {
         const res = await fetch('{{ route('enable.2fa') }}', {
           method: 'POST',
-          headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+          headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json'
+          }
         });
-        const html = await res.text();
-        document.getElementById('2faContainer').innerHTML = html;
+        const contentType = res.headers.get('content-type');
 
-        const faModal = document.getElementById('2faModel');
-        if (faModal) faModal.classList.remove('hidden');
+        if (contentType && contentType.includes('application/json')) {
 
+          const data = await res.json();
+
+          if (data.demo_mode) {
+            toastr.error(data.message);
+            return;
+          }
+
+        } else {
+
+          const html = await res.text();
+
+          document.getElementById('2faContainer').innerHTML = html;
+
+          const faModal = document.getElementById('2faModel');
+
+          if (!faModal) return;
+
+          faModal.classList.remove('hidden');
+        }
         setTimeout(() => {
           const continueBtn = faModal.querySelector('#continue2fa');
           continueBtn?.addEventListener('click', () => {
@@ -126,7 +147,7 @@
     }
   </script>
   <script>
-      // disable 2fa
+    // disable 2fa
     async function disable2fa(eo) {
       const res = await fetch('{{ route('disable.2fa') }}', {
         method: 'PUT',

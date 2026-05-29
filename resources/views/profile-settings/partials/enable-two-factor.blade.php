@@ -29,7 +29,7 @@
           <div id="secret" class="flex-grow flex justify-center border-r-2 border-gray-300 px-2 font-mono text-sm select-all">
             {{ $secret }}
           </div>
-          <div class="flex-shrink ml-2 cursor-pointer" onclick="copy2FA()">
+          <div class="flex-shrink ml-2 cursor-pointer">
             <i class="fas fa-copy text-gray-500 hover:text-gray-700"></i>
           </div>
         </div>
@@ -38,19 +38,3 @@
   </div>
 </div>
 
-@push('scripts')
-<script>
-    function copy2FA() {
-    const secret = document.getElementById('secret').innerText;
-    navigator.clipboard.writeText(secret).then(() => {
-      toastr.options = {
-          "closeButton": true,
-          "progressBar": true,
-          "positionClass": "toast-bottom-right",
-          "timeOut": 2000
-        };
-        toastr.success("Copied To Clibboard");
-    });
-  }
-</script>
-@endpush

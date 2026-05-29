@@ -20,7 +20,9 @@ class PostPolicy
             return true; 
         }
       if ($model instanceof Post && $model->user->hasRole(\App\Enums\UserRole::ADMIN->value)) {
-           return false;
+           return in_array($ability, ['update', 'delete', 'feature', 'updateAny', 'deleteAny'], true)
+               ? false
+               : null;
          }
         return null; 
     }

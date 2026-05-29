@@ -7,17 +7,19 @@ use App\Models\User;
 
 class UserPolicy
 {
-   public function before(User $user, string $ability,?User $model = null): bool|null
+   public function before(User $user, string $ability, ?User $model = null): bool|null
     {
-        if ( $user->hasRole(\App\Enums\UserRole::ADMIN->value)) {
-            return true; 
+        if ($user->hasRole(\App\Enums\UserRole::ADMIN->value)) {
+            return true;
         }
-      
-          if ($model instanceof User && $model->hasRole(\App\Enums\UserRole::ADMIN->value)) {
-           return false;
-         }
-      
-        return null; 
+
+        if ($model instanceof User && $model->hasRole(\App\Enums\UserRole::ADMIN->value)) {
+            return in_array($ability, ['update', 'delete', 'block', 'role', 'updateAny', 'deleteAny'], true)
+               ? false
+               : null;
+        }
+
+        return null;
     }
     public function view(User $user, User $model): bool
     {

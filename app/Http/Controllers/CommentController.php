@@ -17,7 +17,7 @@ class CommentController extends Controller
 {
   public function __construct()
   {
-    $this->middleware(['auth','demo','verified',CheckIfBlocked::class]);
+    $this->middleware(['auth','verified',CheckIfBlocked::class]);
   }
    public function loadMore(Post $post, PostInterface $repo)
 {
