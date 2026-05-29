@@ -78,12 +78,18 @@
         </section>
       </div>
     </div>
-    @if(env('IS_DEMO', false))
+    @if(config('demo.enabled'))
       <div class="mt-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4" role="alert">
-        <p class="font-bold">Demo Credentials</p>
-        <p>Email: <span class="font-mono">{{ env('ADMIN_EMAIL') }}</span></p>
-        <p>Pass: <span class="font-mono">{{ env('ADMIN_PASS') }}</span></p>
+        <p class="font-bold">Admin Credentials</p>
+        <p>Username: <span class="font-mono">{{ config('demo.admin.username') }}</span></p>
+        <p>Pass: <span class="font-mono">{{ config('demo.admin.password') }}</span></p>
       </div>
+      <div class="mt-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4" role="alert">
+        <p class="font-bold">User Credentials</p>
+        <p>Username: <span class="font-mono">{{ config('demo.user.username') }}</span></p>
+        <p>Pass: <span class="font-mono">{{ config('demo.user.password') }}</span></p>
+      </div>
+      
     @endif
   </main>
   @push('scripts')
