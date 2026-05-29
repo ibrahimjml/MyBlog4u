@@ -4,7 +4,9 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <link rel="shortcut icon" href="{{url('/img/icon.png')}}" type="image/png" />
 <link rel="apple-touch-icon" href="{{url('/img/apple-touch-icon.png')}}" />
+<link rel="canonical" href="{{ url()->current() }}">
 <meta name="theme-color" content="#000000" />
+
 {{-- SEO --}}
 <meta name="description" content="{{ $meta_description ?? config('app.name') . '- The platform for creating, interacting, and sharing content on  ' }}" />
 <meta name="keywords" content="{{ $meta_keywords ?? 'laravel, blogpost, myblog, links, link, cv, portfolio, aggregation, platform, social, media, profile, bio, tree' }}">
