@@ -26,7 +26,10 @@ class DemoModeMiddleware
     if (
       $request->is('login') ||
       $request->is('register') ||
-      $request->is('logout')
+      $request->is('logout') ||
+      $request->is('user/*/togglefollow') ||
+      $request->is('post/*/like') ||
+      $request->is('saved-post')
     ) {
       return $next($request);
     }
