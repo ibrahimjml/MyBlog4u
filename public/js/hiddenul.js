@@ -65,6 +65,7 @@ notificationTriggers.forEach((trigger) => {
 
   const hideNotifications = () => {
     notifications.classList.remove('is-open');
+  document.body.classList.remove('no-scroll');
   };
 
   trigger.addEventListener('click', (event) => {
@@ -79,7 +80,13 @@ notificationTriggers.forEach((trigger) => {
     });
 
     notifications.classList.toggle('is-open', !isOpen);
-    console.log("Notification menu toggled");
+
+if (!isOpen) {
+  document.body.classList.add('no-scroll');
+} else {
+  document.body.classList.remove('no-scroll');
+}
+
   });
 
   if (window.matchMedia('(hover: hover)').matches) {

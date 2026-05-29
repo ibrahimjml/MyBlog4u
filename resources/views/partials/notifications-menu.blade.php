@@ -2,8 +2,7 @@
   use App\Enums\NotificationType;
 @endphp
 
-<div style="display: none;" class="notification-menu w-[calc(100vw-1rem)] h-[400px] max-w-[500px] bg-white shadow-[0_10px_15px_rgba(0,0,0,0.4)] rounded-xl px-2 py-3 sm:w-[500px]">
-  <!-- delete all / mark all as read -->
+<div style="display: none;" class="notification-menu flex flex-col w-[calc(100vw-1rem)] h-[400px] overflow-y-auto max-w-[500px] bg-white shadow-[0_10px_15px_rgba(0,0,0,0.4)] rounded-xl px-2 py-3 sm:w-[500px]">  <!-- delete all / mark all as read -->
     <div class="flex gap-3 p-3 justify-between items-center">
       <p class="text-xl font-bold text-left">Notifications</p>
       <div class="flex justify-end items-center gap-2">
@@ -13,6 +12,7 @@
         
       <button form="marksall" type="submit" ><i class="fas fa-check mr-1"></i></button>
       </span>
+      @if(auth()->user()->unreadNotifications->count() > 0)
      <form action="{{ route('notifications.deleteAll') }}" method="POST" class="text-center  sm:text-right sm:w-fit sm:ml-auto">
           @csrf
           @method('DELETE')
@@ -20,6 +20,7 @@
             <i class="fas fa-trash mr-1"></i>
        </button>
       </form> 
+      @endif
       </div>
     
   </div>
@@ -34,8 +35,7 @@
     </div>
 </div>
   <!-- notification section -->
-  <ul id="notification-list" class="h-full overflow-y-auto space-y-3 sm:max-h-[500px]">
-      
+<ul id="notification-list" class="flex-1 overflow-y-auto space-y-3 min-h-12">      
       @forelse($notifications as $notification)
       @php
         $type = $notification->data['type'];

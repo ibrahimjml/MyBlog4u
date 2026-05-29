@@ -1,4 +1,4 @@
-  <div class="flex flex-col w-fit h-dvh gap-2">
+<div class="flex flex-col w-full flex-1 gap-2 min-h-0">
         <a href="{{route('dashboard.index')}}" class="py-2 px-4 text-gray-500  rounded-xl flex items-center gap-4 {{request()->routeIs('dashboard.index') ? 'bg-gray-200':''}}">
           <i class="fas fa-tachometer-alt mr-1"></i>
         Overview

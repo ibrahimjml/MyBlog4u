@@ -1,13 +1,13 @@
 @extends('layouts.dashboard')
 
 @section('content')
-  <main class="min-h-screen w-full lg:flex lg:gap-6 p-0 lg:p-6">
+  <main class="min-h-dvh w-full lg:flex lg:gap-6 p-0 lg:p-6">
 
-    <aside id="mobileSidebar" class="flex flex-col items-center bg-white p-6 shadow h-screen fixed top-0 left-0 w-80 z-30 lg:sticky lg:top-6 lg:h-[calc(100vh-3rem)] lg:w-80 lg:shrink-0 lg:z-auto lg:rounded-lg transition-transform duration-300 ease-in-out -translate-x-full lg:translate-x-0">
+    <aside id="mobileSidebar" class="flex flex-col items-center bg-white p-6 shadow h-dvh fixed top-0 left-0 w-80 z-30 overflow-y-auto">
       @include('components.dashboard-sidebar') <!-- Sidebar content -->
     </aside>
 
-	    <section class="w-full min-w-0 bg-white shadow h-screen lg:flex-1 lg:h-[calc(100vh-3rem)] lg:rounded-lg overflow-y-auto">
+	    <section class="w-full min-w-0 bg-white shadow h-dvh lg:flex-1 lg:h-[calc(100vh-3rem)] lg:rounded-lg overflow-y-auto">
       <div class="sticky top-0 z-20 flex h-20 items-center justify-between gap-4 border-b border-gray-200 bg-white px-4 sm:px-6">
         <div class="flex min-w-0 items-center gap-4">
           <button id="toggleSidebar" class="text-lg text-gray-400 hover:text-gray-600 transition cursor-pointer lg:hidden">
