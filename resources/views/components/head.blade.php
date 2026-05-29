@@ -6,26 +6,26 @@
 <link rel="apple-touch-icon" href="{{url('/img/apple-touch-icon.png')}}" />
 <meta name="theme-color" content="#000000" />
 {{-- SEO --}}
-<meta name="description" content="@yield('meta_description', config('app.name') . '- welcome to myblog where all users share their posts and connect with each other')">
-<meta name="keywords" content="@yield('meta_keywords','laravel, blogpost, post, links, link, cv, portfolio, aggregation, platform, social, media, profile, bio, tree')">
-<meta name="author" content="@yield('author', config('app.name'))">
+<meta name="description" content="{{ $meta_description ?? config('app.name') . '- The platform for creating, interacting, and sharing content on  ' }}" />
+<meta name="keywords" content="{{ $meta_keywords ?? 'laravel, blogpost, myblog, links, link, cv, portfolio, aggregation, platform, social, media, profile, bio, tree' }}">
+<meta name="author" content="{{ $author ?? config('app.name') }}">
 <meta content="BlogPost" property="og:site_name" />
 {{-- meta og graph whatsapp/twitter --}}
 <meta property="og:url" content="{{ url()->current() }}" />
-<meta property="og:type" content="@yield('og_type', 'website')" />
-<meta property="og:title" content="@yield('meta_title',config('app.name') . '- The platform that let users connect with each others and share their ideas .')" />
-<meta property="og:description" content="@yield('meta_description',config('app.name') . '- welcome to myblog where all users share their posts and connect with each other')" />
-<meta property="og:image" content="@yield('og_image', url('/img/logo.png'))" />
+<meta property="og:type" content="{{ $og_type ?? 'website' }}" />
+<meta property="og:title" content="{{ $meta_title ?? (config('app.name') . '- Myblog platform .') }}" />
+<meta property="og:description" content="{{ $meta_description ?? (config('app.name') . '- The platform for creating, interacting, and sharing content on  .') }}" />
+<meta property="og:image" content="{{ $og_image ?? url('/img/logo.png') }}" />
 <meta property="og:image:width" content="200" />
 <meta property="og:image:height" content="200" />
 {{-- meta og twitter --}}
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:url" content="{{ url()->current() }}">
-<meta name="twitter:title" content="@yield('meta_title',config('app.name') . '- The platform that let users connect with each others and share their ideas .')" />
-<meta name="twitter:description" content="@yield('meta_description',config('app.name') . '- welcome to myblog where all users share their posts and connect with each other')" />
-<meta name="twitter:image" content="@yield('og_image', url('/img/logo.png'))">
+<meta name="twitter:title" content="{{ $meta_title ?? (config('app.name') . '- Myblog platform .') }}" />
+<meta name="twitter:description" content="{{ $meta_description ?? (config('app.name') . '- The platform for creating, interacting, and sharing content on .') }}" />
+<meta name="twitter:image" content="{{ $og_image ?? url('/img/logo.png') }}">
 <title>
-  @yield('meta_title', config('app.name') . '- The platform that let users connect with each others and share their ideas .')
+  {{ $meta_title ?? (config('app.name') . '- Myblog platform .') }}
 </title>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">

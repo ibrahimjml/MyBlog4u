@@ -1,4 +1,5 @@
 <?php
+use App\Http\Controllers\SitemapController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\User\{
     DashboardController,
@@ -35,6 +36,8 @@ use App\Http\Controllers\Auth\TwoFactorController;
 */
 // HOME
 Route::get('/',HomeController::class)->name('home');
+// sitemap
+Route::get('/sitemap.xml',SitemapController::class)->name('sitemap');
 // Blog
 Route::get('/blog',[PostController::class,'blogpost'])->name('blog');
 // Post
