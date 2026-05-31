@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://myblog.jmal.store/sitemap.xml
+Sitemap: https://myblog4u.site/sitemap.xml

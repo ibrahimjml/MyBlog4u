@@ -8,6 +8,7 @@ use App\Models\PostView;
 class PostViewsService
 {
     public function getViews(Post $post,){
+      if(!auth()->check()) return;
       $viewer = auth()->user();
       $poster = $post->user_id;
       if($viewer->id === $poster || $viewer->is_admin) return;

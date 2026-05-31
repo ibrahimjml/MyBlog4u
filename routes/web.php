@@ -44,9 +44,9 @@ Route::get('/blog',[PostController::class,'blogpost'])->name('blog');
 Route::get('/post/{post:slug}',[PostController::class,'viewPost'])->name('single.post');
 
 //recent posts page by hashtag 
-Route::get('/hashtag/{hashtag:name}',[Hashtagcontroller::class,'viewhashtag'])->name('viewhashtag');
+Route::get('/hashtag/{hashtag:name}',Hashtagcontroller::class)->name('viewhashtag');
 //recent posts page by category
-Route::get('/category/{category:name}',[CategoryController::class,'viewcategory'])->name('viewcategory');
+Route::get('/category/{category:name}',CategoryController::class)->name('viewcategory');
 // custom pages
 Route::get('/c/{page:slug}', [CustomPageController::class, 'show'])->name('custom.page');
 // Create Post
@@ -72,7 +72,6 @@ Route::get('/followings', 'followings')->name('followings');
 // profile
 Route::controller(ProfileController::class)
     ->prefix('/@{user:username}')
-    ->middleware('can:view,user')
     ->group(function(){
 
  Route::get('/','Home')->name('profile');

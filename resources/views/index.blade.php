@@ -12,11 +12,6 @@
 
             <!-- Content -->
             <div class="absolute inset-0 flex flex-col items-center justify-center z-10 text-center px-4">
-              @guest
-                <h1 class="text-gray-100 text-4xl uppercase font-bold pb-10 sm:text-center">Sign in to start posting</h1>
-                <a class="bg-gray-100 text-gray-700 py-2 px-5 font-bold uppercase rounded-lg mt-3 inline-block"
-                  href="/login">Sign in</a>
-              @else
                 <h1 class="text-gray-100 text-4xl uppercase font-bold pb-10 sm:text-center">{{$slide->title}}</h1>
                 @if($slide->description)
                   <p class="text-blueGray-500 text-md uppercase font-bold pb-10 sm:text-center">{{$slide->description}}</p>
@@ -28,7 +23,6 @@
                   <a class="bg-gray-100 text-gray-700 py-4 px-5 font-bold uppercase rounded-lg inline-block"
                     href="{{route('blog')}}">See Blog</a>
                 @endif
-              @endguest
             </div>
 
           </div>

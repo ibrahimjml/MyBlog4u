@@ -10,7 +10,6 @@ use App\Events\PostCreatedEvent;
 use App\Helpers\DeleteFile;
 use App\Models\PostModeration;
 use App\Models\Post;
-use App\Repositories\Eloquent\PostRepository;
 use App\Repositories\Interfaces\PostInterface;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
@@ -36,7 +35,7 @@ class PostService
     $postList = $this->repo->getPaginatedPosts($perPage, $sort, $page);
     $tags = $this->repo->getPopularTags();
     $cats = $this->repo->getCategories();
-    $whoToFollow = $this->repo->getWhoToFollow(auth()->id());
+    $whoToFollow = auth()->check() ? $this->repo->getWhoToFollow(auth()->id()) : collect();
 
     if ($request->ajax()) {
       $html = view('blog.partials.posts', ['posts' => $postList])->render();
@@ -78,7 +77,6 @@ class PostService
       'posts' => $posts,
       'sorts' => $dto->sort,
       'searchquery' => $dto->search,
-      'authFollowings' => auth()->user()->load('followings')->followings->pluck('id')->toArray()
     ]);
   }
   public function handleSaved()

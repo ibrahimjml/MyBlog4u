@@ -6,13 +6,13 @@
       <div class="flex flex-col gap-4 lg:hidden"><!-- start mobile layout -->
 
         <div class="flex items-center gap-3"><!-- start sidebar button and search bar-->
-          @auth
+
             <button
               class="lg:hidden flex items-center justify-center w-10 h-10 text-gray-800 border border-gray-300 text-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent px-4 py-2.5  transition-all duration-200"
               id="open-sidebar" aria-label="Toggle menu">
               <i class="fa fa-bars text-lg"></i>
             </button>
-          @endauth
+
           <div class="flex-1">
             @include('partials.search-bar', ['searchquery' => $searchquery ?? ''])
           </div>
@@ -72,7 +72,7 @@
         <h1 class=" text-4xl p p-36 font-semibold text-center w-54">No Posts Yet</h1>
       @else
         <div id="posts-container" class="lg:col-span-2">
-          @include('blog.partials.posts', ['posts' => $posts, 'authFollowings' => $authFollowings])
+          @include('blog.partials.posts', ['posts' => $posts])
         </div>
       @endif
       <!-- Sidebar content - Recent Tags & Posts -->

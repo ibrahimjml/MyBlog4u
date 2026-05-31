@@ -4,7 +4,7 @@
     <section class="relative block h-500-px">
       <div class="absolute top-0 w-full h-full bg-gray-200 bg-center bg-cover">
              <img src="{{ $user->cover }}" 
-             alt="Cover image"
+             alt="{{$user->name}} cover"
              class="w-full h-full object-cover blur-md transition-all duration-700 ease-out"
              onload="this.classList.remove('blur-md'); this.parentElement.classList.remove('bg-gray-200')">
       </div>
@@ -22,18 +22,19 @@
         <div class="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-xl rounded-lg -mt-64">
           <div class="px-6">
           {{-- edit cover photo --}}
-          @if($user->is(auth()->user()))
+          @if(auth()->check() && $user->is(auth()->user()))
          <a href="{{route('profile.info')}}" class="absolute -top-10 right-0 lg:text-md text-xs text-black py-1 px-3 rounded-full bg-white">
           <i class="fas fa-camera"></i> cover</a>
           @endif
           <div class="flex flex-wrap justify-center">
               <div class="w-full lg:w-3/12 px-4 lg:order-2 flex justify-center">
                 <div class="relative mb-5 ">
-                  <img src="{{ $user->avatar_url }}" alt=""
+                  <img src="{{ $user->avatar_url }}" 
+                    alt="{{$user->name}} avatar"
                     class="shadow-xl rounded-full border-2 border-gray-700 h-auto align-middle absolute -m-16 max-w-150-px blur-md transition-all duration-700 ease-out"
                     onload="this.classList.remove('blur-md')">
             {{-- edit avatar  --}}
-            @if($user->is(auth()->user()))
+            @if(auth()->check() && $user->is(auth()->user()))
             <span
             class="absolute lg:bottom-0 lg:left-10 bottom-12 left-10 flex justify-center items-center w-6 h-6 shrink-0 grow-0 rounded-full bg-gray-600 text-white">
             <a href="{{route('profile.info')}}"><i class="fas fa-plus" aria-hidden="true"></i></a>
@@ -45,7 +46,6 @@
               </div>
             <div class="w-full lg:w-4/12 px-4 lg:order-3 lg:text-right lg:self-center mt-14 lg:mt-0">
               <div class="py-6 px-3 flex justify-center items-center gap-x-2">
-                @if(auth()->user()->is($user))
                 <div class="relative">
                     <!-- button share -->
                     <button onclick="toggleShareMenu()" title="share" class="w-8 h-8 text-gray-500 hover:text-black text-sm transition-colors duration-150 ease-in flex items-center justify-center border border-black rounded-full">
@@ -54,6 +54,7 @@
                   {{-- share model --}}
                   @include('partials.share-menu')
                 </div>
+                @if(auth()->check() && auth()->user()->is($user))
                 <!-- button qrcode -->
               <button title="qrcode" onclick="openQrModal()" class="w-8 h-8 text-gray-500 hover:text-black transition-colors duration-150 ease-in flex items-center justify-center border border-black rounded-full">
                <i class="fas fa-qrcode"></i>
@@ -83,14 +84,18 @@
                </button>
                {{-- report profile model  --}}
                @include('profile.partials.report-profile')
-                 <!-- follow/unfollow -->
-                    <x-follow-button
+              <!-- follow/unfollow -->
+              <x-follow-button
                :status="$authFollowings[$user->id] ?? null"
                :user-id="$user->id"
                type="label"
                onclick="follow(this)"
                class="follow px-3 py-1 rounded-lg text-xs font-bold"
            /> 
+           @else 
+           @guest
+           <button onclick="window.location.href='{{ route('login') }}'" class="px-3 py-1 rounded-lg text-xs font-bold bg-gray-600 text-white">follow</button>
+           @endguest
                   @endif
                 </div>
               </div>
@@ -98,7 +103,7 @@
             @include('profile.partials.posts-likes-follows-count')
             </div>
             {{-- edit profile | open viewed model --}}
-              @if(auth()->user()->is($user))
+              @if(auth()->check() && auth()->user()->is($user))
           <div class="lg:flex lg:gap-1 lg:justify-center mb-3 hidden">
           <span class="flex justify-start items-center gap-4 bg-gray-500  text-white py-2 px-5 rounded-lg font-bold capitalize  hover:border-gray-700 transition duration-300">
             <i class="fas fa-cog"></i>

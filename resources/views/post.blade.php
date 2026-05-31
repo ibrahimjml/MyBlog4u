@@ -83,7 +83,7 @@
 </div>
 
 {{-- 2- Post Title & user information --}}
-<div class="flex flex-col items-center justify-center container   pb-2 sm:pb-6 mt-7"><!-- start container -->
+<div class="flex flex-col items-center justify-center pb-2 sm:pb-6 mt-7"><!-- start container -->
   <span class="block w-full font-bold md:text-4xl text-2xl text-center capitalize">
     {{$post->title}}
   </span>
@@ -173,8 +173,9 @@
 @include('partials.interactions-post-menu')
 
 {{-- open comments model --}}
+@auth
 @include('partials.comments-model')
-
+@endauth
 {{-- hashtag on post  --}}
 <div class="flex justify-center items-center gap-4 mt-3 mb-10">
   @foreach($post->hashtags->pluck('name') as $tag)
@@ -263,13 +264,14 @@
 
 {{-- open Toc model  --}}
 @include('partials.table-of-contents-model')
+@auth
 {{-- open view who liked model  --}}
 @include('partials.view-who-liked-model')
 {{-- open views model  --}}
 @include('partials.who-viewedpost-model')
 {{-- open reports model  --}}
 @include('partials.reports-model')
-
+@endauth
 @push('scripts')
 {{-- fetch follow --}}
 <script>

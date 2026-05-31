@@ -30,14 +30,17 @@ class PostPolicy
     {
       return $user->hasPermission('post.viewAny');
     }
-    public function view(User $user, Post $post): bool
+    public function view(?User $user, Post $post): bool
     {
-        if ($post->status !== PostStatus::PUBLISHED) {
-        return $user->id === $post->user_id
-            || $user->hasPermission('post.viewAny');
-      }
+    if ($post->status === PostStatus::PUBLISHED) {
+        return true;
+    }
 
-    return true;
+    if (!$user) {
+        return false;
+    }
+
+    return $user->id === $post->user_id || $user->hasPermission('post.viewAny');
     }
     public function create(User $user, ?Post $post = null): bool
     {

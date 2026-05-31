@@ -13,12 +13,14 @@ class ProfileController extends Controller
 {
   public function __construct(protected ProfileViewService $view,protected UserActivityService $activity)
   {
-    $this->middleware(['auth','verified',CheckIfBlocked::class]);
+    $this->middleware(CheckIfBlocked::class);
   }
   public function Home(User $user)
   {
-    $viewer = auth()->user();
-    $this->view->createView($user,$viewer);
+    if(auth()->check()){
+      $viewer = auth()->user();
+      $this->view->createView($user,$viewer);
+    }
     
     $posts = $user->post()
              ->published()

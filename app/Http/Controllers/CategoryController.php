@@ -8,12 +8,11 @@ use App\Repositories\Interfaces\CategoryInterface;
 use Illuminate\View\View;
 class CategoryController extends Controller
 {
-    public function __construct(private CategoryInterface $repo)
-  {
-    $this->middleware(['auth','verified',CheckIfBlocked::class]);
-  }
-
-    public function viewcategory(Category $category):View
+   public function __construct(private CategoryInterface $repo)
+   {
+    $this->middleware(CheckIfBlocked::class);
+   }
+    public function __invoke(Category $category): View
     {
 
     $posts = $this->repo->getPostsByCategory($category);
