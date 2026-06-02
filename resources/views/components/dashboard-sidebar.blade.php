@@ -32,10 +32,10 @@
           Settings
         </a>
       </div>
-      <div class="mt-auto py-4 border-t border-gray-300 w-full">
+      <div class="mt-auto py-4 border-t border-b border-gray-300 w-full">
         <button 
-        onclick="window.location.href='{{route('profile',$user->username)}}'"
+        onclick="window.location.href='{{route('blog')}}'"
         class="block py-2 px-4 text-gray-500 rounded-xl w-full hover:bg-gray-200">
-          <i class="fas fa-arrow-left"></i> Back To Profile
+          <i class="fas fa-arrow-left"></i> Back To Site
         </button>
       </div>

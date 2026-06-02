@@ -13,8 +13,8 @@ trait ImageUploadTrait
       
         $newimage = uniqid() . '-' . $slug . '.' . $imageFile->extension();
           $image = Image::read($imageFile)
-          ->resize(1300, 600)
-          ->encode();
+          ->cover(1300, 600)
+          ->toWebp(85);
           Storage::disk('public')->put("uploads/{$newimage}", $image);
           return $newimage;
     }
@@ -23,8 +23,8 @@ trait ImageUploadTrait
     {
         $newavatar = uniqid() . '-avatar-'.$username . '.' . $imageFile->extension();
           $image = Image::read($imageFile)
-          ->resize(150, 150)
-          ->encode();
+          ->scale(150, 150)
+          ->toWebp(90);
           Storage::disk('public')->put("avatars/{$newavatar}", $image);
           return $newavatar;
     }
@@ -33,8 +33,8 @@ trait ImageUploadTrait
     {
         $newcover = uniqid() . '-cover-'.$username . '.' . $imageFile->extension();
           $image = Image::read($imageFile)
-          ->resize(1500, 500)
-          ->encode();
+          ->cover(1500, 500)
+          ->toWebp(75);
           Storage::disk('public')->put("covers/{$newcover}", $image);
           return $newcover;
     }
@@ -48,5 +48,27 @@ trait ImageUploadTrait
               ->save(public_path('slides/'.$newslide));
           
           return $newslide;
+    }
+    // meta og graph image
+    public function uploadMetaOgImage(UploadedFile $imageFile, string $appName)
+    {
+        $newMetaOgImage = 'meta-og-'.$appName . '.' . $imageFile->extension();
+        Image::read($imageFile)
+              ->cover(1200, 630) 
+              ->toWebp(90)
+              ->save(public_path('img/'.$newMetaOgImage));
+          
+          return $newMetaOgImage;
+    }
+    // favicon 
+    public function uploadFavicon(UploadedFile $imageFile)
+    {
+        $newFavicon = 'favicon.' . $imageFile->extension();
+        Image::read($imageFile)
+              ->scaleDown(64, 64) 
+              ->toWebp(90)
+              ->save(public_path('img/'.$newFavicon));
+          
+          return $newFavicon;
     }
 }

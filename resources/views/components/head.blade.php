@@ -2,32 +2,32 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
 <meta name="csrf-token" content="{{ csrf_token() }}">
-<link rel="shortcut icon" href="{{url('/img/icon.png')}}" type="image/png" />
-<link rel="apple-touch-icon" href="{{url('/img/apple-touch-icon.png')}}" />
+<link rel="shortcut icon" href="{{ $favicon_url }}" />
+<link rel="apple-touch-icon" href="{{ url('/img/apple-touch-icon.png') }}" />
 <link rel="canonical" href="{{ url()->current() }}">
 <meta name="theme-color" content="#000000" />
 
+{!! $header_scripts ?? '' !!}
+
 {{-- SEO --}}
-<meta name="description" content="{{ $meta_description ?? config('app.name') . '- The platform for creating, interacting, and sharing content on  ' }}" />
-<meta name="keywords" content="{{ $meta_keywords ?? 'laravel, blogpost, myblog, links, link, cv, portfolio, aggregation, platform, social, media, profile, bio, tree' }}">
-<meta name="author" content="{{ $author ?? config('app.name') }}">
+<meta name="description" content="{{ $meta_description }}" />
+<meta name="keywords" content="{{ $meta_keywords  }}">
+<meta name="author" content="{{ $author }}">
 <meta content="BlogPost" property="og:site_name" />
 {{-- meta og graph whatsapp/twitter --}}
 <meta property="og:url" content="{{ url()->current() }}" />
 <meta property="og:type" content="{{ $og_type ?? 'website' }}" />
-<meta property="og:title" content="{{ $meta_title ?? (config('app.name') . '- Myblog platform .') }}" />
-<meta property="og:description" content="{{ $meta_description ?? (config('app.name') . '- The platform for creating, interacting, and sharing content on  .') }}" />
-<meta property="og:image" content="{{ $og_image ?? url('/img/logo.png') }}" />
-<meta property="og:image:width" content="200" />
-<meta property="og:image:height" content="200" />
+<meta property="og:title" content="{{ $meta_title }}" />
+<meta property="og:description" content="{{ $meta_description  }}" />
+<meta property="og:image" content="{{ $og_image  }}" />
 {{-- meta og twitter --}}
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:url" content="{{ url()->current() }}">
-<meta name="twitter:title" content="{{ $meta_title ?? (config('app.name') . '- Myblog platform .') }}" />
-<meta name="twitter:description" content="{{ $meta_description ?? (config('app.name') . '- The platform for creating, interacting, and sharing content on .') }}" />
-<meta name="twitter:image" content="{{ $og_image ?? url('/img/logo.png') }}">
+<meta name="twitter:title" content="{{ $meta_title  }}" />
+<meta name="twitter:description" content="{{ $meta_description  }}" />
+<meta name="twitter:image" content="{{ $og_image }}">
 <title>
-  {{ $meta_title ?? (config('app.name') . '- Myblog platform .') }}
+  {{ $meta_title }}
 </title>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">

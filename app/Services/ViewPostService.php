@@ -24,6 +24,7 @@ class ViewPostService
         $post->viewwholiked = $this->repo->getPostLikes($post);
         $post->comments = $this->repo->getPaginatedComments($post,$page,$perpage);
         $post->reasons = $this->getReportReasons();
+        
 
         return $post->loadCount('totalcomments');
   

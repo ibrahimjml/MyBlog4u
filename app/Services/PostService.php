@@ -32,6 +32,10 @@ class PostService
     $perPage = $request->get('perpage', 5);
     $sort = $request->get('sort', 'latest');
 
+    if(in_array($sort,['followings']) && !auth()->check()){
+      return redirect()->route('login');
+    }
+    
     $postList = $this->repo->getPaginatedPosts($perPage, $sort, $page);
     $tags = $this->repo->getPopularTags();
     $cats = $this->repo->getCategories();

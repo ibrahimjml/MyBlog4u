@@ -33,6 +33,8 @@ class AdminSeeder extends Seeder
       'Permissions'       => ['permission.create',  'permission.view',  'permission.update', 'permission.delete'],
       'Slides'            => ['slide.create',  'slide.view',  'slide.update', 'slide.delete'],
       'Notifications'     => ['notifications.view', 'notifications.update'],
+      'Ads'               => ['ad.create', 'ad.view', 'ad.update', 'ad.delete'],
+      'Seo Tools'         => ['seo.view', 'seo.update'],
       'SMTP'              => ['smtp.view', 'smtp.update'],
       'Auth and Security' => ['authsecurity.view', 'authsecurity.update'],
       'Maintenance'       => ['maintenance.view', 'maintenance.update'],

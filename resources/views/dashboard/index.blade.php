@@ -3,9 +3,12 @@
 @section('content')
   <main class="min-h-dvh w-full lg:flex lg:gap-6 p-0 lg:p-6">
 
-    <aside id="mobileSidebar" class="flex flex-col items-center bg-white p-6 shadow h-dvh fixed top-0 left-0 w-80 z-30 overflow-y-auto">
-      @include('components.dashboard-sidebar') <!-- Sidebar content -->
-    </aside>
+<aside id="mobileSidebar"
+       class="fixed top-0 left-0 z-30 w-80 h-dvh bg-white shadow overflow-y-auto
+              -translate-x-full transition-transform duration-300
+              lg:translate-x-0 lg:static p-4 rounded-lg lg:h-[calc(100vh-3rem)] lg:flex-shrink-0">
+  @include('components.dashboard-sidebar')
+</aside>
 
 	    <section class="w-full min-w-0 bg-white shadow h-dvh lg:flex-1 lg:h-[calc(100vh-3rem)] lg:rounded-lg overflow-y-auto">
       <div class="sticky top-0 z-20 flex h-20 items-center justify-between gap-4 border-b border-gray-200 bg-white px-4 sm:px-6">

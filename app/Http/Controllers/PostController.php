@@ -4,9 +4,10 @@ namespace App\Http\Controllers;
 
 
 use App\DTOs\{CreatePostDTO, UpdatePostDTO};
+use App\Enums\Adplacements\AdPosition;
 use App\Http\Middleware\CheckIfBlocked;
 use App\Http\Requests\App\{CreatePostRequest, UpdatePostRequest};
-use App\Models\{Category, Hashtag, Post};
+use App\Models\{AdPlacement, Category, Hashtag, Post};
 use App\Services\{PostService, PostViewsService, ViewPostService};
 use Illuminate\Http\Request;
 
@@ -35,8 +36,9 @@ class PostController extends Controller
     $post = $this->postservice->getPost($post);
     // generate post view
     $views->getViews($post);
+    // ads
+    $ads = AdPlacement::active()->get();
 
-    
     return view('post', [
        'post' => $post,
        'comments' => $post->comments,
@@ -44,6 +46,7 @@ class PostController extends Controller
        'morearticles' => $post->morearticles,
        'viewwholiked' => $post->viewwholiked,
        'reasons' => $post->reasons,
+       'ads' => $ads,
     ]);
   }
   public function createpage()

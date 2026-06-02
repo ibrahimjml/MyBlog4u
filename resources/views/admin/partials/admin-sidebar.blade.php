@@ -154,8 +154,8 @@
 </h6>
 <ul class="md:flex-col md:min-w-full flex flex-col list-none">
   <li class="items-center">
-    <a href="javascript:void(0)"
-      class="text-sm capitalize py-3 font-bold block {{ Route::is('admin.users.page') ? 'text-blue-500 hover:text-blue-600' : ''}}">
+    <a href="{{ route('admin.ads.index') }}"
+      class="text-sm capitalize py-3 font-bold block {{ Route::is('admin.ads.index') ? 'text-blue-500 hover:text-blue-600' : ''}}">
       <i class="fas fa-ad mr-2 text-sm opacity-75"></i>
       Ad Placements
     </a>
@@ -217,8 +217,8 @@
     </a>
   </li>
 <li class="items-center">
-    <a href="javascript:void(0)"
-      class="text-sm capitalize py-3 font-bold block {{ Route::is('admin.settings.backup.view') ? 'text-blue-500 hover:text-blue-600' : ''}}">
+    <a href="{{ route('admin.seo.index') }}"
+      class="text-sm capitalize py-3 font-bold block {{ Route::is('admin.seo.index') ? 'text-blue-500 hover:text-blue-600' : ''}}">
       <i class="fas fa-search mr-2 text-sm opacity-75"></i>
       SEO Tools
     </a>

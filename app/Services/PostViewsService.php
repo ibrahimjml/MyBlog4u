@@ -8,7 +8,12 @@ use App\Models\PostView;
 class PostViewsService
 {
     public function getViews(Post $post,){
-      if(!auth()->check()) return;
+      // guest mode increment loop
+      if(!auth()->check()){
+        $post->increment('views');
+        return;
+      };
+      // auth users increment once
       $viewer = auth()->user();
       $poster = $post->user_id;
       if($viewer->id === $poster || $viewer->is_admin) return;

@@ -13,9 +13,15 @@
     'bg-white shadow-[0_2px_5px_rgba(0,0,0,0.1)] fixed top-0 z-50' => Route::is(['blog']),
   ])>
     <div class="flex justify-between items-center ">
-      <div class=" text-2xl font-bold flex cursor-pointer" onclick="window.location.href='/'">
-        <span class="bg-white text-black pr-1 pl-1 rounded-l-md border border-t-3 border-b-3">Blog</span>
-        <span class="text-white bg-black pl-1 pr-1 rounded-r-md ">Post</span>
+      <div class="flex items-center cursor-pointer group" onclick="window.location.href='/'">
+        <div class="text-2xl font-black tracking-tight flex">
+          <span class="px-2 py-1 bg-gradient-to-r from-white to-gray-100 text-black rounded-l-md shadow-sm">
+            My
+          </span>
+          <span class="px-2 py-1 bg-gradient-to-r from-black to-gray-800 text-white rounded-r-md shadow-sm">
+            Blog4U
+          </span>
+        </div>
       </div>
 
       <div class="md:flex md:items-center  space-x-6 {{ hasCompleted2FA() ? 'hidden' : '' }}">
@@ -57,7 +63,8 @@
                 <a href="/blog">Blog</a>
               </li>
               @unless(request()->is('admin*'))
-                <li id="hover-notification" data-notification-trigger class="text-lg relative pt-2 cursor-pointer text-gray-700 ">
+                <li id="hover-notification" data-notification-trigger
+                  class="text-lg relative pt-2 cursor-pointer text-gray-700 ">
                   <span
                     class="absolute top-2 left-3 h-4 w-4 bg-red-500 text-white flex justify-center items-center rounded-full p-1 text-xs font-semibold">
                     {{ auth()->user()->unreadNotifications->count() }}
@@ -106,17 +113,18 @@
 
           <div class="lg:hidden flex items-center gap-6">
             @unless(request()->is('admin*'))
-                <div data-notification-trigger class="text-lg  relative  cursor-pointer text-gray-700 ">
-                  <span
-                    class="absolute -top-0 left-3 h-4 w-4 bg-red-500 text-white flex justify-center items-center rounded-full p-1 text-xs font-semibold">
-                    {{ auth()->user()->unreadNotifications->count() }}
-                  </span>
-                  <i class="fas fa-bell {{Route::is(['profile', 'home']) ? 'text-white' : 'text-gray-700'}}"></i>
-                </div>
+              <div data-notification-trigger class="text-lg  relative  cursor-pointer text-gray-700 ">
+                <span
+                  class="absolute -top-0 left-3 h-4 w-4 bg-red-500 text-white flex justify-center items-center rounded-full p-1 text-xs font-semibold">
+                  {{ auth()->user()->unreadNotifications->count() }}
+                </span>
+                <i class="fas fa-bell {{Route::is(['profile', 'home']) ? 'text-white' : 'text-gray-700'}}"></i>
+              </div>
 
-                @include('partials.notifications-menu')
-              @endunless
-             <img id="mobile-btn" src="{{auth()->user()->avatar_url}}"   class="md:hidden w-[26px] h-[26px] overflow-hidden flex justify-center items-center  shrink-0 grow-0 rounded-full " >
+              @include('partials.notifications-menu')
+            @endunless
+            <img id="mobile-btn" src="{{auth()->user()->avatar_url}}"
+              class="md:hidden w-[26px] h-[26px] overflow-hidden flex justify-center items-center  shrink-0 grow-0 rounded-full ">
 
           </div>
 

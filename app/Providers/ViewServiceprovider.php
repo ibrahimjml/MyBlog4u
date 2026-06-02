@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Helpers\MetaHelpers;
+use App\Models\SeoSetting;
 use App\Models\User;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
@@ -22,6 +23,7 @@ class ViewServiceProvider extends ServiceProvider
    */
   public function boot(): void
   {
+    $this->setCustomSeo();
     $this->setMetaForPostPage();
     $this->setMetaForHashtagPage();
     $this->setMetaForProfilePage();
@@ -113,6 +115,20 @@ class ViewServiceProvider extends ServiceProvider
         }
       }
       $view->with('authFollowings', $followings);
+    });
+  }
+
+  private function setCustomSeo()
+  {
+    View::composer(['components.head','admin.partials.layout'], function ($view) {
+      $seoSettings = SeoSetting::first();
+      if (! $seoSettings) {
+        return;
+      }
+       $meta = MetaHelpers::generateCustomSeo($seoSettings->meta_title, $seoSettings->meta_description, $seoSettings->meta_keywords, $seoSettings->meta_og_image_url, $seoSettings->favicon_url,$seoSettings->author,$seoSettings->header_scripts,$seoSettings->footer_scripts);
+        MetaHelpers::setSection($meta);
+
+      $view->with($meta);
     });
   }
 }

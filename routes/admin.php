@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Admin\Ads\AdController;
+use App\Http\Controllers\Admin\Optimization\SeoController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\{
     AdminController,
@@ -160,10 +162,22 @@ Route::put('/{category}/feature','toggle')->name('feature');
   Route::post('/testmail','testmail')->name('smtp.test');
   });
     });
+    // Ads management
+    Route::prefix('ads')->controller(AdController::class)->name('ads.')->group(function(){
+      Route::get('/', 'index')->name('index');
+      Route::post('/create', 'store')->name('store');
+      Route::put('/{ad}/update', 'update')->name('update');
+      Route::patch('/{ad}/status', 'toggleStatus')->name('toggle.status');
+      Route::delete('/{ad}/delete', 'destroy')->name('destroy');
+    });
   // optimization
   Route::prefix('optimize')->controller(MaintenanceController::class)->name('optimize.')->group(function(){
   Route::get('/maintenance','maintenance_page')->name('maintenance');
   Route::post('/run','run_artisans')->name('run');
   });
-    
+  Route::prefix('seo')->controller(SeoController::class)->name('seo.')->group(function(){
+    Route::get('/', 'index')->name('index');
+    Route::put('/update', 'update')->name('update');
+  });
+  
 });

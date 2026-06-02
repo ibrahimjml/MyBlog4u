@@ -30,5 +30,7 @@
 </footer>
 <x-scripts/>
 
+{!! $footer_scripts ?? '' !!}
+
 </body>
 </html>

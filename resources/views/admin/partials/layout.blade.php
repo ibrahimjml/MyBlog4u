@@ -6,27 +6,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#000000" />
   <meta name="csrf-token" content="{{ csrf_token() }}">
-  <link rel="shortcut icon" href="{{url('/img/icon.png')}}" />
+  <link rel="shortcut icon" href="{{$favicon_url}}" />
   <link rel="apple-touch-icon" sizes="76x76" href="{{url('/img/apple-touch-icon.png')}}" />
   <link rel="stylesheet" href="{{asset('assets/vendor/@fortawesome/fontawesome-free/css/all.min.css')}}" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css"/>
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+  {!! $header_scripts ?? '' !!} <!-- custom header scripts -->
   @vite(['resources/css/app.css', 'resources/js/app.js'])
-  <title>@yield('title','Dashboard | Admin')</title>
+  <title>@yield('title', 'Dashboard | Admin')</title>
   <style>
     .iti {
-  width: 100% !important;
-}
+      width: 100% !important;
+    }
   </style>
 </head>
 
 <body class="text-blueGray-700 antialiased">
-  
+
   <div id="root">
     @if(config('demo.enabled'))
-    <div class="stick top-0 w-full p-4 bg-orange-400 text-white font-bold text-center uppercase">
-      Demo mode is enabled. All actions are disabled for security.
-    </div>
+      <div class="stick top-0 w-full p-4 bg-orange-400 text-white font-bold text-center uppercase">
+        Demo mode is enabled. All actions are disabled for security.
+      </div>
     @endif
     <nav
       class="md:left-0 md:block md:fixed md:top-0 md:bottom-0 md:overflow-y-auto md:flex-row md:flex-nowrap md:overflow-hidden shadow-xl bg-white flex flex-wrap items-center justify-between relative md:w-64 z-10 py-4 px-6">
@@ -50,18 +51,17 @@
           @endrole
         </a>
         <ul class="md:hidden items-center flex flex-wrap list-none">
-        
+
           <li class="inline-block relative">
             <a class="text-blueGray-500 block" href="#pablo" onclick="openDropdown(event,'user-responsive-dropdown')">
               <div class="items-center flex">
                 <span
                   class="w-12 h-12 text-sm text-white bg-blueGray-200 inline-flex items-center justify-center rounded-full">
-                  <img
-                    alt="..." class="w-full rounded-full align-middle border-none shadow-lg"
+                  <img alt="..." class="w-full rounded-full align-middle border-none shadow-lg"
                     src="{{auth()->user()->avatar_url}}" /></span>
               </div>
             </a>
-        
+
           </li>
         </ul>
         <div
@@ -97,23 +97,23 @@
         </div>
       </div>
     </nav>
-      <div>
-          @yield('content')
-      </div>
+    <div>
+      @yield('content')
+    </div>
 
+    {!! $footer_scripts ?? '' !!} <!-- custom footer scripts -->
+    <script src="https://unpkg.com/@popperjs/core@2/dist/umd/popper.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
-  <script src="https://unpkg.com/@popperjs/core@2/dist/umd/popper.js"></script>
-  <script src="https://code.highcharts.com/highcharts.js"></script>
-  <script src="https://code.highcharts.com/modules/accessibility.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
- 
-  @if(Route::is('admin.posts.featured.page'))
-    <script src="{{asset('js/hashtagsUI.js')}}" defer></script>
-  @endif
-  <script>
-/* Sidebar - Side navigation menu on mobile/responsive mode */
+    @if(Route::is('admin.posts.featured.page'))
+      <script src="{{asset('js/hashtagsUI.js')}}" defer></script>
+    @endif
+    <script>
+      /* Sidebar - Side navigation menu on mobile/responsive mode */
       function toggleNavbar(collapseID) {
         document.getElementById(collapseID).classList.toggle("hidden");
         document.getElementById(collapseID).classList.toggle("bg-white");
@@ -133,8 +133,9 @@
         document.getElementById(dropdownID).classList.toggle("hidden");
         document.getElementById(dropdownID).classList.toggle("block");
       }
-</script>
-  <!-- push all scripts in pages -->
-  @stack('scripts')
+    </script>
+    <!-- push all scripts in pages -->
+    @stack('scripts')
 </body>
+
 </html>

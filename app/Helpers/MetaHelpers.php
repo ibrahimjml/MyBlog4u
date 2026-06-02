@@ -34,6 +34,21 @@ class MetaHelpers{
           'og_type' => $user ? 'profile':'website',
       ];
   }
+  // custom seo admin management
+  public static function generateCustomSeo($title = null, $description = null, $keywords = [],$ogImage,$favicon,$author,$headerScripts = null,$footerScripts = null)
+  {
+      return [
+          'meta_title' => $title ?? 'Myblog4u a social network that connect creators',
+          'meta_description' => $description ?? 'Myblog4u a social network that connect creators Myblog4u a social network that connect creators',
+          'meta_keywords' => !empty($keywords) ? implode(', ', $keywords) : 'laravel, blogpost, myblog, links, link, cv, portfolio, aggregation, platform, social, media, profile',
+          'author' => $author ?? config('app.name') ,
+          'og_image' =>  url($ogImage) ?? url('/img/logo.png'),
+          'favicon_url' => url($favicon) ?? url('/img/icon.png'),
+          'og_type' => 'website',
+          'header_scripts' => $headerScripts ?? '',
+          'footer_scripts' => $footerScripts ?? '',
+      ];
+  }
   public static function setSection(array $meta): void
    {
     foreach ($meta as $key => $value) {
