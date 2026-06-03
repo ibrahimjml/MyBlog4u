@@ -17,95 +17,60 @@
 
 ## 🚀 Features
 
-### 📝 Content & Blog System
-- 📰 Social Blog system with fully cached pages and **infinite scroll pagination**
-- 🎯 Multi-blog sorting options
-- 🧠 Full-text search powered by **TNTSearch**
-- 🧭 Dynamic **Table of Contents (ToC)** generated from post headings
-- 🧾 Dynamic SEO management for posts and pages
-- 🖊️ **TinyMCE rich text editor** with:
-  - Code blocks
-  - Image upload / update / delete
-  - Image zoom & preview effect
+### 📝 Social Feed and Interactions
+  
+  - **Dynamic Slides:** Homepage with dynamic slides geenrated.
+  - **Infinite Scroll:** Fast laod feed.
+  - **Interactions:** AJAX powered Likes, comments, follow, save that updates UI withoud reload page.
+  - **Nested Comments and Mentions:** Multi level comments, with @username mentions.
+  - **Follow System:** Insta style, follow creators, accept followers, requested followers.
+  - **Profile Visiblity:** Switch between public and private only creators with accepted follow can access posts.
+  - **Activity Section:** Track the creator history comments, replies, mentions, posted.
+  - **Reports:** Creators can report articles,comments,profiles based on selecting reasons or typing new reason. 
 
-### 🏠 Homepage & User Interface
-- 🎞️ Dynamic homepage slider
-- 📱 Fully responsive UI built with **Tailwind CSS**
-- ⚡ Smooth **AJAX-powered navigation and interactions**
+### 👤 Creator Dashboard and Editor
+  
+  - **Creator Dashboard:** Dasboard page with multiple stats and pages, pin unpin posts, profile views, custom social links.
+  - **Rich Text Editor:** Powered by TinyMCE,responsive and sticky toolbar.
+  - **Media Integration:** By TinyMCE creators can upload multiple images into arcticle editable and deletable with image zoom preview.
+  - **Hashtags and Categories** Creators can write new up to 4 hashtags on article or select most popular if exists, and choose one category.
+  - **Articles Submission:** Creators can create publish article to public, or save draft articles with private visibility. toggle visibility on comments thread.
 
-### 💬 Social Interaction
-- 💬 **AJAX comments & nested replies** with load-more pagination
-- 🔔 **@Mentions in comments** with user notifications
-- ❤️ User interactions (AJAX):
-  - Like / Unlike
-  - Save / Unsave
-  - Follow / Unfollow
-  - Share posts
-  - Track post views
-  - Follow request system with accept-follow notifications
-- 🚩 Report system for **posts, comments, and profiles**
+### 🧑‍💼 Admin Control Panel
 
-### 👤 User Profiles & Social Features
-- 👥 Advanced profile system including:
-  - Profile Home / Activities / About sections
-  - Activities : track user profile history (commented, relpied, liked, posted)
-  - Pin & unpin posts
-  - Social links + custom links
-  - Profile view tracking
-  - Share or download **profile QR code**
-- 🔐 Public & private profile visibility settings
-- 🔒 Private profiles accessible only to **accepted followers**
+  - **Dashboard Pages:** Realtime charts tracking new users, published posts, with fully responsive and AJAX based.
+  - **Posts Moderation:** Full Control on posts,and enforce post submissions by auto approve posts and allow user posts going published.
+  - **User Management:** Full control on users, with Full custom ACL manage custom rules, permissions , grant permissions to each rule , and grant user permissions.
+  - **Notifications:** Track Creators actions by receiving notification by type, notification setting manage by notification type to allow recieving or not.
+  - **Custom Pages:** Create Custom pages to global display footer ( about us, privacy ..etc).
+  - **SMTP Settings:** Customizable SMTP configuration and testing mode.
+  - **Backups Generator** Cronjbos for creating daily encrypting backups , and delete old backups, managable backups delete or download.
+  - **Auth and Security:** Enable user registration mode with allowed certian custom domains, and enable google recaptcha by editing site and secret keys.
+  - **Slides Management:** Customize Home feed by creating new slides.
+  - **Monetization:** Global Ad management by placing Google AdSense code or custom banner images across different postions customizable.
+  - **Reports:** Full Control Reports by type comments,posts,profiles.
+  - **Hashtags and Categories:** Manage hashatgs activating or disabling spam hastags, manage categories actions.
+  - **Seo Tools:** Customizable meta Seo with customizable header scripts and footer scripts.
+  - **System Maintenance:** Clear all Cache, or refresh compiled views,Clear config cache,Clear route cache,Clear log.
 
-### 🔐 Security & Authentication
-- 🎯 Recaptcha v2 
-- 🛡️ **Custom Two-Factor Authentication (2FA)**
-- 🔑 Secure account and profile management with confirm password
-- ✉️ Reset password option via Email verification code
-- 🔑 Identity check via Email verification code required on changing password action
-- 🔐 RESTful API authentication using **Laravel Sanctum**
+### 🔐 Security & Notifications 
 
-### 🧑‍💼 Admin Dashboard & Management
-- 📊 Responsive admin dashboard
-- ⚡ Full **AJAX CRUD** across admin pages
-- ✉️ Custom mail setting for configuring SMTP
-- ✉️ Notifications control setting
-- 💾 DB backup management
-- 📈 Analytics, filters, and reports
-
-### 🛂 Authorization & Permissions
-- 🧠 Powerful custom permission system (ACL):
-  - Fully cahched Role and permission access control
-  - Manage users, roles, permissions, and rules
-  - Fine-grained authorization logic
-
-### ⏱️ Scheduler Tasks
-- 💾 **Generate daily secure encrypted database backups**
-- 🧹 **Weekly backup cleanup** to remove old backups
-
-### 🔔 In-App Notifications
-- 🔔 **Emails and in-app notification system** with multiple notification types:
-  - Likes, comments, replies
-  - @Mentions, profile-views
-  - Follow requests & accept notifications
-  - Reports and system alerts
+  -  **Custom Two-Factor Authentication :** enabling by scanning qrcode or type manually with confirmation code.
+  -  **Confirm Password Check:** Laravel middleware for confirmimg passwords on certian actions.
+  -  **Identity Check:** Creators by changing their passwords will redirect to identity check page with Otp verification.
+  -  **Email and In-app Notifications:** Creators will recieve mutiple notifications type Views,Mentions,Posted,Following,Requested Following,Reports and by emails.
 
 ### 🧱 Architecture & Performance
-- 🧩 Clean architecture using:
-  - Service Layer
-  - Observers
-  - Builders
-  - Repositories
-  - Decorators
-  - DTOs (Data Transfer Objects)
-- 🧪 Improved validation and separation of concerns
-- 🚀 **Redis caching** for better performance and scalability
+
+  - **Clean architecture using:** Service Layer,Observers,Builders,Repositories and Decorators Caches, DTOs.
+  - **Dynamic XML Sitemaps**
 
 
+## 🔥🔥 Upcoming Features.
 
-## 🚀 All Pages Styled With TailwindCss ,more responsive.
-🔥🔥 Upcomig: winning badges by completing competitions |  AI for recommended posts.
-
----
+  - **AI multi providers management**
+  - **AI auto paste content**
+  - **Paywall system**
 
 ## INSTALLATION
 - **Requirements extensions:**
