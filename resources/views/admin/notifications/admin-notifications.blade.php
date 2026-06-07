@@ -82,7 +82,7 @@
       @endphp
 
     @if($notifyUser)
-    <a href="{{ route('profile', $username) }}">
+    <a href="{{ route('profile.home', $username) }}">
         <img src="{{ $avatar }}?v={{ $notifyUser?->updated_at->timestamp ?? time() }}" class="w-8 h-8 rounded-full object-cover" alt="">
     </a>
     @endif

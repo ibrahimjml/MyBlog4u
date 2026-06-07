@@ -35,12 +35,17 @@ class PostRepository implements PostInterface
     {
         return  Hashtag::active()
                      ->withCount('posts')
+                     ->orderBy('is_featured','desc')
+                     ->orderByDesc('posts_count')
                      ->get();
     }
 
     public function getCategories(): \Illuminate\Support\Collection
     {
-      return  Category::withCount('posts')->get();
+      return  Category::withCount('posts')
+                    ->orderBy('is_featured','desc')
+                    ->orderByDesc('posts_count')
+                    ->get();
     }
 
     public function getWhoToFollow(int $userId): \Illuminate\Support\Collection

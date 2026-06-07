@@ -14,7 +14,7 @@ trait ImageUploadTrait
         $newimage = uniqid() . '-' . $slug . '.' . $imageFile->extension();
           $image = Image::read($imageFile)
           ->cover(1300, 600)
-          ->toWebp(85);
+          ->toWebp(90);
           Storage::disk('public')->put("uploads/{$newimage}", $image);
           return $newimage;
     }

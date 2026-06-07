@@ -15,7 +15,7 @@
       </div>
       </form>
       <ul class="flex-col md:flex-row list-none items-center hidden md:flex">
-      <a class="text-blueGray-500 block" href="{{route('profile',auth()->user()->username)}}" >
+      <a class="text-blueGray-500 block" href="{{route('profile.home',auth()->user()->username)}}" >
         <div class="items-center flex">
         <span
           class="w-12 h-12 text-sm text-white bg-blueGray-200 inline-flex items-center justify-center rounded-full"><img

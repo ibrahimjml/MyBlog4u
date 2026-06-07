@@ -32,7 +32,7 @@ class UpdatePostRequest extends FormRequest
         'categories' => 'sometimes|nullable|array|min:1|max:4', 
         'categories.*' => 'integer|exists:categories,id',
         'hashtag' => ['nullable', 'string', new ValidHashtag(5)],
-        'image' => 'sometimes|image|mimes:jpg,png,jpeg|max:5120',
+        'image' => 'sometimes|image|mimes:jpg,png,jpeg,webp|max:5120',
         'status' => ['required', Rule::in(array_keys(PostStatus::forUserCreation()))],
         'enabled' => 'sometimes|nullable|boolean',
         'featured' => 'sometimes|nullable|boolean'

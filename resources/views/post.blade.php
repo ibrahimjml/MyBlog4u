@@ -103,13 +103,13 @@
 
 
         <div class="flex items-center gap-3"><!-- start User Profile -->
-          <a href='{{route('profile', $post->user->username)}}' class="flex-shrink-0">
+          <a href='{{route('profile.home', $post->user->username)}}' class="flex-shrink-0">
             <img src="{{$post->user->avatar_url}}" alt="{{$post->user->username}}"
               class="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm hover:shadow-md transition-shadow">
           </a>
 
           <div class="flex flex-col">
-            <a href="{{route('profile', $post->user->username)}}"
+            <a href="{{route('profile.home', $post->user->username)}}"
               class="font-semibold text-gray-900 hover:text-blue-600 transition-colors text-sm md:text-base">
               {{$post->user->username}}
             </a>
@@ -213,11 +213,11 @@
     @foreach($morearticles as $article)
       <div class=" p-3 mx-auto md:mx-0 w-[400px] md:w-[500px] h-fit flex flex-col ">
         <div class="flex gap-2 items-center">
-          <a href='{{route('profile', $article->user->username)}}'>
+          <a href='{{route('profile.home', $article->user->username)}}'>
             <img loading="lazy" src="{{$article->user->avatar_url}}"
               class="w-[40px] h-[40px] overflow-hidden flex justify-center items-center  shrink-0 grow-0 rounded-full">
           </a>
-          <a href='{{route('profile', $article->user->username)}}' class="hover:underline">
+          <a href='{{route('profile.home', $article->user->username)}}' class="hover:underline">
             {{$article->user->username}}
           </a>
         </div>
@@ -252,11 +252,11 @@
       @foreach($latestblogs as $blogs)
         <div class="carousel-item p-3 flex-shrink-0">
           <div class="flex gap-2 items-center">
-            <a href="{{ route('profile', $blogs->user->username) }}">
+            <a href="{{ route('profile.home', $blogs->user->username) }}">
               <img loading="lazy" src="{{ $blogs->user->avatar_url }}"
                 class="w-[40px] h-[40px] rounded-full object-cover">
             </a>
-            <a href="{{ route('profile', $blogs->user->username) }}" class="hover:underline">
+            <a href="{{ route('profile.home', $blogs->user->username) }}" class="hover:underline">
               {{ $blogs->user->username }}
             </a>
           </div>

@@ -30,7 +30,7 @@
             @include('partials.notifications-menu')
           </div>
 
-          <a href="{{route('profile',$user->username)}}" class="block h-10 w-10 shrink-0 overflow-hidden rounded-full border border-gray-200">
+          <a href="{{route('profile.home',$user->username)}}" class="block h-10 w-10 shrink-0 overflow-hidden rounded-full border border-gray-200">
             <img src="{{$user->avatar_url}}" alt="{{$user->name}}" class="h-full w-full object-cover">
           </a>
         </div>

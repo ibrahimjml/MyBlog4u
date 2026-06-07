@@ -54,7 +54,7 @@ private function ProfileData(User $user, string $section)
   return [
       'user' => $user,
       'section' => $section,
-      'postcount' => $user->post()->count(),
+      'postcount' => $user->post()->published()->count(),
       'likescount' => $user->post()->withCount('likes')->get()->sum('likes_count'),
       'commentscount' => $user->post()->withCount('comments')->get()->sum('comments_count'),
       'profileviews' => ProfileView::where('profile_id', $user->id)->with('viewer')->get(),

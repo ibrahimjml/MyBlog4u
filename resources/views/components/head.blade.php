@@ -10,13 +10,13 @@
 {!! $header_scripts ?? '' !!}
 
 {{-- SEO --}}
-<meta name="description" content="{{ $meta_description }}" />
+<meta name="description" content="{{ $meta_description ?? 'Myblog4u a social network that connect creators'}}" />
 <meta name="keywords" content="{{ $meta_keywords  }}">
 <meta name="author" content="{{ $author }}">
 <meta content="BlogPost" property="og:site_name" />
 {{-- meta og graph whatsapp/twitter --}}
 <meta property="og:url" content="{{ url()->current() }}" />
-<meta property="og:type" content="{{ $og_type ?? 'website' }}" />
+<meta property="og:type" content="{{ $og_type }}" />
 <meta property="og:title" content="{{ $meta_title }}" />
 <meta property="og:description" content="{{ $meta_description  }}" />
 <meta property="og:image" content="{{ $og_image  }}" />

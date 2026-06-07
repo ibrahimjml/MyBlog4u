@@ -27,7 +27,7 @@
           <i class="fas fa-bookmark"></i>
           Bookmarks
         </a>
-        <a href="{{route('profile.account')}}" class="py-2 px-4 text-gray-500  rounded-xl flex items-center gap-4 {{request()->routeIs('two.factor.view') ? 'bg-gray-200':''}}">
+        <a href="{{route('account')}}" class="py-2 px-4 text-gray-500  rounded-xl flex items-center gap-4 {{request()->routeIs('two.factor.view') ? 'bg-gray-200':''}}">
           <i class="fas fa-cog"></i>
           Settings
         </a>

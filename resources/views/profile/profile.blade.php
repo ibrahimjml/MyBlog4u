@@ -23,7 +23,7 @@
           <div class="px-6">
           {{-- edit cover photo --}}
           @if(auth()->check() && $user->is(auth()->user()))
-         <a href="{{route('profile.info')}}" class="absolute -top-10 right-0 lg:text-md text-xs text-black py-1 px-3 rounded-full bg-white">
+         <a href="{{route('info')}}" class="absolute -top-10 right-0 lg:text-md text-xs text-black py-1 px-3 rounded-full bg-white">
           <i class="fas fa-camera"></i> cover</a>
           @endif
           <div class="flex flex-wrap justify-center">
@@ -37,7 +37,7 @@
             @if(auth()->check() && $user->is(auth()->user()))
             <span
             class="absolute lg:bottom-0 lg:left-10 bottom-12 left-10 flex justify-center items-center w-6 h-6 shrink-0 grow-0 rounded-full bg-gray-600 text-white">
-            <a href="{{route('profile.info')}}"><i class="fas fa-plus" aria-hidden="true"></i></a>
+            <a href="{{route('info')}}"><i class="fas fa-plus" aria-hidden="true"></i></a>
            </span>
           @endif
 
@@ -67,7 +67,7 @@
           </button>
           <!-- button settings -->
           <button 
-          onclick="window.location.href='{{route('profile.info')}}'"
+          onclick="window.location.href='{{route('info')}}'"
           title="settings"  
           class="w-8 h-8 lg:hidden text-gray-500 hover:text-black transition-colors duration-150 ease-in flex items-center justify-center border border-black rounded-full">
          <i class="fas fa-cog"></i>
@@ -107,7 +107,7 @@
           <div class="lg:flex lg:gap-1 lg:justify-center mb-3 hidden">
           <span class="flex justify-start items-center gap-4 bg-gray-500  text-white py-2 px-5 rounded-lg font-bold capitalize  hover:border-gray-700 transition duration-300">
             <i class="fas fa-cog"></i>
-            <a href="{{route('profile.info')}}">settings</a>
+            <a href="{{route('info')}}">settings</a>
           </span>
           </div>
         @endif
@@ -143,7 +143,7 @@
   </div>
 {{-- home | Activity | About me --}}
 <div class="flex items-center gap-2 ml-4">
-  <a href="{{route('profile',['user'=>$user->username])}}" class="nav-link p-1 font-bold text-gray-400  rounded-lg">Home</a>
+  <a href="{{route('profile.home',['user'=>$user->username])}}" class="nav-link p-1 font-bold text-gray-400  rounded-lg">Home</a>
   <div class="h-4 w-px bg-gray-400"></div>
   <a href="{{route('profile.activity',['user'=>$user->username])}}"  class="nav-link p-1 font-bold text-gray-400 rounded-lg">Activity</a>
   <div class="h-4 w-px bg-gray-400"></div>

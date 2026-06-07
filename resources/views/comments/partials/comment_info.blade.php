@@ -4,7 +4,7 @@
   
   <div class="flex flex-col">
     <div class="flex items-center gap-2">
-      <a href="{{route('profile',$comment->user->username)}}" class="hover:underline">
+      <a href="{{route('profile.home',$comment->user->username)}}" class="hover:underline">
         <strong>{{ $comment->user->name }}</strong>
       </a>
       <div class="items-center">

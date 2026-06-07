@@ -8,8 +8,8 @@
 <body class="min-h-screen m-0 ">
   <nav @class([
     'w-screen px-6 py-5 h-20',
-    'bg-opacity-0 absolute z-50' => Route::is(['profile', 'home']),
-    'bg-white shadow-[0_2px_5px_rgba(0,0,0,0.1)]' => !Route::is(['profile', 'home']),
+    'bg-opacity-0 absolute z-50' => Route::is(['profile.*', 'home']),
+    'bg-white shadow-[0_2px_5px_rgba(0,0,0,0.1)]' => !Route::is(['profile.*', 'home']),
     'bg-white shadow-[0_2px_5px_rgba(0,0,0,0.1)] fixed top-0 z-50' => Route::is(['blog']),
   ])>
     <div class="flex justify-between items-center ">
@@ -32,8 +32,8 @@
             @if(hasCompleted2FA())
               <li id="dropdown" @class([
                 'text-lg pt-2  relative',
-                'text-white' => Route::is(['profile', 'home']),
-                'text-gray-700' => !Route::is(['profile', 'home'])
+                'text-white' => Route::is(['profile.*', 'home']),
+                'text-gray-700' => !Route::is(['profile.*', 'home'])
               ])>
                 @include('partials.hover-menu')
                 <span class="cursor-pointer">
@@ -47,8 +47,8 @@
             @unless(request()->routeIs('login'))
               <li @class([
                 'font-bold text-lg p-1 px-4 pt-2 uppercase rounded-xl font-semibold',
-                'text-black bg-white' => Route::is(['profile', 'home']),
-                'text-white text-lg  bg-black ' => !Route::is(['profile', 'home'])
+                'text-black bg-white' => Route::is(['profile.*', 'home']),
+                'text-white text-lg  bg-black ' => !Route::is(['profile.*', 'home'])
               ])>
                 <a href="{{route('login')}}">sign in</a>
               </li>
@@ -57,8 +57,8 @@
             @if(hasCompleted2FA())
               <li @class([
                 'font-bold text-xl' => Route::is('blog'),
-                'text-white text-lg pt-2' => Route::is(['profile', 'home']),
-                'text-gray-700 text-lg  pt-2' => !Route::is(['profile', 'home'])
+                'text-white text-lg pt-2' => Route::is(['profile.*', 'home']),
+                'text-gray-700 text-lg  pt-2' => !Route::is(['profile.*', 'home'])
               ])>
                 <a href="/blog">Blog</a>
               </li>
@@ -69,22 +69,22 @@
                     class="absolute top-2 left-3 h-4 w-4 bg-red-500 text-white flex justify-center items-center rounded-full p-1 text-xs font-semibold">
                     {{ auth()->user()->unreadNotifications->count() }}
                   </span>
-                  <i class="fas fa-bell {{Route::is(['profile', 'home']) ? 'text-white' : 'text-gray-700'}}"></i>
+                  <i class="fas fa-bell {{Route::is(['profile.*', 'home']) ? 'text-white' : 'text-gray-700'}}"></i>
                 </li>
 
                 @include('partials.notifications-menu')
               @endunless
               <li @class([
                 'font-bold text-xl' => Route::is('bookmarks'),
-                'text-white text-lg pt-2' => Route::is(['profile', 'home']),
-                'text-gray-700 text-lg  pt-2' => !Route::is(['profile', 'home'])
+                'text-white text-lg pt-2' => Route::is(['profile.*', 'home']),
+                'text-gray-700 text-lg  pt-2' => !Route::is(['profile.*', 'home'])
               ])>
                 <a href="{{route('bookmarks')}}"><i class="far fa-bookmark"></i></a>
               </li>
               @if(auth()->user()->hasAnyRole(['Admin', 'Moderator']) || auth()->user()->hasPermission('Access'))
                 <li @class([
-                  'text-white text-lg pt-2' => Route::is(['profile', 'home']),
-                  'text-gray-700 text-lg  pt-2' => !Route::is(['profile', 'home'])
+                  'text-white text-lg pt-2' => Route::is(['profile.*', 'home']),
+                  'text-gray-700 text-lg  pt-2' => !Route::is(['profile.*', 'home'])
                 ])>
                   <a href="{{route('admin.panel')}}">
                     Admin Panel
@@ -93,8 +93,8 @@
               @endif
               @unless(request()->routeIs('home'))
                 <li @class([
-                  'text-white text-lg pt-2' => Route::is(['profile', 'home']),
-                  'text-gray-700 text-lg pt-2' => !Route::is(['profile', 'home'])
+                  'text-white text-lg pt-2' => Route::is(['profile.*', 'home']),
+                  'text-gray-700 text-lg pt-2' => !Route::is(['profile.*', 'home'])
                 ])>
                   <a href="/">Home</a>
                 </li>
@@ -118,7 +118,7 @@
                   class="absolute -top-0 left-3 h-4 w-4 bg-red-500 text-white flex justify-center items-center rounded-full p-1 text-xs font-semibold">
                   {{ auth()->user()->unreadNotifications->count() }}
                 </span>
-                <i class="fas fa-bell {{Route::is(['profile', 'home']) ? 'text-white' : 'text-gray-700'}}"></i>
+                <i class="fas fa-bell {{Route::is(['profile.*', 'home']) ? 'text-white' : 'text-gray-700'}}"></i>
               </div>
 
               @include('partials.notifications-menu')
