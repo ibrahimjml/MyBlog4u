@@ -4,7 +4,7 @@
     <p class="text-2xl font-bold">People who liked</p>
     @forelse($viewwholiked as $viewliked)
     <div class="rounded-xl flex items-center gap-2 mb-2 mt-4 w-full py-1 px-2 hover:bg-gray-200 transition-bg duration-200 ease-in-out">
-    <a href="{{route('profile',$viewliked->user->username)}}" class="flex items-center gap-3">
+    <a href="{{route('profile.home',$viewliked->user->username)}}" class="flex items-center gap-3">
       <img src="{{$viewliked->user->avatar_url}}"  class="w-8 h-8 overflow-hidden flex justify-center items-center  shrink-0 grow-0 rounded-full ">
         <div class="flex flex-col gap-1">
           <strong>{{ $viewliked->user->name }}</strong>

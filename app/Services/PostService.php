@@ -8,6 +8,7 @@ use App\DTOs\UpdatePostDTO;
 use App\Enums\PostStatus;
 use App\Events\PostCreatedEvent;
 use App\Helpers\DeleteFile;
+use App\Models\AdPlacement;
 use App\Models\PostModeration;
 use App\Models\Post;
 use App\Repositories\Interfaces\PostInterface;
@@ -31,18 +32,26 @@ class PostService
     $page = $request->get('blog_page', 1);
     $perPage = $request->get('perpage', 5);
     $sort = $request->get('sort', 'latest');
-
-    if(in_array($sort,['followings']) && !auth()->check()){
+    /* 
+     * geust mode filter followings not allowed
+     */ 
+    if (in_array($sort, ['followings']) && !auth()->check()) {
       return redirect()->route('login');
     }
-    
+
     $postList = $this->repo->getPaginatedPosts($perPage, $sort, $page);
     $tags = $this->repo->getPopularTags();
     $cats = $this->repo->getCategories();
     $whoToFollow = auth()->check() ? $this->repo->getWhoToFollow(auth()->id()) : collect();
+    $inner_ads = AdPlacement::active()->where('ad_position', \App\Enums\Adplacements\AdPosition::INNER_FEED)->get();
 
     if ($request->ajax()) {
-      $html = view('blog.partials.posts', ['posts' => $postList])->render();
+      $html = view('blog.partials.posts', [
+        'posts' => $postList,
+        'searchquery' => $request->get('search', null),
+        'ads' => $inner_ads,
+        'showAppliedFilter' => false
+      ])->render();
 
       return response()->json([
         'html' => $html,
@@ -57,6 +66,8 @@ class PostService
       'users' => $whoToFollow,
       'posts' => $postList,
       'sorts' => $sort,
+      'ads' => $inner_ads,
+      'searchquery' => null,
     ]);
   }
   public function handleSearch(Request $request)
@@ -66,9 +77,15 @@ class PostService
     $page = request()->get('page', 1);
     $perPage = request('perpage', 5);
     $posts = $this->repo->getBySearch($dto, $page, $perPage);
+    $inner_ads = AdPlacement::active()->where('ad_position', \App\Enums\Adplacements\AdPosition::INNER_FEED)->get();
 
     if (request()->ajax()) {
-      $html = view('blog.partials.posts', ['posts' => $posts])->render();
+      $html = view('blog.partials.posts', [
+        'posts' => $posts,
+        'searchquery' => $dto->search,
+        'ads' => $inner_ads,
+        'showAppliedFilter' => false
+      ])->render();
       return response()->json([
         'html' => $html,
         'searchquery' => $dto->search,
@@ -80,6 +97,7 @@ class PostService
     return view('search', [
       'posts' => $posts,
       'sorts' => $dto->sort,
+      'ads' => $inner_ads,
       'searchquery' => $dto->search,
     ]);
   }
@@ -215,7 +233,7 @@ class PostService
       if ($newImage) {
         DeleteFile::existImage('uploads/' . $newImage);
       }
-      Log::error('Error updating post ID ' . $post->id .': ' . $e->getMessage()  );
+      Log::error('Error updating post ID ' . $post->id . ': ' . $e->getMessage());
 
       return null;
     }

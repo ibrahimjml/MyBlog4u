@@ -12,11 +12,11 @@
     <aside id="mobileSidebar" class=" col-span-1 flex flex-col justify-center items-center bg-white p-6 rounded-lg shadow h-full lg:h-auto fixed top-0 left-0 w-80 z-30 lg:static lg:w-auto lg:z-auto transition-transform duration-300 ease-in-out -translate-x-full lg:translate-x-0">
       <p class="text-xl font-semibold mb-4">User Settings</p>
       <div class="flex flex-col w-fit  gap-2">
-        <a href="{{route('profile.info')}}" class="py-2 px-4 text-gray-500  rounded-xl flex items-center gap-4 {{request()->routeIs('profile.info') ? 'bg-gray-200':''}}">
+        <a href="{{route('info')}}" class="py-2 px-4 text-gray-500  rounded-xl flex items-center gap-4 {{request()->routeIs('info') ? 'bg-gray-200':''}}">
           <i class="fas fa-user"></i>
           Profile Details
         </a>
-        <a href="{{route('profile.account')}}" class="py-2 px-4 text-gray-500  rounded-xl flex items-center gap-4 {{request()->routeIs('profile.account') ? 'bg-gray-200':''}}">
+        <a href="{{route('account')}}" class="py-2 px-4 text-gray-500  rounded-xl flex items-center gap-4 {{request()->routeIs('account') ? 'bg-gray-200':''}}">
           <i class="fas fa-cog"></i>
           Account Management
         </a>
@@ -34,7 +34,7 @@
         onclick="if(history.length >1 ){
         history.back();
         }else{
-        window.location.href='{{route('profile',$user->username)}}'
+        window.location.href='{{route('profile.home',$user->username)}}'
         };"
         class="block py-2 px-4 text-gray-500 rounded-xl w-full hover:bg-gray-200">
           <b>&leftarrow;</b> Back

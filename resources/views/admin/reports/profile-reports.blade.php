@@ -65,7 +65,7 @@
          <i class="fas fa-trash"></i></button>
        </form>
         @endcan
-       <a href="{{route('profile',$report->profile->username)}}"><i class="fas fa-eye "></i></a>
+       <a href="{{route('profile.home',$report->profile->username)}}"><i class="fas fa-eye "></i></a>
         {{-- action report status menu --}}
         @can('profilereport.status')
         <div class="relative inline-block">

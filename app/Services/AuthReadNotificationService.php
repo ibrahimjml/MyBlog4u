@@ -25,7 +25,7 @@ class AuthReadNotificationService
     if (in_array($type, array_map(fn($e) => $e->value, NotificationType::postRelated()), true)) {
          return to_route('single.post', $data['post_link']);
     } elseif (in_array($type, array_map(fn($e) => $e->value, NotificationType::userRelated()), true)) {
-          return to_route('profile', $username);
+          return to_route('profile.home', $username);
       }
     }
 }

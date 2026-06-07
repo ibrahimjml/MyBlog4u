@@ -21,7 +21,7 @@ export function initTinyMCE() {
     codesample_dialog_height: 425,
     toolbar: 'undo redo | bold italic underline | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media | code codesample ',
     license_key: 'gpl',
-
+    sandbox_iframes: false,
     images_upload_credentials: true,
 
     images_upload_handler: async function (blobInfo) {

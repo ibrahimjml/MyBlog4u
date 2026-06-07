@@ -4,7 +4,7 @@
     <p class="text-2xl font-bold">People who viewed your post</p>
     @forelse($post->viewers as $viewer)
     <div class="rounded-xl flex items-center gap-2 mb-2 mt-4 w-full py-1 px-2 hover:bg-gray-200 transition-bg duration-200 ease-in-out">
-    <a href="{{route('profile',$viewer->username)}}" class="flex items-center gap-3">
+    <a href="{{route('profile.home',$viewer->username)}}" class="flex items-center gap-3">
       <img src="{{$viewer->avatar_url}}"  class="w-8 h-8 overflow-hidden flex justify-center items-center  shrink-0 grow-0 rounded-full ">
         <div class="flex flex-col gap-1">
           <strong>{{$viewer->name}}</strong>

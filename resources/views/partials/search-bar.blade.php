@@ -12,10 +12,7 @@
     <i class="fas fa-search absolute right-3 top-3 text-gray-400 text-sm pointer-events-none"></i>
   </div>
 </form>
-<div id="applied-filter" class="mt-2 {{ $searchquery ? 'block' : 'hidden' }}">
-  <span class="text-xs text-gray-600 font-medium">Searching for: <strong class="text-gray-800">{{ $searchquery }}</strong></span>
-  <button id="reset-filter" type="button" class="ml-2 text-xs text-gray-500 hover:text-gray-700 transition-colors">✕ Clear</button>
-</div>
+
 @push('scripts')
     
 <script>
@@ -31,18 +28,7 @@
   
     searchForm.submit();  
   });
-
-
-  resetFilterButton.addEventListener('click', function (e) {
-    e.preventDefault();
-  searchInput.value = ''; 
-  appliedFilter.classList.add('hidden');  
-  searchForm.submit();
-  window.location.href = '/blog';
 });
-
-});
-
 
 </script>
 @endpush

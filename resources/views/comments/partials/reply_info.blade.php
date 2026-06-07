@@ -3,7 +3,7 @@
 
 <div class="flex flex-col">
   <div class="flex gap-1 items-center">
-    <a href="{{route('profile',$reply->user->username)}}" class="hover:underline">
+    <a href="{{route('profile.home',$reply->user->username)}}" class="hover:underline">
       <strong>{{ $reply->user->name }}</strong>
     </a>
       <div class="items-center">

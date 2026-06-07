@@ -72,11 +72,12 @@ Route::get('/followings', 'followings')->name('followings');
 // profile
 Route::controller(ProfileController::class)
     ->prefix('/@{user:username}')
+    ->name('profile.')
     ->group(function(){
 
- Route::get('/','Home')->name('profile');
- Route::get('activity','activity')->name('profile.activity');
- Route::get('/about','aboutme')->name('profile.aboutme');
+ Route::get('/','Home')->name('home');
+ Route::get('activity','activity')->name('activity');
+ Route::get('/about','aboutme')->name('aboutme');
  
 });
 // settings
@@ -85,8 +86,8 @@ Route::prefix('profile')
 ->middleware('password.confirm')
 ->group(function(){
 
-  Route::get('/settings/info','profile_info')->name('profile.info');
-  Route::get('/settings/account','profile_account')->name('profile.account');
+  Route::get('/settings/info','profile_info')->name('info');
+  Route::get('/settings/account','profile_account')->name('account');
   Route::get('/settings/privacy','account_privacy')->name('account.privacy');
   Route::get('/settings/security','two_factor_view')->name('two.factor.view');
   Route::post('/settings/privacy','profile_visibility')->name('profile.visibility');

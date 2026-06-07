@@ -5,12 +5,12 @@
   <section class="flex flex-col gap-3 p-4 lg:w-90">
     <!-- User Info -->
     <div class="flex items-center gap-4 w-full">
-      <a href="{{ route('profile', $post->user->username) }}">
+      <a href="{{ route('profile.home', $post->user->username) }}">
         <img src="{{ $post->user->avatar_url }}" class="w-8 h-8 rounded-full object-cover border" alt="avatar">
       </a>
       <div>
         <div class="flex items-center justify-center gap-3">
-          <a href="{{ route('profile', $post->user->username) }}"
+          <a href="{{ route('profile.home', $post->user->username) }}"
             class="text-base font-semibold hover:underline truncate">
             {{ $post->user->username }}
           </a>

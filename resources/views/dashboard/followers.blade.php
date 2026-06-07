@@ -1,7 +1,7 @@
 <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
   @forelse($people as $person)
     <div  class="flex items-center gap-3 rounded-lg border border-gray-200 p-4 hover:bg-gray-50">
-      <a href="{{ route('profile', $person->username) }}">
+      <a href="{{ route('profile.home', $person->username) }}">
         <img src="{{ $person->avatar_url }}" alt="{{ $person->name }}" class="h-12 w-12 rounded-full object-cover">
       </a>
       <div class="min-w-0">

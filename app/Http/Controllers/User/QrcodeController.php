@@ -24,7 +24,7 @@ class QrcodeController extends Controller
             ->merge('/public/img/icon.png')
             ->backgroundColor	(250, 128, 114)
             ->color(0, 0, 0,80)
-            ->generate(route('profile',[
+            ->generate(route('profile.home',[
               'user'=>$user->username
             ]));
 
