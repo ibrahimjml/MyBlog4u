@@ -34,6 +34,7 @@ class AdminSeeder extends Seeder
       'Slides'            => ['slide.create',  'slide.view',  'slide.update', 'slide.delete'],
       'Notifications'     => ['notifications.view', 'notifications.update'],
       'Ads'               => ['ad.create', 'ad.view', 'ad.update', 'ad.delete'],
+      'Api Rate Limit'    => ['limit.view','limit.create', 'limit.update', 'limit.delete'],
       'Seo Tools'         => ['seo.view', 'seo.update'],
       'SMTP'              => ['smtp.view', 'smtp.update'],
       'Auth and Security' => ['authsecurity.view', 'authsecurity.update'],

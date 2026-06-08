@@ -2,9 +2,11 @@
 
 namespace App\Providers;
 
-use App\Helpers\MetaHelpers;
-use App\Models\SeoSetting;
+
+use App\Enums\CustomPageStatus;
+use App\Models\CustomPage;
 use App\Models\User;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -23,9 +25,10 @@ class ViewServiceProvider extends ServiceProvider
    */
   public function boot(): void
   {
-    
+
     $this->setNotificationsMenuData();
     $this->sendFollowingsIdsToView();
+    $this->sendCustomPagesToFooter();
 
 
   }
@@ -71,5 +74,19 @@ class ViewServiceProvider extends ServiceProvider
     });
   }
 
+  private function sendCustomPagesToFooter()
+  {
+    view()->composer('components.footer', function ($view) {
+      $footerPages = Cache::rememberForever('custom_pages', function () {
+        return CustomPage::query()
+          ->where('is_active', CustomPageStatus::ACTIVE->value)
+          ->where('show_in_footer', true)
+          ->orderBy('order')
+          ->orderBy('title')
+          ->get();
+      });
+      $view->with('footerPages', $footerPages);
+    });
+  }
 
 }

@@ -95,7 +95,7 @@
     </tr>
       @empty
       <tr>
-    colspan="7" class="p-4 text-center font-bold text-blueGray-500">No ads found.</td>
+      <td colspan="7" class="p-4 text-center font-bold text-blueGray-500">No ads found.</td>
       </tr>
     @endforelse
     </x-tables.table>

@@ -40,6 +40,7 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\CheckIfBlocked::class,
             \App\Http\Middleware\EnsureIdentityVerified::class,
             \App\Http\Middleware\EnsureTwoFactorMiddleware::class,
+            \App\Http\Middleware\DynamicRateLimitMiddleware::class,
 
         ],
 

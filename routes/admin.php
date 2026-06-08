@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\Ads\AdController;
+use App\Http\Controllers\Admin\ApiRateLimit\ApiRateLimitController;
 use App\Http\Controllers\Admin\Optimization\SeoController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\{
@@ -170,6 +171,14 @@ Route::put('/{category}/feature','toggle')->name('feature');
       Route::patch('/{ad}/status', 'toggleStatus')->name('toggle.status');
       Route::delete('/{ad}/delete', 'destroy')->name('destroy');
     });
+  // API rate limits
+  Route::prefix('api-limits')->controller(ApiRateLimitController::class)->name('api-limits.')->group(function(){
+    Route::get('/', 'index')->name('index');
+    Route::post('/create', 'store')->name('store');
+    Route::put('/{limit}/update', 'update')->name('update');
+    Route::patch('/{limit}/status', 'toggleStatus')->name('toggle.status');
+    Route::delete('/{limit}/delete', 'destroy')->name('destroy');
+  });
   // optimization
   Route::prefix('optimize')->controller(MaintenanceController::class)->name('optimize.')->group(function(){
   Route::get('/maintenance','maintenance_page')->name('maintenance');
