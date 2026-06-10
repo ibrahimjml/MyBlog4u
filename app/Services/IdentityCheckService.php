@@ -19,7 +19,7 @@ class IdentityCheckService
             'expires_at' => now()->addMinutes(10),
          ]);
           // mail to user verification code
-          Mail::to($user->email)->send(new VerificationCode($user, $code));
+          Mail::to($user->email)->queue(new VerificationCode($user, $code));
 
           return $code;
 

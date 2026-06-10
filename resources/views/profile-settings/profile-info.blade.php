@@ -93,12 +93,12 @@
              {{ $message }}
              </p>
             @enderror
-             <!-- about you -->
-             <label for="about" class="mt-5">Profile bio <small class="text-gray-400 ml-3"> (optional)</small></label>
-             <textarea name="about" rows="10"  placeholder="Description about your self" class="rounded-xl p-2 mt-2 font-bold border border-gray-300 hover:bg-gray-200 @error("about") border-2 border-red-500 @enderror">
-              {{ old('about', $user->aboutme) }}
+             <!-- about me -->
+             <label for="aboutme" class="mt-5">About Me <small class="text-gray-400 ml-3"> (optional)</small></label>
+             <textarea id="textarea" name="aboutme" rows="10"  placeholder="Description about your self" class="rounded-xl p-2 mt-2 font-bold border border-gray-300 hover:bg-gray-200 @error("aboutme") border-2 border-red-500 @enderror">
+              {{ old('aboutme', $user->aboutme) }}
              </textarea>
-             @error('about')
+             @error('aboutme')
              <p class="text-red-500 text-xs italic mt-4">
              {{ $message }}
              </p>
@@ -109,7 +109,7 @@
              <hr class="mt-4">
               <!-- github -->
              <label for="github" class="mt-5">Github <small class="text-gray-400 ml-3"> (optional)</small></label>
-             <input type="text" name="github" value="{{old('github',$user->github)}}" placeholder="https://github.com/username" class="rounded-xl p-2 mt-2 font-bold placeholder:font-medium border border-gray-300 @error("github") border-2 border-red-500 @enderror">
+             <input type="text" name="github" value="{{old('github',$user->github)}}" placeholder="https://github.com/username" class="rounded-xl p-2 mt-2 font-bold placeholder:font-light placeholder:text-sm border border-gray-300 @error("github") border-2 border-red-500 @enderror">
              @error('github')
              <p class="text-red-500 text-xs italic mt-4">
              {{ $message }}
@@ -117,7 +117,7 @@
             @enderror
              <!-- linkedin -->
              <label for="linkedin" class="mt-5">Linkedin <small class="text-gray-400 ml-3"> (optional)</small></label>
-             <input type="text" name="linkedin" value="{{ old('linkedin', $user->linkedin) }}" placeholder="https://linkedin.com/in/username" class="rounded-xl p-2 mt-2 font-bold placeholder:font-medium border border-gray-300 @error("linkedin") border-2 border-red-500 @enderror">
+             <input type="text" name="linkedin" value="{{ old('linkedin', $user->linkedin) }}" placeholder="https://linkedin.com/in/username" class="rounded-xl p-2 mt-2 font-bold placeholder:font-light placeholder:text-sm border border-gray-300 @error("linkedin") border-2 border-red-500 @enderror">
                @error('linkedin')
              <p class="text-red-500 text-xs italic mt-4">
              {{ $message }}
@@ -125,7 +125,7 @@
             @enderror
              <!-- twitter -->
              <label for="twitter" class="mt-5">Twitter <small class="text-gray-400 ml-3"> (optional)</small></label>
-             <input type="text" name="twitter" value="{{ old('twitter', $user->twitter) }}" placeholder="https://twitter.com/username" class="rounded-xl p-2 mt-2 font-bold placeholder:font-medium border border-gray-300 @error("twitter") border-2 border-red-500 @enderror">
+             <input type="text" name="twitter" value="{{ old('twitter', $user->twitter) }}" placeholder="https://twitter.com/username" class="rounded-xl p-2 mt-2 font-bold placeholder:font-light placeholder:text-sm border border-gray-300 @error("twitter") border-2 border-red-500 @enderror">
                @error('twitter')
              <p class="text-red-500 text-xs italic mt-4">
              {{ $message }}

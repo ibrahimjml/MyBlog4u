@@ -6,11 +6,13 @@ use App\DTOs\Admin\CreateUserDTO;
 use App\DTOs\Admin\UpdateUserDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\App\Admin\{CreateUserRequest, UpdateUserRequest};
-use App\Models\{Permission, Role, User};
+use App\Mail\ActivationSuccess;
+use App\Models\{Activation, Permission, Role, User};
 use App\Services\Admin\UsersService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class UsersController extends Controller
 {
@@ -20,11 +22,13 @@ class UsersController extends Controller
      }
       public function users(Request $request)
   {
-    $users = $this->service->getUsers($request->only('search','blocked','sort'));
+    $users = $this->service->getUsers($request->only('search','blocked','sort','activate'));
     $roles = Role::all();
+    $pendingActivations = Activation::where('completed', false)->count();
     return view('admin.users.users',[
       'users'=>$users,
-      'filter'=>$request->only(['search','blocked','sort']),
+      'filter'=>$request->only(['search','blocked','sort','activate']),
+      'activationCount' => $pendingActivations,
       'permissions' => Permission::all()->groupBy('module'),
       'roles'=>$roles
     ]);
@@ -50,13 +54,19 @@ public function createUser(CreateUserRequest $request)
     }
 }
 public function updateUser(UpdateUserRequest $request, User $user)
-{     $this->authorize('updateAny',$user);
+{
+      $this->authorize('updateAny',$user);
       $dto = UpdateUserDTO::fromRequest($request);
       $this->service->updateUser($user,$dto);
 
       Cache::tags(['user_permissions','has_any_role'])->flush();
-      toastr()->success('user updated',['timeOut'=>1000]);
-      return back();
+
+      if ($request->wantsJson()) {
+          return response()->json(['message' => 'User updated successfully']);
+      }
+
+      // toastr()->success('user updated',['timeOut'=>1000]);
+      // return back();
 }
   
   public function toggle(User $user){
@@ -69,7 +79,18 @@ public function updateUser(UpdateUserRequest $request, User $user)
     toastr()->success($message,['timeOut'=>1000]);
     return redirect()->back();
   }
-
+public function activateUser(User $user)
+{
+  $this->authorize('activate',$user);
+     $user->activation->update([
+       'completed' => true,
+       'completed_at' => now(),
+   ]);
+   toastr()->success('user activated',['timeOut'=>1000]);
+   // send approve mail to user
+   Mail::to($user->email)->queue(new ActivationSuccess($user));
+   return back();
+}
   public function destroy(User $user){
 
     $this->authorize('deleteAny',$user);

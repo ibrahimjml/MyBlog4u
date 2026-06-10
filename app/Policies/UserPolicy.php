@@ -14,7 +14,7 @@ class UserPolicy
         }
 
         if ($model instanceof User && $model->hasRole(\App\Enums\UserRole::ADMIN->value)) {
-            return in_array($ability, ['update', 'delete', 'block', 'role', 'updateAny', 'deleteAny'], true)
+            return in_array($ability, ['update', 'delete', 'block', 'activate','role', 'updateAny', 'deleteAny'], true)
                ? false
                : null;
         }
@@ -44,6 +44,10 @@ class UserPolicy
    public function block(User $user, User $model): bool
     {
         return $user->hasPermission('user.block') && $user->id !== $model->id;
+    }
+   public function activate(User $user, User $model): bool
+    {
+        return $user->hasPermission('user.activate') && $user->id !== $model->id;
     }
     public function deleteAny(User $user, User $model): bool
     {

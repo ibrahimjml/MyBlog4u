@@ -29,43 +29,43 @@
         <!-- Form Fields -->
         <div>
           <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Name:</label>
-          <input type="text" name="name" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm @error('name') border-red-500 @enderror">
+          <input type="text" name="name" class="block w-full rounded-2xl border border-gray-300 bg-gray-50 p-3 text-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
           @error('name')<p class="text-red-500 text-xs italic mt-2">{{ $message }}</p>@enderror
         </div>
 
         <div>
           <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Username:</label>
-          <input type="text" name="username" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm @error('username') border-red-500 @enderror">
+          <input type="text" name="username" class="block w-full rounded-2xl border border-gray-300 bg-gray-50 p-3 text-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
           @error('username')<p class="text-red-500 text-xs italic mt-2">{{ $message }}</p>@enderror
         </div>
 
         <div>
           <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email:</label>
-          <input type="email" name="email" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm @error('email') border-red-500 @enderror">
+          <input type="email" name="email" class="block w-full rounded-2xl border border-gray-300 bg-gray-50 p-3 text-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
           @error('email')<p class="text-red-500 text-xs italic mt-2">{{ $message }}</p>@enderror
         </div>
 
         <div>
           <label for="age" class="block text-sm font-medium text-gray-700 mb-1">Age:</label>
-          <input type="number" name="age" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm @error('age') border-red-500 @enderror">
+          <input type="number" name="age" class="block w-full rounded-2xl border border-gray-300 bg-gray-50 p-3 text-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
           @error('age')<p class="text-red-500 text-xs italic mt-2">{{ $message }}</p>@enderror
         </div>
 
         <div>
           <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Phone:</label>
-          <input id="phone" type="tel" name="phone" value="{{ old('phone') }}" autocomplete="tel" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm @error('phone') border-red-500 @enderror">
+          <input id="phone" type="tel" name="phone" value="{{ old('phone') }}" autocomplete="tel" class="block w-full rounded-2xl border border-gray-300 bg-gray-50 p-3 text-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
           @error('phone')<p class="text-red-500 text-xs italic mt-2">{{ $message }}</p>@enderror
         </div>
 
         <div>
           <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password:</label>
-          <input type="password" name="password" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm @error('password') border-red-500 @enderror">
+          <input type="password" name="password" class="block w-full rounded-2xl border border-gray-300 bg-gray-50 p-3 text-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
           @error('password')<p class="text-red-500 text-xs italic mt-2">{{ $message }}</p>@enderror
         </div>
 
         <div>
           <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-1">Confirm Password:</label>
-          <input type="password" name="password_confirmation" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+          <input type="password" name="password_confirmation" class="block w-full rounded-2xl border border-gray-300 bg-gray-50 p-3 text-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
         </div>
 
         <!-- Roles -->

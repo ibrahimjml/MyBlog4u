@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 
 use App\Http\Requests\App\RegisterRequest;
+use App\Models\CustomPage;
 use App\Models\User;
 use App\Rules\Recaptcha;
 use Illuminate\Support\Str;
@@ -21,16 +22,18 @@ class AuthController extends Controller
   public function registerpage()
   {
     abort_unless_require_registration();
-    return view('auth.register');
+    $terms = CustomPage::firstWhere('slug','terms-of-service');
+    $privacy = CustomPage::firstWhere('slug','privacy-policy');
+    return view('auth.register',['terms' => $terms,'privacy' => $privacy]);
     
   }
 
   public function register(RegisterRequest $request,RegisterUserService $service)
   {
     abort_unless_require_registration();
-    $service->register($request->validated());
-    toastr()->success('Account created successfully',['timeOut'=>1000]);
-    return to_route('home');
+    $result = $service->register($request->validated());
+    toastr()->info($result['success'],['timeOut'=>7000]);
+    return back();
   }
 
   public function loginpage()
@@ -45,7 +48,6 @@ class AuthController extends Controller
     $fields = $request->validate([
       "login" => 'required|string',
       "password" => 'required',
-      "g-recaptcha-response" => [new Recaptcha]
     ]);  
 
     $loginType = filter_var($fields['login'], FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
@@ -63,6 +65,13 @@ class AuthController extends Controller
     if ($user->is_blocked) {
         return back();
     }
+    // activation check
+    if($user->hasRole(\App\Enums\UserRole::USER->value) && 
+    (! $user->activation || ! $user->activation->completed))
+     {
+      toastr()->info('Your account has not yet been activated, please be passiont.', ['timeOut' => 7000]);
+      return back();
+   }
 
     if ($user->has_two_factor_enabled) {
         auth()->login($user);
@@ -104,7 +113,7 @@ class AuthController extends Controller
 
     $fields = $request->validate([
       "email" => ["required", "email", "min:5", "max:50"],
-      "g-recaptcha-response" => [new Recaptcha]
+      "g-recaptcha-response" => [new Recaptcha()]
     ]);
     $fields['email'] = htmlspecialchars(strip_tags($fields['email']));
 
@@ -117,7 +126,8 @@ class AuthController extends Controller
         ['token' => $token, 'created_at' => now()]
       );
       $user->save();
-      Mail::to($user->email)->send(new ForgotPassword($user, $token));
+
+      Mail::to($user->email)->queue(new ForgotPassword($user,$token));
       
       toastr()->success('please check your email',['timeOut'=>2000]);
       return back();

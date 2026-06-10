@@ -17,6 +17,7 @@ class ProfileController extends Controller
   }
   public function Home(User $user)
   {
+    abort_if_user_not_activated($user);
     if(auth()->check()){
       $viewer = auth()->user();
       $this->view->createView($user,$viewer);
@@ -37,7 +38,7 @@ class ProfileController extends Controller
   }
   
   public function activity(User $user){
-  
+  abort_if_user_not_activated($user);
   $activities = $this->activity->getUserActivities($user);
   
   return view('profile.profile', array_merge(
@@ -46,6 +47,7 @@ class ProfileController extends Controller
   ));
 }
 public function aboutme(User $user){
+  abort_if_user_not_activated($user);
   return view('profile.profile', $this->ProfileData($user, 'about'));
 }
 private function ProfileData(User $user, string $section)

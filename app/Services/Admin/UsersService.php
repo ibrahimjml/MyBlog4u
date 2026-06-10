@@ -16,8 +16,8 @@ class UsersService
     {
         $filter = new Fluent($filters);
 
-  return User::with(['roles','roles.permissions','userPermissions']) 
-                ->withCount(['reportsSubmitted', 'reportsReceived'])
+  return User::with(['roles','roles.permissions','userPermissions','activation']) 
+                ->withCount(['reportsSubmitted', 'reportsReceived','followings','followers','post'])
                ->latest()
                ->filter($filter)
                ->paginate(6)

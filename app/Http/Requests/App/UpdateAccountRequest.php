@@ -31,17 +31,17 @@ class UpdateAccountRequest extends FormRequest
       $user = $this->user();
         return [
             'username' => [
-            "required", "min:5", "max:15", "alpha_num",
+            "sometimes", "min:5", "max:15", "alpha_num",
              Rule::unique(User::class)->ignore($user->id),
              new Username($user)
             ],
             'email' => [
-            "required", "email", "min:5", "max:50", 
+            "sometimes", "email", "min:5", "max:50", 
             Rule::unique(User::class)->ignore($user->id),
             new EmailProviders()
           ],
-            "password" => ["nullable", "confirmed", new PasswordRule()],
-            "current_password" => ["required_with:password", "current_password"]
+            "password" => ["sometimes","nullable", "confirmed", new PasswordRule()],
+            "current_password" => ["sometimes","nullable","required_with:password", "current_password"]
         ];
     }
 }

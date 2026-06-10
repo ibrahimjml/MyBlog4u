@@ -32,7 +32,7 @@ class UpdateUserProfileRequest extends FormRequest
             "name"     => ["sometimes","nullable", "min:3", "max:50", "alpha"],
             "phone"    => ["sometimes","nullable", 'regex:/^\+\d{8,15}$/', Rule::unique(User::class)->ignore($user->id)],
             'bio'      =>'sometimes|nullable|min:5|string',
-            'about'    =>'sometimes|nullable|string|min:10|max:255',
+            'aboutme'    =>'sometimes|nullable|string|min:10',
             'github'   => 'sometimes|nullable|url|starts_with:https',
             'linkedin' => 'sometimes|nullable|url|starts_with:https',
             'twitter'     => 'sometimes|nullable|url|starts_with:https',

@@ -50,7 +50,8 @@ class PostRepository implements PostInterface
 
     public function getWhoToFollow(int $userId): \Illuminate\Support\Collection
     {
-       return User::where('id', '!=', $userId)
+       return User::activated()
+                   ->where('id', '!=', $userId)
                    ->whereNotIn('id', auth()->user()->followings()->pluck('user_id'))
                    ->inRandomOrder()
                    ->take(5)

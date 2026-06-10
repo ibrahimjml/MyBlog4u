@@ -11,7 +11,7 @@ use App\Traits\AdminNotificationGate;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
-class SendPostReportNotification
+class SendPostReportNotification implements ShouldQueue
 {
     use AdminNotificationGate;
     /**

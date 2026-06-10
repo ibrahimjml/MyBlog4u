@@ -73,6 +73,7 @@ Route::prefix('admin')
   Route::post('/create','createUser')->name('create');
   Route::put('/{user}/edit','updateUser')->name('update');
   Route::put('/{user}/role', 'role')->name('role');
+  Route::patch('/{user}/activate', 'activateUser')->name('activate');
   Route::put('/{user}/toggle', 'toggle')->name('block');
   Route::delete('/{user}/delete', 'destroy')->name('delete');
   });

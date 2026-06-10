@@ -2,26 +2,22 @@
 
 namespace App\Mail;
 
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
-use Illuminate\Mail\Markdown;
 use Illuminate\Queue\SerializesModels;
 
-class ForgotPassword extends Mailable 
+class WelcomeNewUser extends Mailable
 {
     use Queueable, SerializesModels;
+
     public $user;
-    public $token;
-    /**
-     * Create a new message instance.
-     */
-    public function __construct($user,$token)
+    public function __construct(User $user)
     {
         $this->user = $user;
-        $this->token = $token;
     }
 
     /**
@@ -30,7 +26,7 @@ class ForgotPassword extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Forgot Password',
+            subject: 'Welcome to MyBlog4u Platform',
         );
     }
 
@@ -40,11 +36,10 @@ class ForgotPassword extends Mailable
     public function content(): Content
     {
         return new Content(
-            markdown: 'email.forgot',
-            with:[
-              'user'=>$this->user,
-              'token'=>$this->token
-            ],
+            markdown: 'email.welcome-user',
+            with : [
+              'user' => $this->user
+            ]
         );
     }
 

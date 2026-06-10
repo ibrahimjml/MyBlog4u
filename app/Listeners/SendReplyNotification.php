@@ -10,7 +10,7 @@ use App\Traits\AdminNotificationGate;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
-class SendReplyNotification
+class SendReplyNotification implements ShouldQueue
 {
     use AdminNotificationGate;
     /**

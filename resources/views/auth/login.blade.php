@@ -1,15 +1,15 @@
 <x-layout>
 
-  <main class="sm:container mx-auto  max-w-fit mt-5 mb-20 sm:max-w-lg sm:mt-10">
+  <main class="mx-auto max-w-md sm:max-w-lg px-4 mt-5 mb-20 sm:mt-10">
     <div class="flex">
-      <div class="w-[80%] lg:w-full mx-auto">
-        <section class="flex flex-col break-words bg-white sm:border-1 rounded-md  sm:shadow-lg">
+      <div class="w-full">
+        <section class="flex flex-col break-words bg-white border border-gray-200 rounded-2xl shadow-sm">
 
-          <header class=" font-bold text-center bg-gray-200 text-gray-700 py-5 px-6 sm:py-6 sm:px-8 rounded-t-md">
+          <header class="font-bold text-center bg-gray-100 text-gray-700 py-5 px-6 sm:py-6 sm:px-8 rounded-t-2xl">
             Login
           </header>
 
-          <form id="recaptcha" class="border-2 w-full px-6 space-y-6 sm:px-10 sm:space-y-8" method="POST"
+          <form id="recaptcha" class="w-full border border-transparent px-4 py-6 space-y-6 sm:px-10 sm:space-y-5" method="POST"
             action="{{ route('login.post') }}">
             @csrf
             @method('POST')
@@ -19,7 +19,7 @@
               </label>
 
               <input id="login" type="text"
-                class="rounded-sm p-2 border-2 form-input w-full @error('login') border-red-500 @enderror" name="login"
+                class="w-full rounded-2xl border border-gray-300 bg-gray-50 p-3 text-gray-900 transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none @error('login') border-red-500 bg-white @enderror" name="login"
                 value="{{ old('login') }}" required >
 
               @error('login')
@@ -35,7 +35,7 @@
               </label>
 
               <input id="password" type="password"
-                class="rounded-sm p-2 border-2 form-input w-full @error('password') border-red-500 @enderror"
+                class="w-full rounded-2xl border border-gray-300 bg-gray-50 p-3 text-gray-900 transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none @error('password') border-red-500 bg-white @enderror"
                 name="password"  required >
 
               @error('password')
@@ -44,25 +44,16 @@
                 </p>
               @enderror
             </div>
-            <!-- Google reCAPTCHA v2 checkbox -->
-            @recaptcha_enabled
-            <div class="g-recaptcha" data-sitekey="{{config('services.captcha.sitekey')}}"></div>
-            @error('g-recaptcha-response')
-              <p class="text-red-500 text-xs italic mt-4">
-                {{ $message }}
-              </p>
-            @enderror
-            @endrecaptcha_enabled
 
-            <div class="flex flex-wrap">
+            <div class="flex flex-col gap-4">
               <button type="submit"
-                class=" w-full select-none font-bold whitespace-no-wrap p-3 rounded-lg text-base leading-normal no-underline text-gray-100 bg-gray-700 hover:bg-gray-500 sm:py-4">
+                class="w-full font-bold p-3 rounded-2xl text-base leading-normal text-white bg-gray-700 hover:bg-gray-500 transition sm:py-4">
                 Login
               </button>
 
-              <a class="text-gray-500 mt-2 hover:text-blue-700 no-underline hover:underline"
+              <a class="text-gray-500 hover:text-blue-700 no-underline hover:underline"
                 href="{{ route('forgot.password') }}">
-                forgot your password ?
+                Forgot your password?
               </a>
 
               <p class="w-full text-xs text-center text-gray-700 my-6 sm:text-sm sm:my-8">

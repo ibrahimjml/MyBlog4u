@@ -16,7 +16,7 @@ class LikeObserver
      */
     public function created(Like $like): void
     {
-      $like->load(['user','post']);
+      $like->load(['user','post.user']);
       event(new PostLikedEvent($like));
     }
 
