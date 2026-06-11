@@ -17,6 +17,7 @@ class VerificationCode extends Mailable
     public $code;
     public function __construct(User $user,$code)
     {
+      logger('VerificationCode MAIL CONSTRUCTOR RUNNING');
         $this->user = $user;
         $this->code = $code;
     }
@@ -36,6 +37,7 @@ class VerificationCode extends Mailable
      */
     public function content(): Content
     {
+       logger('VerificationCode CONTENT RUNNING');
         return new Content(
             markdown: 'email.verificationcode',
             with:[

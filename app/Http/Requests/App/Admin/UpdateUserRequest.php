@@ -33,7 +33,7 @@ class UpdateUserRequest extends FormRequest
               "email" => ["nullable", "email", Rule::unique("users", "email")->ignore($user->id),new EmailProviders()],
               "name" => ["nullable", "min:5", "max:50", "alpha"],
               "username" => ["nullable", "min:5", "max:15", "alpha_num", Rule::unique('users', 'username')->ignore($user->id)],
-              "phone" => ["nullable", Rule::unique("users", "phone")->ignore($user->id)],
+              "phone" => ["nullable",'regex:/^\+\d{8,15}$/',Rule::unique("users", "phone")->ignore($user->id)],
               "password" => ["nullable","confirmed",new PasswordRule()],
               "age" => ["nullable", "numeric", "between:18,64"],
               "roles" => ["nullable", new Enum(UserRole::class)],

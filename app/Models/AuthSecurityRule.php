@@ -20,6 +20,7 @@ class AuthSecurityRule extends Model
         'require_email_verification' => 'boolean',
         'require_captcha' => 'boolean',
         'allow_registration' => 'boolean',
+        'allowed_email_domains' => 'array'
         
     ];
 }

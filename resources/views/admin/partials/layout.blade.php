@@ -38,18 +38,19 @@
           type="button" onclick="toggleNavbar('example-collapse-sidebar')">
           <i class="fas fa-bars"></i>
         </button>
+        @role(\App\Enums\UserRole::ADMIN->value)
         <a class="md:block text-left md:pb-2 text-blueGray-600 mr-0 inline-block whitespace-nowrap text-sm uppercase font-bold p-4 px-0"
           href="{{route('admin.panel')}}">
-          @role('Admin')
           Admin Dashboard
-          @endrole
-          @role('Moderator')
-          Moderator Dashboard
-          @endrole
-          @role('Editor')
-          Moderator Dashboard
-          @endrole
         </a>
+        @endrole
+        @role(\App\Enums\UserRole::USER->value)
+        <a class="md:block text-left md:pb-2 text-blueGray-600 mr-0 inline-block whitespace-nowrap uppercase text-sm font-bold p-4 px-0"
+          href="{{route('admin.panel')}}">
+          Admin Dashboard
+        </a>
+        <small class="p-1 mt-1 rounded-md text-white bg-orange-400 whitespace-nowrap font-bold">Demo User readonly action</small>
+        @endrole
         <ul class="md:hidden items-center flex flex-wrap list-none">
 
           <li class="inline-block relative">

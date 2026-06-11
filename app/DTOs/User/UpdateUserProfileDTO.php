@@ -22,21 +22,13 @@ class UpdateUserProfileDTO
 
     public static function fromRequest(UserInfoRequest $request): self
     {
-       $fields = $request->only([
-        'name', 'phone', 'bio', 'about', 'github', 'linkedin', 'twitter',
-        'social_links',
-    ]);
+       $fields = $request->validated();
 
-    foreach ($fields as $key => $value) {
-        if (!is_array($value) && is_string($value)) {
-            $fields[$key] = trim(strip_tags($value));
-        }
-    }
         return new self(
              name: $fields['name'],
              phone: $fields['phone'],
              bio: $fields['bio'] ?? null,
-             about: $fields['about'] ?? null,
+             about: $fields['aboutme'] ?? null,
              github: $fields['github'] ?? null,
              linkedin: $fields['linkedin'] ?? null,
              twitter: $fields['twitter'] ?? null,

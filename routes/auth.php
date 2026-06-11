@@ -35,7 +35,6 @@ Route::middleware('auth')
   // confirmation password
   Route::get('/confirm-password','index')->name('password.confirm');
   Route::post('/confirm-password', 'confirm')
-  ->middleware('throttle:6,1')
   ->name('confirm.password');
   // email verification
   Route::get('/email/verify', 'verify_notice')

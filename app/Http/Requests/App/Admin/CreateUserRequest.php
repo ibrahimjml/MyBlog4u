@@ -32,12 +32,18 @@ class CreateUserRequest extends FormRequest
               "email" => ["required", "email", Rule::unique(User::class),new EmailProviders()],
               "name" => ["required", "min:5", "max:50", "alpha"],
               "username" => ["required", "min:5", "max:15", "alpha_num", Rule::unique(User::class)],
-              "phone" => ["required", Rule::unique(User::class)],
+              "phone" => ["required",'regex:/^\+\d{8,15}$/', Rule::unique(User::class)],
               "password" => ["required", "confirmed", new PasswordRule()],
               "age" => ["required", "numeric", "between:18,64"],
               "roles" => ["required", new Enum(UserRole::class)],
               "permissions" => ["nullable", "array"],
               "permissions.*" => ["integer","exists:permissions,id"],
+        ];
+    }
+    public function messages(): array
+    {
+        return [
+            'phone.regex' => 'The phone number must include a valid country code.',
         ];
     }
 }

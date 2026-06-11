@@ -20,7 +20,7 @@ class AdminSeeder extends Seeder
   {
 
     $modules = [
-      'User'              => ['Access', 'user.view', 'user.create', 'user.delete', 'user.block', 'user.role', 'user.updateImage', 'user.deleteSocial', 'user.update', 'user.edit'],
+      'User'              => ['Access', 'user.view', 'user.create', 'user.delete', 'user.activate','user.block', 'user.role', 'user.updateImage', 'user.deleteSocial', 'user.update', 'user.edit'],
       'Posts'             => ['post.view', 'post.update', 'post.feature', 'post.delete'],
       'Post Moderation'   => ['postmoderation.view', 'postmoderation.update'],
       'Tags'              => ['tag.create', 'tag.view', 'tag.update', 'tag.delete', 'tag.feature'],
@@ -34,6 +34,7 @@ class AdminSeeder extends Seeder
       'Slides'            => ['slide.create',  'slide.view',  'slide.update', 'slide.delete'],
       'Notifications'     => ['notifications.view', 'notifications.update'],
       'Ads'               => ['ad.create', 'ad.view', 'ad.update', 'ad.delete'],
+      'Api Rate Limit'    => ['limit.view','limit.create', 'limit.update', 'limit.delete'],
       'Seo Tools'         => ['seo.view', 'seo.update'],
       'SMTP'              => ['smtp.view', 'smtp.update'],
       'Auth and Security' => ['authsecurity.view', 'authsecurity.update'],

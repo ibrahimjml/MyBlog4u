@@ -10,7 +10,7 @@ use App\Traits\AdminNotificationGate;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
-class SendLikeNotification
+class SendLikeNotification implements ShouldQueue
 {
     use AdminNotificationGate;
     /**
@@ -30,12 +30,12 @@ class SendLikeNotification
         $post = $like->post;
         $liker = $like->user;
 
-      if($post->user->id !== auth()->user()->id){
+      if($post->user->id !== $liker->id){
         // Mail::to($post->user)->queue(new postlike($post->user, auth()->user(), $post));
         $post->user->notify(new LikesNotification($liker,$post));
       }
       // Notify  admins
-      $liker = auth()->user();
+
       User::where('is_admin', true)->get()->each(function ($admin) use ($liker, $post) {
       if($admin && $this->allow($admin,NotificationType::LIKE)){
       $admin->notify(new LikesNotification($liker,$post));

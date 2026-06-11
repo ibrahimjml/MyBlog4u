@@ -25,7 +25,7 @@
     @endcan
 </div>
  <div class="bg-white shadow rounded-xl overflow-hidden w-7xl lg:max-w-max mx-4 transform -translate-y-40 ">
-    <x-tables.table id='' :headers="['#','Avatar','User','Role','Permissions','Submitted Reports','Reports Recieved','Verified','Phone','Age','Blocked','Username ChangedAt','CreatedAt','Actions']" title="Users Table" >
+    <x-tables.table id='' :headers="['#','Avatar','User','Stats','Role','Permissions','Submitted Reports','Reports Recieved','Verified','Phone','Blocked','Username ChangedAt','CreatedAt','Actions']" title="Users Table" >
       @forelse ($users as $user)
   
       <tr>
@@ -42,6 +42,22 @@
         <p>{{$user->email}}</p>
         </div>
         </td>
+        <td  class=" pr-2 w-20 text-left">
+        <div class="flex flex-col  gap-1 text-sm text-gray-700">
+        <div title="posts" class="flex items-center gap-2">
+            <i class="fas fa-image text-blue-500 w-4"></i>
+            <span>{{ $user->post_count }}</span>
+        </div>
+        <div title="followings" class="flex items-center gap-2">
+            <i class="fas fa-user text-green-500 w-4"></i>
+            <span>{{ $user->followings_count }}</span>
+        </div>
+        <div title="followers" class="flex items-center gap-2">
+            <i class="fas fa-users text-purple-500 w-4"></i>
+            <span>{{ $user->followers_count }}</span>
+        </div>
+         </div>
+      </td>
         <td class="p-2 flex justify-start w-40">
         @can('user.role')
         @include('admin.users.partials.change-role')
@@ -80,7 +96,6 @@
         </div>
         </td>
         <td class=" p-2">{{$user->phone}}</td>
-        <td class=" p-2">{{$user->age}}</td>
         <td class=" bg-white  p-2 text-center">
         <div class="flex justify-center">
         @if($user->is_blocked)
@@ -90,10 +105,22 @@
         @endif
         </div>
         </td>
-        <td class=" p-2">{{ $user->username_changed_at ? $user->username_changed_at->format('Y-m-d H:i') : '-' }}</td>
+        <td class=" p-2 text-center">{{ $user->username_changed_at ? $user->username_changed_at->format('Y-m-d H:i') : 'N/A' }}</td>
         <td class=" p-2">{{$user->created_at->diffForHumans()}}</td>
         <td colspan="2" class=" bg-white text-white p-2">
         <div class="flex justify-center gap-2">
+        @can('activate',$user)
+        @if(!$user->is_admin && !$user->activation->completed) <!-- Activation users -->
+        <div>
+        <form action="{{ route('admin.users.activate',$user) }}" method="POST">
+        @csrf
+        @method("PATCH")
+        <button type="submit" class="text-green-500 rounded-lg p-2 hover:text-green-400 ">
+          <i class="fas fa-power-off"></i>
+        </form>
+      </div>
+      @endif
+      @endcan
         <div>
         @can('deleteAny',$user)
         <form action="{{ route('admin.users.delete', $user) }}" method="POST"
@@ -118,27 +145,42 @@
         </form>
         @endcan
         </div>
+
         @can('updateAny',$user)
-        <button data-user-id="{{ $user->id }}" class="editusers text-gray-500 rounded-lg p-2 cursor-pointer hover:text-gray-300" ><i class="fas fa-edit"></i></button>
+        <button type="button"
+          data-user="{{ json_encode([
+              'id' => $user->id,
+              'name' => $user->name,
+              'username' => $user->username,
+              'email' => $user->email,
+              'age' => $user->age,
+              'phone' => $user->phone,
+              'selectedRole' => $user->roles->first()?->name,
+              'permissions' => $user->userPermissions->pluck('id')->toArray(),
+          ]) }}"
+          data-update-url="{{ route('admin.users.update', $user) }}"
+          class="editusers text-gray-500 rounded-lg p-2 cursor-pointer hover:text-gray-300">
+          <i class="fas fa-edit"></i>
+        </button>
         @endcan
       </div>
     </td>
   </tr>
-  {{-- user edit model --}}
-  @include('admin.users.partials.edit-user-model',['permissions'=>$permissions,'roles'=>$roles,'user'=>$user])
-      @empty
-      <h4 class="text-center font-bold">Sorry, column not found</h4>
-      @endforelse
-  </x-tables.table>
-  <div class="relative  ">
-    {!! $users->links() !!}
-  </div>
- </div>
+  @empty
+  <h4 class="text-center font-bold">Sorry, column not found</h4>
+  @endforelse
+</x-tables.table>
+<div class="relative  ">
+  {!! $users->links() !!}
+</div>
+</div>
 </div>
 
 
-  {{-- create user model --}}
-  @include('admin.users.partials.create-user-model',['permissions'=>$permissions,'roles'=>$roles])
+{{-- create user model --}}
+@include('admin.users.partials.create-user-model',['permissions'=>$permissions,'roles'=>$roles])
+{{-- user edit model --}}
+@include('admin.users.partials.edit-user-model',['permissions'=>$permissions,'roles'=>$roles])
   
 @endsection
 
@@ -162,20 +204,4 @@
     });
   }
 </script>
-<script>
-  document.querySelectorAll('.editusers').forEach(button => {
-    const userId = button.dataset.userId;
-    const modal = document.getElementById(`editModel-${userId}`);
-    const closeBtn = document.getElementById(`closeEditModel-${userId}`);
-
-    button.addEventListener('click', () => {
-      modal.classList.remove('hidden');
-    });
-
-    closeBtn.addEventListener('click', () => {
-      modal.classList.add('hidden');
-    });
-  });
-</script>
-
 @endpush

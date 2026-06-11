@@ -9,7 +9,7 @@ use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Notifications\DatabaseNotification;
-class SendProfileViewNotification
+class SendProfileViewNotification implements ShouldQueue
 {
     /**
      * Create the event listener.

@@ -7,7 +7,7 @@ use App\Notifications\ReportStatusNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
-class SendReportStatusNotification
+class SendReportStatusNotification implements ShouldQueue
 {
     /**
      * Create the event listener.

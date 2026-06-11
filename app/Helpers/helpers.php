@@ -27,3 +27,14 @@ if (! function_exists('abort_unless_require_registration')) {
     abort_unless($allowedRegistration, 403, 'Registration is currently disabled contact support.');
   }
 }
+
+if(! function_exists('abort_if_user_not_activated')){
+   function abort_if_user_not_activated($user)
+   {
+     if ($user->hasRole(\App\Enums\UserRole::USER->value) &&
+        (! $user->activation || ! $user->activation->completed))
+         {
+      abort(404);
+      }
+   }
+}

@@ -5,6 +5,7 @@ namespace App\Http\Requests\App;
 use App\Models\User;
 use App\Rules\EmailProviders;
 use App\Rules\PasswordRule;
+use App\Rules\Recaptcha;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -31,13 +32,15 @@ class RegisterRequest extends FormRequest
             "username" => ["required", "min:5", "max:15", "alpha_num", Rule::unique(User::class)],
             "phone" => ['required', 'regex:/^\+\d{8,15}$/', Rule::unique(User::class)],
             "password" => ["required","confirmed",new PasswordRule()],
-            "age" => ["required", "integer", "between:18,64"]
+            "accept" => ['required'],
+            "g-recaptcha-response" => [new Recaptcha()]
         ];
     }
      public function messages(): array
     {
         return [
-            'phone.regex' => 'The phone number must include a valid country code.'
+            'phone.regex' => 'The phone number must include a valid country code.',
+            'accept.required' => 'Please read and accept the terms and privacy',
         ];
     }
 }

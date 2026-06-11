@@ -42,7 +42,6 @@
             "fas fa-circle  mr-2 text-xs",
             'text-orange-400' => $report->post->status === \App\Enums\PostStatus::BANNED,
             'text-green-600' => $report->post->status === \App\Enums\PostStatus::PUBLISHED,
-            'text-red-600' => $report->post->status === \App\Enums\PostStatus::TRASHED,
           ])></i>  {{$report->post->status->value}}
       </td>
       <td>{{$report->reason_label}}</td>

@@ -102,7 +102,7 @@ async function handleMentionInput(eo) {
     const cursor = textarea.selectionStart;
     const textBefore = textarea.value.slice(0, cursor);
 
-    const match = textBefore.match(/@([\w]{2,})$/);
+    const match = textBefore.match(/@([\w][\w.-]{1,})$/);
 
     if (!match) {
         hideMentionDropdown();
@@ -110,6 +110,7 @@ async function handleMentionInput(eo) {
     }
 
     const query = match[1];
+    const currentQuery = query;
 
     if (mentionController) {
         mentionController.abort();
@@ -118,16 +119,29 @@ async function handleMentionInput(eo) {
     mentionController = new AbortController();
 
     try {
-        const res = await fetch(`/users/search?q=${query}`, {
+        const url = new URL('/users/search', window.location.origin);
+        url.searchParams.set('q', query);
+
+        const res = await fetch(url.toString(), {
             signal: mentionController.signal,
         });
 
-        if (!res.ok) return;
+        if (!res.ok) {
+            hideMentionDropdown();
+            return;
+        }
 
         const users = await res.json();
 
+        if (!textarea.value.slice(0, cursor).endsWith(`@${currentQuery}`)) {
+            return;
+        }
+
         showMentionDropdown(users, textarea);
     } catch (err) {
+        if (err.name === 'AbortError') {
+            return;
+        }
         console.error(err);
     }
 }
@@ -165,12 +179,13 @@ function showMentionDropdown(users, textarea) {
         )
         .join("");
 
-    const rect = textarea.getBoundingClientRect();
+ const rect = textarea.getBoundingClientRect();
 
-    dropdown.style.top = `${window.scrollY + rect.bottom - 60}px`;
-    dropdown.style.left = `${window.scrollX + rect.left}px`;
+    dropdown.style.position = "absolute";
+    dropdown.style.top = `${rect.bottom}px`;
+    dropdown.style.left = `${rect.left}px`;
+
     dropdown.classList.remove("hidden");
-
     dropdown.currentTextarea = textarea;
 }
 document.body.addEventListener("click", (eo) => {

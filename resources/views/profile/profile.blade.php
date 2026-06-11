@@ -120,7 +120,7 @@
     @if($user->bio == null)
     <p class="text-lg text-gray-400 text-center mb-2">Tell people about yourself</p>
     @else
-      <i class="fas fa-info mr-2 text-lg text-blueGray-400"></i>{{$user->bio}}
+      <i class="fas fa-info-circle mr-2 text-lg text-gray-300/50"></i>{{$user->bio}}
     @endif
     </div>
   {{-- social links --}}
@@ -151,7 +151,7 @@
 </div>
 
 {{-- home | activity | aboutme sections --}}
-<div class=" py-10 border-t border-blueGray-200 text-center">
+<div class=" py-10 border-t border-blueGray-200 ">
 <div id="profile-content">
   @switch($section)
   @case('home')

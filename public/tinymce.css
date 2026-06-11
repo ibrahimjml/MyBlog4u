@@ -5,6 +5,19 @@ div.published-content img {
   height: auto; 
 
     }
+div.published-content ul li::marker { 
+color: #1d2021;
+    }
+/* ===============
+  style aboutme page
+=================*/  
+#about-me {
+    max-width: 100% !important;
+}
+#about-me ul li::marker {
+    color: #1d2021;
+}  
+
 /* ===============
   styles for prism
 =================*/

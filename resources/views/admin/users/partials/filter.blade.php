@@ -23,13 +23,20 @@
 </x-forms.filter-form>
 <!-- blocked -->
 <x-forms.filter-form exclude="blocked" class="gap-3 bg-blueGray-200 rounded-md p-2 h-10 flex items-center">
-      <input type="checkbox" name="blocked" value="1"
+      <input type="checkbox" id="blocked" name="blocked" value="1"
         {{ request('blocked') ? 'checked' : '' }}
         onchange="this.form.submit()">
           <label class="text-blueGray-500 font-semibold" for="blocked">Blocked</label>
 </x-forms.filter-form>
+<!-- Activation -->
+<x-forms.filter-form exclude="activate" class="gap-3 bg-blueGray-200 rounded-md p-2 h-10 flex items-center">
+      <input type="checkbox" id="activate" name="activate" value="1"
+        {{ request('activate') ? 'checked' : '' }}
+        onchange="this.form.submit()">
+          <label class="text-blueGray-500 font-semibold" for="activate">Require Activation <b class="text-gray-800/70">({{ $activationCount }})</b></label>
+</x-forms.filter-form>
   <!-- Clear Filters  -->
-    @if(request()->anyFilled(['search', 'sort', 'blocked']))
+    @if(request()->anyFilled(['search', 'sort', 'blocked','activate']))
       <a href="{{ url()->current() }}" 
          class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg text-sm transition duration-200 flex items-center gap-2">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

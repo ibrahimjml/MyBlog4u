@@ -13,7 +13,7 @@ class UpdateUserDTO
       public readonly ?string $username,
       public readonly ?string $password,
       public readonly ?int $age,
-      public readonly ?int $phone,
+      public readonly ?string $phone,
       public readonly UserRole $roles,
       public readonly ?array $permissions =[],
     ){}
