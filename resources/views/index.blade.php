@@ -49,7 +49,6 @@
                 <p>{{$post->created_at->format('F d, Y')}}</p>
                </div>
           <p class="text-sm font-bold mt-1">{{ $post->title }}</p>
-          <p class="absolute top-7 left-4 text-sm font-bold mt-1 p-2 rounded bg-orange-400 text-blueGray-200">Featured</p>
         </a>
       </div>
     @endforeach

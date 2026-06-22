@@ -2,13 +2,10 @@
 namespace App\Helpers;
 
 use App\Models\SeoSetting;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class MetaHelpers
 {
-  private const DEFAULT_FAVICON = '/img/icon.png';
-  private const DEFAULT_LOGO = '/img/logo.png';
-  private const STORAGE_PATH = 'storage/uploads/';
   private const DEFAULT_KEYWORDS = 'laravel, blogpost, myblog, links, link, cv, portfolio, aggregation, platform, social, media, profile';
   private const DEFAULT_DESCRIPTION = 'Myblog4u a social network that connect creators, writes, publishers';
   private const DEFAULT_TITLE = 'Myblog4u Platform';
@@ -27,8 +24,8 @@ class MetaHelpers
       'meta_title'       => $post->title ?? self::DEFAULT_TITLE,
       'meta_description' => $metaDescription ?? self::DEFAULT_DESCRIPTION,
       'meta_keywords'    => $metaKeywords ,
-      'og_image'         => url(self::STORAGE_PATH . $post->image_path),
-      'favicon_url'      => url($seoSettings?->favicon_url) ?? url(self::DEFAULT_FAVICON),
+      'og_image'         => Storage::disk(media_driver())->url('uploads/' . $post->image_path) ?: url('img/logo2.png'),
+      'favicon_url'      => $seoSettings?->favicon_url ?? url('img/icon.png'),
       'header_scripts'   => $seoSettings?->header_scripts ?? '',
       'footer_scripts'   => $seoSettings?->footer_scripts ?? '',
       'og_type'          => 'article',
@@ -36,14 +33,15 @@ class MetaHelpers
   }
   public static function generateDefault($title = null, $description = null, $hashtags = [], $user = null)
   {
-    $favicon = SeoSetting::first()?->favicon_url ?? self::DEFAULT_FAVICON;
+    $favicon = SeoSetting::first()?->favicon_url;
+
     return [
       'author'           => $user?->username ?? config('app.name'),
       'meta_title'       => $title ?? self::DEFAULT_TITLE,
       'meta_description' => $description ?? self::DEFAULT_DESCRIPTION,
       'meta_keywords'    => !empty($hashtags) ? implode(', ', $hashtags) : self::DEFAULT_KEYWORDS,
-      'og_image'         => $user?->avatar_url ? url($user->avatar_url) : url(self::DEFAULT_LOGO),
-      'favicon_url'      => url($favicon) ?? url(self::DEFAULT_FAVICON),
+      'og_image'         =>  $user?->avatar_url ?: url('img/logo2.png'),
+      'favicon_url'      => url($favicon) ?? url('img/icon.png'),
       'og_type'          => $user ? 'profile' : 'website',
     ];
   }
@@ -52,8 +50,8 @@ class MetaHelpers
   {
     return [
       'author'           => $author ?? config('app.name'),
-      'favicon_url'      => url($favicon) ?? url(self::DEFAULT_FAVICON),
-      'og_image'         => url($ogImage) ?? url(self::DEFAULT_LOGO),
+      'favicon_url'      => url($favicon) ?: url('img/icon.png'),
+      'og_image'         => url($ogImage) ?: url('img/logo2.png'),
       'meta_title'       => $title ?? self::DEFAULT_TITLE,
       'meta_description' => $description ?? self::DEFAULT_DESCRIPTION,
       'meta_keywords'    => !empty($keywords) ? implode(', ', $keywords) : self::DEFAULT_KEYWORDS,

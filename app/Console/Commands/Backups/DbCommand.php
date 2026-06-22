@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands\Backups;
 
+use App\Services\BackupDiskResolver;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Storage;
@@ -17,18 +18,24 @@ class DbCommand extends Command
   /**
    * Execute the console command.
    */
-  public function handle()
+  public function handle(BackupDiskResolver $resolver)
   {
-    $filename = env('DB_DATABASE') . '-' . now()->format('Y-m-d-H-i-s') . '.sql.enc';
-    $disk = Storage::disk('backups');
+    $connectionName = config('database.default');
+    $db = config("database.connections.$connectionName");
+    $filename = $db['database'] . '-' . now()->format('Y-m-d-H-i-s') . '.sql.enc';
+    $disk = $resolver->resolve();
+
     $process = new Process([
       'mysqldump', 
-      '--user=' . env('DB_USERNAME'), 
-      '--password=' . env('DB_PASSWORD'), 
-      '--host=' . env('DB_HOST'), 
-      env('DB_DATABASE'),
+      '--user=' . $db['username'], 
+      '--host=' . $db['host'], 
+      '--port=' . ($db['port'] ?? 3306),
+      $db['database'],
       ]);
+
+    $process->setEnv(['MYSQL_PWD' => $db['password']]);
     $process->run();
+
     if (! $process->isSuccessful()) {
       $this->error($process->getErrorOutput());
       return self::FAILURE;

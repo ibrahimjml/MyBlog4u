@@ -44,8 +44,8 @@ class PostObserver
             $oldimage = 'uploads/' . $post->image_path;
             Log::info('Trying to delete old image: ' . $oldimage);
     
-            if (Storage::disk('public')->exists($oldimage)) {
-              Storage::disk('public')->delete($oldimage);
+            if (Storage::disk(media_driver())->exists($oldimage)) {
+              Storage::disk(media_driver())->delete($oldimage);
                 Log::info('image deleted : '.$post->image_path);
             } else {
                 Log::warning('old image not found: ');
@@ -73,10 +73,14 @@ class PostObserver
             $src = $img->getAttribute('src');
             Log::info('Found TinyMCE image src: ' . $src);
 
-            $path = str_replace('/storage/', 'public/', parse_url($src, PHP_URL_PATH));
-    
-            if (Storage::exists($path)) {
-                Storage::delete($path);
+            $path = ltrim(parse_url($src, PHP_URL_PATH), '/');
+
+            if(media_driver() === 'public'){
+              $path = str_replace('/storage/', 'public/', parse_url($src, PHP_URL_PATH));
+            }
+
+            if (Storage::disk(media_driver())->exists($path)) {
+                Storage::disk(media_driver())->delete($path);
                 Log::info('Found TinyMCE image src: ' . $src .'deleted');
             }
             Log::warning('Not Found TinyMCE image');

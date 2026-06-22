@@ -49,8 +49,8 @@
                 E-Mail Address:
               </label>
 
-              <input id="email" type="email" placeholder="mail.ru, gmail.com, outlook.com, hotmail.com"
-                class="w-full rounded-2xl border border-gray-300 bg-gray-50 p-3 text-gray-900 transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none @error('email') border-red-500 bg-white @enderror"
+              <input id="email" type="email" placeholder="e.g. gmail.com, mail.ru"
+                class="w-full rounded-2xl border placeholder:text-xs border-gray-300 bg-gray-50 p-3 text-gray-900 transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none @error('email') border-red-500 bg-white @enderror"
                 name="email" value="{{ old('email') }}" required autocomplete="email">
 
               @error('email')
@@ -151,7 +151,7 @@
         });
 
 
-        fetch('https://get.geojs.io/v1/ip/country.json')
+        fetch('https://get.geojs.io/v1/ip/geo.json')
           .then(response => response.json())
           .then(data => {
             const country = data.country_code;  // Country code like "US", "IN", etc.

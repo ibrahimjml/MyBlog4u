@@ -38,3 +38,8 @@ if(! function_exists('abort_if_user_not_activated')){
       }
    }
 }
+if(! function_exists('media_driver')){
+   function media_driver(){
+      return config('filesystems.default');
+   }
+}

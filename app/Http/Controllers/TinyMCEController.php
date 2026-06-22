@@ -25,10 +25,11 @@ class TinyMCEController extends Controller
           $file = $request->file('tiny-image');
           $filename = 'TinyMCE'.'.'.Str::random(15) . '.' . $file->getClientOriginalExtension();
           
-          $path = $file->storeAs('images', $filename, 'public');
-          
+          $path = $file->storeAs('images', $filename, media_driver());
+          $url = Storage::disk(media_driver())->url($path);
+
           return response()->json([
-            'location' => '/storage/' . $path  
+            'location' => $url 
         ]);
       }
 
@@ -42,10 +43,13 @@ class TinyMCEController extends Controller
     if (!$src) return response()->json(['message' => 'No image provided'], 400);
 
     $path = parse_url($src, PHP_URL_PATH); 
-    $storagePath = str_replace('/storage/', '', $path); 
+    
+     if (media_driver() === 'public') {
+    $path = str_replace('/storage/', '', $path); 
+     }
 
-    if (Storage::disk('public')->exists($storagePath)) {
-        Storage::disk('public')->delete($storagePath);
+    if (Storage::disk(media_driver())->exists($path)) {
+        Storage::disk(media_driver())->delete($path);
     
         return response()->json(['message' => 'Image deleted']);
     }

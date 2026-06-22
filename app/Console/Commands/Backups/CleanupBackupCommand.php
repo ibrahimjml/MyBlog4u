@@ -2,9 +2,9 @@
 
 namespace App\Console\Commands\Backups;
 
+use App\Services\BackupDiskResolver;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Storage;
 
 class CleanupBackupCommand extends Command
 {
@@ -12,9 +12,9 @@ class CleanupBackupCommand extends Command
 
     protected $description = 'Delete old backup files from backups disk';
 
-    public function handle(): int
+    public function handle(BackupDiskResolver $resolver): int
     {
-         $disk = Storage::disk('backups');
+         $disk = $resolver->resolve();
 
         if (!method_exists($disk, 'files')) {
             $this->error('Backups disk is not accessible.');
