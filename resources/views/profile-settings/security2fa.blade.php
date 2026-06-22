@@ -52,75 +52,123 @@
 @push('scripts')
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-
+      let faModal = null;
       const open2faBtn = document.getElementById('open2fa');
+      const originalOpen2faHtml = open2faBtn?.innerHTML;
 
-      open2faBtn?.addEventListener('click', async () => {
-        const res = await fetch('{{ route('enable.2fa') }}', {
-          method: 'POST',
-          headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-            'X-Requested-With': 'XMLHttpRequest',
-            'Accept': 'application/json'
+      try {
+        open2faBtn?.addEventListener('click', async () => {
+          if (open2faBtn) {
+            open2faBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i>`;
+            open2faBtn.disabled = true;
+          }
+
+          const res = await fetch('{{ route('enable.2fa') }}', {
+            method: 'POST',
+            headers: {
+              'X-CSRF-TOKEN': '{{ csrf_token() }}',
+              'X-Requested-With': 'XMLHttpRequest',
+              'Accept': 'application/json'
+            }
+          });
+          const contentType = res.headers.get('content-type');
+
+          if (contentType && contentType.includes('application/json')) {
+
+            const data = await res.json();
+
+            if (data.demo_mode) {
+              toastr.error(data.message);
+              return;
+            }
+
+          } else {
+
+            const html = await res.text();
+
+            document.getElementById('2faContainer').innerHTML = html;
+
+            faModal = document.getElementById('2faModel');
+
+            if (!faModal) return;
+
+            faModal.classList.remove('hidden');
+
+            // Setup event listeners after modal is shown
+            setTimeout(() => {
+              const continueBtn = faModal.querySelector('#continue2fa');
+              if (continueBtn) {
+                continueBtn.addEventListener('click', () => {
+                  faModal.classList.add('hidden'); // hide 2FA modal
+                  const confirmModal = document.getElementById('confirmationModel');
+                  if (confirmModal) confirmModal.classList.remove('hidden'); // show confirmation modal
+                });
+              }
+
+              closeTwoFaModal();
+
+              // copy button
+              const copyDiv = faModal.querySelector('#secret + div');
+              if (copyDiv) {
+                copyDiv.addEventListener('click', () => {
+                  const secret = faModal.querySelector('#secret').innerText;
+                  navigator.clipboard.writeText(secret).then(() => {
+                    toastr.options = {
+                      closeButton: true,
+                      progressBar: true,
+                      positionClass: "toast-bottom-right",
+                      timeOut: 2000
+                    };
+                    toastr.success("Copied To Clipboard");
+                  });
+                });
+              }
+            }, 50);
           }
         });
-        const contentType = res.headers.get('content-type');
-
-        if (contentType && contentType.includes('application/json')) {
-
-          const data = await res.json();
-
-          if (data.demo_mode) {
-            toastr.error(data.message);
-            return;
-          }
-
-        } else {
-
-          const html = await res.text();
-
-          document.getElementById('2faContainer').innerHTML = html;
-
-          const faModal = document.getElementById('2faModel');
-
-          if (!faModal) return;
-
-          faModal.classList.remove('hidden');
+      } catch (error) {
+        alert(error.message);
+      } finally {
+        if (open2faBtn) {
+          open2faBtn.disabled = false;
+          open2faBtn.innerHTML = originalOpen2faHtml || `
+              <i class="fas fa-user-shield text-xs"></i>
+              <small>Enable Two Factor</small>`;
         }
-        setTimeout(() => {
-          const continueBtn = faModal.querySelector('#continue2fa');
-          continueBtn?.addEventListener('click', () => {
-            faModal.classList.add('hidden'); // hide 2FA modal
-            const confirmModal = document.getElementById('confirmationModel');
-            if (confirmModal) confirmModal.classList.remove('hidden'); // show confirmation modal
-          });
+      }
 
-          faModal.querySelector('#closeModel')?.addEventListener('click', () => {
+
+      closeConfirmationModal();
+
+
+      function closeTwoFaModal() {
+        const closeModelBtn = faModal.querySelector('#closeModel');
+        if (closeModelBtn) {
+          closeModelBtn.addEventListener('click', () => {
             faModal.classList.add('hidden');
+            if (open2faBtn) {
+              open2faBtn.disabled = false;
+              open2faBtn.innerHTML = originalOpen2faHtml || `
+           <i class="fas fa-user-shield text-xs"></i>
+           <small>Enable Two Factor</small>`;
+            }
+
           });
-          // copy button
-          faModal.querySelector('#secret + div')?.addEventListener('click', () => {
-            const secret = faModal.querySelector('#secret').innerText;
-            navigator.clipboard.writeText(secret).then(() => {
-              toastr.options = {
-                closeButton: true,
-                progressBar: true,
-                positionClass: "toast-bottom-right",
-                timeOut: 2000
-              };
-              toastr.success("Copied To Clipboard");
-            });
-          });
-        }, 50);
-
-      });
-
-      const closeConfirmBtn = document.getElementById('closeConfirmation');
-      closeConfirmBtn?.addEventListener('click', () => {
-        const confirmModal = document.getElementById('confirmationModel');
-        if (confirmModal) confirmModal.classList.add('hidden');
-      });
-
+        }
+      }
+      function closeConfirmationModal() {
+        const closeConfirmBtn = document.getElementById('closeConfirmation');
+        closeConfirmBtn?.addEventListener('click', () => {
+          const confirmModal = document.getElementById('confirmationModel');
+          if (confirmModal) confirmModal.classList.add('hidden');
+          if (open2faBtn) {
+            open2faBtn.disabled = false;
+            open2faBtn.innerHTML = originalOpen2faHtml || `
+           <i class="fas fa-user-shield text-xs"></i>
+           <small>Enable Two Factor</small>`;
+          }
+        });
+      }
     });
   </script>
   <script>

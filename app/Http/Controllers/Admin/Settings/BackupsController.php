@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\Admin\Settings;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Services\BackupDiskResolver;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Storage;
 
 class BackupsController extends Controller
 {
-  public function __construct()
+  public function __construct(protected BackupDiskResolver $backupDisk)
   {
     $this->middleware('permission:backup.view')->only('backup_view');
     $this->middleware('permission:backup.download')->only('backup_download');
@@ -18,15 +18,16 @@ class BackupsController extends Controller
 
   public function backup_view()
   {
-    return view('admin.settings.backup', ['files' => Storage::disk('backups')->files()]);
+    $disk = $this->backupDisk->resolve();
+    return view('admin.settings.backup', [
+      'files' => $disk->files()
+      ]);
   }
   public function backup_download($file)
   {
-    $disk = Storage::disk('backups');
+    $disk = $this->backupDisk->resolve();
 
-    if (! $disk->exists($file)) {
-      abort(404);
-    }
+    abort_unless($disk->exists($file), 404);
 
     $encrypted = base64_decode($disk->get($file));
 
@@ -53,11 +54,9 @@ class BackupsController extends Controller
   }
   public function backup_destroy($file)
   {
-    $disk = Storage::disk('backups');
+    $disk = $this->backupDisk->resolve();
 
-    if (! $disk->exists($file)) {
-      abort(404);
-    }
+    abort_unless($disk->exists($file), 404);
     $disk->delete($file);
 
     toastr()->success('Backup deleted', ['timeOut' => 1000]);

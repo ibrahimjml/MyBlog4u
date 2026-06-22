@@ -13,7 +13,9 @@ use App\Repositories\Eloquent\TagRepository;
 use App\Repositories\Interfaces\CategoryInterface;
 use App\Repositories\Interfaces\PostInterface;
 use App\Repositories\Interfaces\TagInterface;
+use App\Services\MediaDriverResolver;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
@@ -53,11 +55,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+       app(MediaDriverResolver::class)->resolveAndApply();
        $this->bootEvents();
        $this->bootBladeDirectives();
        $this->bootDynamicConfigSmtp();
        $this->bootDynamicConfigRecaptcha();
      }
+
+
     public function bootEvents(){
       Post::observe(PostObserver::class);
       Comment::observe(CommentObserver::class);

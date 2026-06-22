@@ -39,7 +39,7 @@ class AdController extends Controller
         $validated = $request->validated();
 
         if ($request->hasFile('image')) {
-          $uploadedImagePath = $request->file('image')->store('ads', 'public');
+          $uploadedImagePath = $request->file('image')->store('ads', media_driver());
           $validated['image_path'] = $uploadedImagePath;
         }
 
@@ -75,7 +75,7 @@ class AdController extends Controller
         $validated = $request->validated();
 
         if ($request->hasFile('image')) {
-          $uploadedImagePath = $request->file('image')->store('ads', 'public');
+          $uploadedImagePath = $request->file('image')->store('ads', media_driver());
           $validated['image_path'] = $uploadedImagePath;
         } elseif ($request->boolean('remove_image')) {
           $validated['image_path'] = null;

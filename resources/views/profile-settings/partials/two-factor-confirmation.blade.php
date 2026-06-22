@@ -30,7 +30,7 @@
         class="bg-black/60 mt-3 text-white  font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150">
         Confirm
       </button>
-      <button onclick="document.getElementById('confirmationModel').classList.add('hidden');"
+      <button id="cancel" onclick="cancelTwoFactor()"
         class="bg-red-500/70 mt-3 text-white  font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150">
         Cancel
       </button>
@@ -99,6 +99,22 @@
         toastr.error(data.errors?.code || 'Invalid code');
       }
     });
+  </script>
+  <script>
+    function cancelTwoFactor() {
 
+      const confirmModal = document.getElementById('confirmationModel');
+      const open2faBtn = document.getElementById('open2fa');
+
+      if (confirmModal) confirmModal.classList.add('hidden');
+      if (open2faBtn) {
+        open2faBtn.disabled = false;
+        open2faBtn.innerHTML =  `
+               <i class="fas fa-user-shield text-xs"></i>
+               <small>Enable Two Factor</small>`;
+      }
+
+
+    }
   </script>
 @endpush

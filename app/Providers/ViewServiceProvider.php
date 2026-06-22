@@ -85,7 +85,13 @@ class ViewServiceProvider extends ServiceProvider
           ->orderBy('title')
           ->get();
       });
-      $view->with('footerPages', $footerPages);
+      $categories = Cache::rememberForever('categories_footer', function () {
+        return \App\Models\Category::query()
+          ->orderBy('is_featured', 'desc')
+          ->take(5)
+          ->get();
+      });
+      $view->with(['footerPages' => $footerPages, 'categories' => $categories]);
     });
   }
 

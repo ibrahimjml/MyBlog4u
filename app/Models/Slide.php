@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Enums\SlidesStatus;
-use Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
@@ -46,12 +45,6 @@ class Slide extends Model
     }
     public function getImageAttribute()
     {
-          if ($this->image_path && Storage::disk('slides')->exists($this->image_path)) {
-            return Storage::disk('slides')->url($this->image_path);
-          }
-
-        if ($this->image_path && file_exists(public_path($this->image_path))) {
-            return asset($this->image_path);
-          }
+      return Storage::disk(media_driver())->url('slides/'.$this->image_path);
     }
 }

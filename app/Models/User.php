@@ -143,12 +143,12 @@ class User extends Authenticatable implements MustVerifyEmail
   {
     return $this->avatar !== "default.jpg"
       ? Storage::url('avatars/' . $this->avatar)
-      : asset('storage/avatars/' . $this->avatar);
+      : Storage::url('avatars/' . 'default.jpg');
   }
   public function getCoverAttribute()
   {
     return $this->cover_photo === 'sunset.jpg'
-      ? asset('storage/covers/' . $this->cover_photo)
+      ? Storage::url('covers/' . 'sunset.jpg')
       : Storage::url('covers/' . $this->cover_photo);
   }
   protected $hidden = [

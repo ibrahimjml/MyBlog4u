@@ -42,18 +42,6 @@ return [
             'url' => env('APP_URL').'/storage',
             'visibility' => 'public',
         ],
-
-        'slides' => [
-            'driver' => 'local',
-            'root' => public_path('slides'),
-            'url' => env('APP_URL').'/slides',
-            'visibility' => 'public',
-        ],
-        'backups' => [
-            'driver' => 'local',
-            'root' => storage_path('app/private/backups'),
-            'visibility' => 'private',
-        ],
         
         's3' => [
             'driver' => 's3',
@@ -66,7 +54,28 @@ return [
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
             'throw' => false,
         ],
+          'do_spaces' => [
+              'driver' => 's3',
+              'key' => '',
+              'secret' => '',
+              'region' => '',
+              'bucket' => '',
+              'endpoint' => '',
+              'use_path_style_endpoint' => false,
+              'throw' => true
+       ],
+        'r2' => [
+            'driver' => 's3',
+            'key' => '',
+            'secret' => '',
+            'region' => 'auto',
+            'bucket' => '',
+            'url' => '',
+            'endpoint' => '',
+            'use_path_style_endpoint' => false,
+            'throw' => true,
 
+       ],
     ],
 
     /*

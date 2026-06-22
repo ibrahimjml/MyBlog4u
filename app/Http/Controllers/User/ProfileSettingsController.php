@@ -54,8 +54,8 @@ class ProfileSettingsController extends Controller
     public function delete_avatar()
     {
       $user = request()->user();
-      if ($user->avatar !== 'default.jpg' && Storage::disk('public')->exists("avatars/{$user->avatar}")) {
-        Storage::disk('public')->delete("avatars/{$user->avatar}");
+      if ($user->avatar !== 'default.jpg' && Storage::disk(media_driver())->exists("avatars/{$user->avatar}")) {
+        Storage::disk(media_driver())->delete("avatars/{$user->avatar}");
     }
     $user->avatar="default.jpg";
     $user->save();
@@ -68,8 +68,8 @@ class ProfileSettingsController extends Controller
     public function delete_cover()
     {
       $user = request()->user();
-         if ($user->cover_photo !== 'sunset.jpg' && Storage::disk('public')->exists("covers/{$user->cover_photo}")) {
-        Storage::disk('public')->delete("covers/{$user->cover_photo}");
+         if ($user->cover_photo !== 'sunset.jpg' && Storage::disk(media_driver())->exists("covers/{$user->cover_photo}")) {
+        Storage::disk(media_driver())->delete("covers/{$user->cover_photo}");
     }
     $user->cover_photo = 'sunset.jpg';
     $user->save();

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\SeoSetting;
 use App\Traits\ImageUploadTrait;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class SeoController extends Controller
 {
@@ -72,10 +73,10 @@ class SeoController extends Controller
 
   private function deleteSeoImage(string $imagePath)
   {
-    $candidate = public_path('img/' . $imagePath);
+    $candidate = 'img/' . $imagePath;
 
-    if (file_exists($candidate)) {
-      unlink($candidate);
+    if (Storage::disk(media_driver())->exists($candidate)) {
+      Storage::disk(media_driver())->delete($candidate);
     }
   }
 }

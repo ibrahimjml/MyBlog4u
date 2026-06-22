@@ -92,8 +92,8 @@ class SlidesService
 
     protected function deleteSlideImage(?string $imagePath): void
     {
-        if ($imagePath && Storage::disk('slides')->exists($imagePath)) {
-            Storage::disk('slides')->delete($imagePath);
+        if ($imagePath && Storage::disk(media_driver())->exists('slides/'.$imagePath)) {
+            Storage::disk(media_driver())->delete('slides/'.$imagePath);
         }
     }
     

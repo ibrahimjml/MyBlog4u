@@ -182,6 +182,13 @@
     </a>
   </li>
   <li class="items-center">
+    <a href="{{ route('admin.settings.media.index') }}"
+      class="text-sm capitalize py-3 font-bold block {{ Route::is('admin.settings.media.index') ? 'text-blue-500 hover:text-blue-600' : ''}}">
+      <i class="fas fa-image mr-2 text-sm opacity-75"></i>
+      Media Setting
+    </a>
+  </li>
+  <li class="items-center">
     <a href="{{ route('admin.settings.smtp') }}"
       class="text-sm capitalize py-3 font-bold block {{ Route::is('admin.settings.smtp') ? 'text-blue-500 hover:text-blue-600' : ''}}">
       <i class="fas fa-envelope mr-2 text-sm opacity-75"></i>

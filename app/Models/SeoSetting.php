@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class SeoSetting extends Model
 {
@@ -30,18 +31,21 @@ class SeoSetting extends Model
     $this->attributes['app_name'] = $value ?? config('app.name');
   }
 
-  public function getFaviconUrlAttribute()
-  {
-    if ($this->favicon_path && file_exists(public_path('img/' .$this->favicon_path))) {
-      return asset('img/' .$this->favicon_path);
+   public function getFaviconUrlAttribute(): string
+    {
+        if (!empty($this->favicon_path)) {
+            return Storage::disk(media_driver())->url('img/' . $this->favicon_path);
+        }
+
+        return asset('img/icon.png');
     }
-    return asset('img/icon.png');
-  }
-  public function getMetaOgImageUrlAttribute()
-  {
-    if ($this->meta_og_image && file_exists(public_path('img/' . $this->meta_og_image))) {
-      return asset('img/'.$this->meta_og_image);
+
+    public function getMetaOgImageUrlAttribute(): string
+    {
+        if (!empty($this->meta_og_image)) {
+            return Storage::disk(media_driver())->url('img/' . $this->meta_og_image);
+        }
+
+        return asset('img/logo2.png');
     }
-    return asset('img/logo.png');
-  }
 }

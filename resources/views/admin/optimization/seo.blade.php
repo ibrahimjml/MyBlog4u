@@ -135,7 +135,7 @@
               <div id="currentMetaOgImage"
                 class="w-[200px] bg-white border-2 border-gray-300 border-dashed relative mt-3 p-2 bg-blueGray-100 rounded-md">
                 <p class="text-xs font-semibold text-blueGray-500 mb-2">Current {{ $seoSettings?->meta_og_image_url ? 'Og Image' : 'Default Og Image' }}:</p>
-                <img src="{{ $seoSettings?->meta_og_image_url ?? asset('img/logo.png') }}" alt="Current Open Graph image" class="w-40 object-cover rounded">
+                <img src="{{ $seoSettings?->meta_og_image_url ?? asset('img/logo2.png') }}" alt="Current Open Graph image" class="w-40 object-cover rounded">
                 @if($seoSettings?->meta_og_image)
                 @can('seo.update')
                 <button id="removeMetaOgImage" type="button"

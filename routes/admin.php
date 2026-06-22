@@ -1,32 +1,14 @@
 <?php
 
+use App\Http\Controllers\Admin\{ AdminController, CategoriesController, CommentReportController, CustomPageController, NotificationsController, TagsController, PermissionsController, PostReportController, PostsController, ProfileReportController, RolesController, SlidesController, UsersController };
 use App\Http\Controllers\Admin\Ads\AdController;
 use App\Http\Controllers\Admin\ApiRateLimit\ApiRateLimitController;
-use App\Http\Controllers\Admin\Optimization\SeoController;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\{
-    AdminController,
-    CategoriesController,
-    CommentReportController,
-    CustomPageController,
-    NotificationsController,
-    TagsController,
-    PermissionsController,
-    PostReportController,
-    PostsController,
-    ProfileReportController,
-    RolesController,
-    SlidesController,
-    UsersController
-};
+use App\Http\Controllers\Admin\MediaSettingController;
 use App\Http\Controllers\Admin\Optimization\MaintenanceController;
+use App\Http\Controllers\Admin\Optimization\SeoController;
 use App\Http\Controllers\Admin\PostModeration\PostModerationController;
-use App\Http\Controllers\Admin\Settings\{
-    AuthSecurityController,
-    BackupsController,
-    ManageNotificationController,
-    SmtpController
-};
+use App\Http\Controllers\Admin\Settings\{ AuthSecurityController, BackupsController, ManageNotificationController, SmtpController };
+use Illuminate\Support\Facades\Route;
 Route::prefix('admin')
     ->middleware(['can:makeAdminActions','demo'])
     ->name('admin.')
@@ -145,6 +127,11 @@ Route::put('/{category}/feature','toggle')->name('feature');
   Route::controller(AuthSecurityController::class)->group(function(){
   Route::get('/auth-settings', 'auth_settings')->name('auth.index');
   Route::put('/auth-settings', 'update_auth_settings')->name('auth.update');
+  });
+  // media settings
+  Route::prefix('media')->controller(MediaSettingController::class)->name('media.')->group(function(){
+  Route::get('/','index')->name('index');
+  Route::put('/update','mediaSettingUpdate')->name('update');
   });
   // backups 
   Route::controller(BackupsController::class)->group(function(){

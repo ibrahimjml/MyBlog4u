@@ -15,7 +15,7 @@ trait ImageUploadTrait
           $image = Image::read($imageFile)
           ->cover(1300, 600)
           ->toWebp(90);
-          Storage::disk('public')->put("uploads/{$newimage}", $image);
+          Storage::disk(media_driver())->put("uploads/{$newimage}", $image);
           return $newimage;
     }
     // user avatar image
@@ -25,7 +25,7 @@ trait ImageUploadTrait
           $image = Image::read($imageFile)
           ->scale(150, 150)
           ->toWebp(90);
-          Storage::disk('public')->put("avatars/{$newavatar}", $image);
+          Storage::disk(media_driver())->put("avatars/{$newavatar}", $image);
           return $newavatar;
     }
     // user cover image
@@ -35,17 +35,17 @@ trait ImageUploadTrait
           $image = Image::read($imageFile)
           ->cover(1500, 500)
           ->toWebp(75);
-          Storage::disk('public')->put("covers/{$newcover}", $image);
+          Storage::disk(media_driver())->put("covers/{$newcover}", $image);
           return $newcover;
     }
     // slide image
     public function uploadImageSlide(UploadedFile $imageFile, string $username)
     {
          $newslide = uniqid() . '-slide-'.$username . '.' . $imageFile->extension();
-         Image::read($imageFile)
+         $slide = Image::read($imageFile)
               ->scaleDown(1500, 600) 
-              ->toWebp(75)
-              ->save(public_path('slides/'.$newslide));
+              ->toWebp(75);
+              Storage::disk(media_driver())->put("slides/{$newslide}",$slide);
           
           return $newslide;
     }
@@ -53,21 +53,21 @@ trait ImageUploadTrait
     public function uploadMetaOgImage(UploadedFile $imageFile, string $appName)
     {
         $newMetaOgImage = 'meta-og-'.$appName . '.' . $imageFile->extension();
-        Image::read($imageFile)
+        $og_image = Image::read($imageFile)
               ->cover(1200, 630) 
-              ->toWebp(90)
-              ->save(public_path('img/'.$newMetaOgImage));
-          
+              ->toWebp(90);
+          Storage::disk(media_driver())->put( "img/{$newMetaOgImage}",$og_image);
+
           return $newMetaOgImage;
     }
     // favicon 
     public function uploadFavicon(UploadedFile $imageFile)
     {
         $newFavicon = 'favicon.' . $imageFile->extension();
-        Image::read($imageFile)
+        $favicon = Image::read($imageFile)
               ->scaleDown(64, 64) 
-              ->toWebp(90)
-              ->save(public_path('img/'.$newFavicon));
+              ->toWebp(90);
+          Storage::disk(media_driver())->put("img/{$newFavicon}",$favicon);
           
           return $newFavicon;
     }
