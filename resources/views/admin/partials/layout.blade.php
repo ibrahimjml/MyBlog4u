@@ -104,8 +104,12 @@
 
     {!! $footer_scripts ?? '' !!} <!-- custom footer scripts -->
     <script src="https://unpkg.com/@popperjs/core@2/dist/umd/popper.js"></script>
-    <script src="https://code.highcharts.com/highcharts.js"></script>
-    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+    @if(Route::is('admin.panel'))
+    <script src="{{ asset('js/highcharts-exporting.js') }}"></script>
+    <script src="{{ asset('js/highmaps.js') }}"></script>
+    <script src="{{ asset('js/highcharts-world.js') }}"></script>
+    <script src="{{ asset('js/highcharts-accessibility.js') }}"></script>
+    @endif
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>

@@ -14,7 +14,9 @@
         "vite": "^4.0.0"
     },
     "dependencies": {
+        "@highcharts/map-collection": "^2.3.3",
         "flowbite": "^3.1.2",
+        "highcharts": "^13.0.0",
         "medium-zoom": "^1.1.0",
         "prism-themes": "^1.9.0",
         "prismjs": "^1.30.0",

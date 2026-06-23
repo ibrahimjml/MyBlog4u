@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\{ AdminController, CategoriesController, CommentReportController, CustomPageController, NotificationsController, TagsController, PermissionsController, PostReportController, PostsController, ProfileReportController, RolesController, SlidesController, UsersController };
 use App\Http\Controllers\Admin\Ads\AdController;
+use App\Http\Controllers\Admin\Analytics\AnalyticsController;
 use App\Http\Controllers\Admin\ApiRateLimit\ApiRateLimitController;
 use App\Http\Controllers\Admin\MediaSettingController;
 use App\Http\Controllers\Admin\Optimization\MaintenanceController;
@@ -150,6 +151,12 @@ Route::put('/{category}/feature','toggle')->name('feature');
   Route::post('/smtpmails','smtp_config')->name('smtp.config');
   Route::post('/testmail','testmail')->name('smtp.test');
   });
+    });
+    // Analytics
+    Route::controller(AnalyticsController::class)->prefix('analytics')->name('analytics.')->group(function(){
+    Route::get('/','index')->name('index');
+    Route::put('/update','updateAnalytics')->name('update');
+    Route::post('/json','jsonUploadFile')->name('json');
     });
     // Ads management
     Route::prefix('ads')->controller(AdController::class)->name('ads.')->group(function(){

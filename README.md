@@ -38,7 +38,8 @@
 
 ### 🧑‍💼 Admin Control Panel
 
-  - **Dashboard Pages:** Realtime charts tracking new users, published posts, with fully responsive and AJAX based.
+  - **Dashboard Pages:** Realtime charts tracking new users, published posts, Google Analytics integration with fully responsive and AJAX based.
+  - **Media Setting** Easy setup custom media driver and switch between multiple media suppoted ( Local, Cloudflare R2, S3, DigitalOcean Spaces)
   - **Posts Moderation:** Full Control on posts,and enforce post submissions by auto approve posts and allow user posts going published.
   - **User Management:** Full control on users, with Full custom ACL manage custom rules, permissions , grant permissions to each rule , and grant user permissions.
   - **Notifications:** Track Creators actions by receiving notification by type, notification setting manage by notification type to allow recieving or not.

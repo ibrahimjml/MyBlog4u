@@ -36,18 +36,3 @@
     </div>
   </div>
 @endsection
-
-{{-- @push('scripts')
-<script>
-  function openAllowedEmails(toggle) {
-    const allowedEmailsSection = document.getElementById('allowed-emails-section');
-    if (!toggle.checked) allowedEmailsSection.classList.add('hidden');
-    else allowedEmailsSection.classList.remove('hidden');
-  }
-  function openRecaptchaKeys(toggle) {
-    const recaptchaKeysSection = document.getElementById('recaptcha-keys-section');
-    if (!toggle.checked) recaptchaKeysSection.classList.add('hidden');
-    else recaptchaKeysSection.classList.remove('hidden');
-  }
-</script>
-@endpush --}}

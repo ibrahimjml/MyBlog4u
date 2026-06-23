@@ -41,7 +41,8 @@ class AdminSeeder extends Seeder
       'Maintenance'       => ['maintenance.view', 'maintenance.update'],
       'Custom Pages'      => ['custompage.view', 'custompage.create', 'custompage.update', 'custompage.delete'],
       'Backups'           => ['backup.view', 'backup.download', 'backup.delete'],
-      'Media Settings'    => ['media.view', 'media.update']
+      'Media Settings'    => ['media.view', 'media.update'],
+      'Google Analytics'  => ['analytics.view','analytics.update']
     ];
 
     foreach ($modules as $name => $permssions) {

@@ -32,7 +32,6 @@ class ViewServiceProvider extends ServiceProvider
 
 
   }
-
   private function setNotificationsMenuData()
   {
     view::composer('partials.notifications-menu', function ($view) {

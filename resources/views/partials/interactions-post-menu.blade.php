@@ -94,38 +94,38 @@
   <!-- end trigger observer -->
   <div id="action-bar-end"></div>
 
-  @push('scripts')
-    {{-- observer for model inertactions --}}
-    <script>
-      document.addEventListener('DOMContentLoaded', () => {
-        const actionBar = document.getElementById('action-bar');
-        const trigger = document.getElementById('action-bar-trigger');
-        const endtrigger = document.getElementById('action-bar-end');
+@push('scripts')
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const actionBar = document.getElementById('action-bar');
+    const trigger   = document.getElementById('action-bar-trigger');
+    const endTrigger = document.getElementById('action-bar-end');
 
-        const positionObserver = new IntersectionObserver(entries => {
-          entries.forEach(entry => {
-            if (entry.isIntersecting) {
-              actionBar.classList.remove('fixed-bottom', 'hidden-bottom');
-            } else {
-              actionBar.classList.add('fixed-bottom');
-              actionBar.classList.remove('hidden-bottom');
-            }
-          });
-        }, { threshold: 0 });
-
-        // Observe  hide when scrolled below menu
-        const endObserver = new IntersectionObserver(entries => {
-          entries.forEach(entry => {
-            if (entry.isIntersecting) {
-              actionBar.classList.remove('hidden-bottom');
-            } else {
-              actionBar.classList.add('hidden-bottom');
-            }
-          });
-        }, { threshold: 0 });
-
-        positionObserver.observe(trigger);
-        endObserver.observe(endtrigger);
+  
+    const positionObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) {
+          actionBar.classList.add('fixed-bottom');
+          actionBar.classList.remove('hidden-bottom');
+        } else {
+          actionBar.classList.remove('fixed-bottom', 'hidden-bottom');
+        }
       });
-    </script>
-  @endpush
+    }, { threshold: 0 });
+
+    const endObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting && entry.boundingClientRect.top > 0) {
+        } else if (!entry.isIntersecting && entry.boundingClientRect.top <= 0) {
+          actionBar.classList.add('hidden-bottom');
+        } else {
+          actionBar.classList.remove('hidden-bottom');
+        }
+      });
+    }, { threshold: 0 });
+
+    positionObserver.observe(trigger);
+    endObserver.observe(endTrigger);
+  });
+</script>
+@endpush

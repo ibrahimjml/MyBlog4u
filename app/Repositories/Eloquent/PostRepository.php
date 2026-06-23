@@ -34,15 +34,17 @@ class PostRepository implements PostInterface
     public function getPopularTags(): \Illuminate\Support\Collection
     {
         return  Hashtag::active()
+                     ->has('posts')
                      ->withCount('posts')
-                     ->orderBy('is_featured','desc')
+                     ->orderByDesc('is_featured')
                      ->orderByDesc('posts_count')
                      ->get();
     }
 
     public function getCategories(): \Illuminate\Support\Collection
     {
-      return  Category::withCount('posts')
+      return  Category::has('posts')
+                    ->withCount('posts')
                     ->orderBy('is_featured','desc')
                     ->orderByDesc('posts_count')
                     ->get();

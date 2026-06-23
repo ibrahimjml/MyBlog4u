@@ -209,6 +209,13 @@
       Notification settings
     </a>
   </li>
+  <li class="items-center">
+    <a href="{{ route('admin.analytics.index') }}"
+      class="text-sm capitalize py-3 font-bold block {{ Route::is('admin.analytics.index') ? 'text-blue-500 hover:text-blue-600' : ''}}">
+      <i class="fas fa-signal mr-2 text-sm opacity-75"></i>
+      Google Analytics
+    </a>
+  </li>
 </ul>
 <!-- Maintenance -->
 <hr class="my-4 md:min-w-full" />
