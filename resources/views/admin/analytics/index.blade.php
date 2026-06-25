@@ -26,12 +26,12 @@
               <input type="hidden" name="analytics_dashboard_widgets" value="0">
               <x-toggle name="analytics_dashboard_widgets" value="1" :checked="$settings['analytics_dashboard_widgets'] ?? false" onchange="openAnalyticsConfig(this)" />
             </div>
-            <div id="config-section" class="{{ ($settings['analytics_dashboard_widgets']) ? '' : 'hidden' }} rounded-lg p-5 w-full mt-3  border-2 border-gray-300">
+            <div id="config-section" class="{{ ($settings['analytics_dashboard_widgets'] ?? '') ? '' : 'hidden' }} rounded-lg p-5 w-full mt-3  border-2 border-gray-300">
               <div class="mb-2">
                 <label for="" class="block text-sm font-medium text-gray-700 mb-2">Property Id for GA4</label>
                 <input type="text"
                   class=" border border-gray-300 rounded-lg px-3 py-2 w-full max-w-xs placeholder:text-sm"
-                  name="analytics_property_id" placeholder="Google Property Id for GA4" value="{{ old('analytics_property_id',$settings['analytics_property_id']) }}">
+                  name="analytics_property_id" placeholder="Google Property Id for GA4" value="{{ old('analytics_property_id',$settings['analytics_property_id'] ?? '') }}">
               </div>
               <div class="mb-2">
                 <label for="" class="block text-sm font-medium text-gray-700 mb-2">Service Account Credentials</label>
