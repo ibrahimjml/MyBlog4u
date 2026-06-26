@@ -36,5 +36,10 @@
 <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 <link rel="stylesheet" href="{{asset('style.css')}}">
 <link rel="stylesheet" href="{{asset('tinymce.css')}}">
+@auth
+<script>
+     window.userId = {{ auth()->id() }};
+</script>
+@endauth
 @vite(['resources/css/app.css', 'resources/js/app.js'])
 @stack('styles')

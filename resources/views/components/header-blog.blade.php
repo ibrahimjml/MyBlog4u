@@ -66,7 +66,8 @@
                 <li id="hover-notification" data-notification-trigger
                   class="text-lg relative pt-2 cursor-pointer text-gray-700 ">
                   <span
-                    class="absolute top-2 left-3 h-4 w-4 bg-red-500 text-white flex justify-center items-center rounded-full p-1 text-xs font-semibold">
+                    data-notification-count
+                    class="notification-count absolute top-2 left-3 h-4 w-4 bg-red-500 text-white flex justify-center items-center rounded-full p-1 text-xs font-semibold">
                     {{ auth()->user()->unreadNotifications->count() }}
                   </span>
                   <i class="fas fa-bell {{Route::is(['profile.*', 'home']) ? 'text-white' : 'text-gray-700'}}"></i>
@@ -115,7 +116,8 @@
             @unless(request()->is('admin*'))
               <div data-notification-trigger class="text-lg  relative  cursor-pointer text-gray-700 ">
                 <span
-                  class="absolute -top-0 left-3 h-4 w-4 bg-red-500 text-white flex justify-center items-center rounded-full p-1 text-xs font-semibold">
+                  data-notification-count
+                  class="notification-count absolute -top-0 left-3 h-4 w-4 bg-red-500 text-white flex justify-center items-center rounded-full p-1 text-xs font-semibold">
                   {{ auth()->user()->unreadNotifications->count() }}
                 </span>
                 <i class="fas fa-bell {{Route::is(['profile.*', 'home']) ? 'text-white' : 'text-gray-700'}}"></i>

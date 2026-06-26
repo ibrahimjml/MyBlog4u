@@ -34,7 +34,7 @@ class RepliedCommentNotification extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return ['database','broadcast'];
     }
 
     /**
@@ -55,20 +55,33 @@ class RepliedCommentNotification extends Notification
      */
     public function toDatabase(object $notifiable): array
     {
-  
-      $message = $notifiable->is_admin
-      ? ($this->replier->id === $this->ParentComment->user->id
-      ? "{$this->replier->name} replied to their own comment '{$this->ParentComment->content}' on {$this->post->user->name}'s post"
-      : "{$this->replier->name} replied '{$this->reply->content}' to {$this->ParentComment->user->name} on {$this->post->user->name}'s post")
-      : "{$this->replier->name} replied to your comment '{$this->ParentComment->content}'";
-      
         return [
             'reply_id' => $this->reply->id,
             'comment_id' => $this->ParentComment->id,
             'replier_username' => $this->replier->username,
             'post_link' => $this->post->slug,
-            'message' => $message,
+            'message' => $this->buildMessage($notifiable),
             'type' => NotificationType::COMMENTS->value
         ];
+    }
+    public function toBroadcast(object $notifiable): array
+    {
+        return [
+            'reply_id' => $this->reply->id,
+            'comment_id' => $this->ParentComment->id,
+            'replier_username' => $this->replier->username,
+            'post_link' => $this->post->slug,
+            'message' => $this->buildMessage($notifiable),
+            'type' => NotificationType::COMMENTS->value
+        ];
+    }
+    private function buildMessage(object $notifiable): string
+    {
+        return $notifiable->is_admin
+               ? ($this->replier->id === $this->ParentComment->user->id
+               ? "{$this->replier->name} replied to their own comment '{$this->ParentComment->content}' on {$this->post->user->name}'s post"
+               : "{$this->replier->name} replied '{$this->reply->content}' to {$this->ParentComment->user->name} on {$this->post->user->name}'s post")
+               : "{$this->replier->name} replied to your comment '{$this->ParentComment->content}'";
+      
     }
 }

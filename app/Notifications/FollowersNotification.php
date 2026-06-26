@@ -33,7 +33,7 @@ class FollowersNotification extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return ['database','broadcast'];
     }
 
     /**
@@ -54,13 +54,6 @@ class FollowersNotification extends Notification
      */
     public function toDatabase( $notifiable): array
     {
-  
-      $message = $notifiable->is_admin
-         ? "{$this->follower->name} has followed {$this->user->name}"
-         : ( $this->status === 'public' 
-         ? "{$this->follower->name} has followed you"
-         :"{$this->follower->name} requested to follow you!" );
-
       return [
         'user_name' => $this->user->name,
         'follower_id' => $this->follower->id,
@@ -68,8 +61,29 @@ class FollowersNotification extends Notification
         'follower_username' => $this->follower->username,
         'type'=> NotificationType::FOLLOW->value,
         'status' => $this->status,
-        'message' => $message,
+        'message' => $this->buildMessage($notifiable),
         
     ];
+    }
+    public function toBroadcast( $notifiable): array
+    {
+      return [
+        'user_name' => $this->user->name,
+        'follower_id' => $this->follower->id,
+        'follower_name' => $this->follower->name,
+        'follower_username' => $this->follower->username,
+        'type'=> NotificationType::FOLLOW->value,
+        'status' => $this->status,
+        'message' => $this->buildMessage($notifiable),
+        
+    ];
+    }
+    private function buildMessage(object $notifiable): string
+    {
+        return $notifiable->is_admin
+               ? "{$this->follower->name} has followed {$this->user->name}"
+               : ( $this->status === 'public' 
+               ? "{$this->follower->name} has followed you"
+               :"{$this->follower->name} requested to follow you!" );
     }
 }

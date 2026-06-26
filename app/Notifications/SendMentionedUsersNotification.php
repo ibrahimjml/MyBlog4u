@@ -34,7 +34,7 @@ protected Post $post;
      */
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return ['database','broadcast'];
     }
 
     /**
@@ -55,18 +55,29 @@ protected Post $post;
      */
     public function toDatabase(object $notifiable): array
     {
-       $mentionedName = $this->mentioned?->name ?? 'someone';
-
-    $message = $notifiable->is_admin
-        ? "{$this->commenter->name} mentioned {$mentionedName} on {$this->commenter->name}'s comment"
-        : "you were mentioned by {$this->commenter->name}";
-
         return [
             'comment_id' => $this->comment->id,
             'commenter_username' => $this->commenter->username,
             'post_link'=> $this->post->slug,
-            'message' => $message,
+            'message' => $this->buildMessage($notifiable),
             'type' => NotificationType::MENTION->value
         ];
+    }
+    public function toBroadcast(object $notifiable): array
+    {
+        return [
+            'comment_id' => $this->comment->id,
+            'commenter_username' => $this->commenter->username,
+            'post_link'=> $this->post->slug,
+            'message' => $this->buildMessage($notifiable),
+            'type' => NotificationType::MENTION->value
+        ];
+    }
+    private function buildMessage(object $notifiable): string
+    {
+        $mentionedName = $this->mentioned?->name ?? 'someone';
+        return $notifiable->is_admin
+              ? "{$this->commenter->name} mentioned {$mentionedName} on {$this->commenter->name}'s comment"
+              : "you were mentioned by {$this->commenter->name}";
     }
 }

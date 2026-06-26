@@ -34,9 +34,8 @@ class LikesNotification extends Notification
     public function via(object $notifiable): array
     {
 
-        return ['database'];
+        return ['database','broadcast'];
     }
-
     /**
      * Get the mail representation of the notification.
      */
@@ -55,12 +54,6 @@ class LikesNotification extends Notification
      */
     public function toDatabase(object $notifiable): array
     {
-  
-      $message = $notifiable->is_admin
-      ? ($this->user->id === $this->post->user->id
-      ? "{$this->user->name} liked his post"
-      : "{$this->user->name} liked {$this->post->user->name}'s post")
-      : "{$this->user->name} liked your post {$this->post->title}";
 
         return [
           'user_id' => $this->user->id,
@@ -68,7 +61,27 @@ class LikesNotification extends Notification
           'post_id' => $this->post->id,
           'post_link'=>$this->post->slug,
           'type'=> NotificationType::LIKE->value,
-          'message'=>$message
+          'message'=>$this->buildMessage($notifiable),
         ];
+    }
+    public function toBroadcast(object $notifiable): array
+    {
+
+        return [
+          'user_id' => $this->user->id,
+          'user_username'=>$this->user->username,
+          'post_id' => $this->post->id,
+          'post_link'=>$this->post->slug,
+          'type'=> NotificationType::LIKE->value,
+          'message'=>$this->buildMessage($notifiable),
+        ];
+    }
+     private function buildMessage(object $notifiable): string
+    {
+        return $notifiable->is_admin
+            ? ($this->user->id === $this->post->user->id
+                ? "{$this->user->name} liked his post"
+                : "{$this->user->name} liked {$this->post->user->name}'s post")
+            : "{$this->user->name} liked your post {$this->post->title}";
     }
 }

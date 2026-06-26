@@ -31,7 +31,7 @@ class FollowingPostCreatedNotification extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['database','mail'];
+        return ['database','broadcast','mail'];
     }
 
     /**
@@ -52,17 +52,30 @@ class FollowingPostCreatedNotification extends Notification
      */
     public function toDatabase(object $notifiable): array
     {
-      $message = $notifiable->is_admin
-        ? "{$this->PostedBy->name} created a new post '{$this->post->title}'"
-        : "{$this->PostedBy->name} (whom you followed) created a new post '{$this->post->title}'";
-
         return [
             'postedby_id' => $this->PostedBy->id,
             'postedby_username' => $this->PostedBy->username,
             'post_id' => $this->post->id,
             'post_link' => $this->post->slug,
-            'message' => $message,
+            'message' => $this->buildMessage($notifiable),
             'type' => NotificationType::POSTCREATED->value,
         ];
+    }
+    public function toBroadcast(object $notifiable): array
+    {
+        return [
+            'postedby_id' => $this->PostedBy->id,
+            'postedby_username' => $this->PostedBy->username,
+            'post_id' => $this->post->id,
+            'post_link' => $this->post->slug,
+            'message' => $this->buildMessage($notifiable),
+            'type' => NotificationType::POSTCREATED->value,
+        ];
+    }
+    private function buildMessage(object $notifiable): string
+    {
+        return $notifiable->is_admin
+        ? "{$this->PostedBy->name} created a new post '{$this->post->title}'"
+        : "{$this->PostedBy->name} (whom you followed) created a new post '{$this->post->title}'";
     }
 }

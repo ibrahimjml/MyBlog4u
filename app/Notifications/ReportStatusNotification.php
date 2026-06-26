@@ -27,7 +27,7 @@ class ReportStatusNotification extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return ['database','broadcast'];
     }
 
     /**
@@ -47,6 +47,21 @@ class ReportStatusNotification extends Notification
      * @return array<string, mixed>
      */
     public function toArray(object $notifiable): array
+    {
+        return [
+            'report_id' => $this->report->id,
+            'post_id' => $this->report->post->id,
+            'post_link' => $this->report->post->slug,
+            'status' => $this->report->status->value,
+            'type'=> NotificationType::REPORT->value,
+            'message' => match($this->report->status) {
+                ReportStatus::Pending => "Your report on {$this->report->post->title} will be reviewed shortly status ".ReportStatus::Pending->value .".",
+                ReportStatus::Reviewed => "Action has been taken on your report for '{$this->report->post->title}'.",
+                ReportStatus::Rejected => "Your report didn't meet the criteria for '{$this->report->post->title}'.",
+            },
+        ];
+    }
+    public function toBroadcast(object $notifiable): array
     {
         return [
             'report_id' => $this->report->id,

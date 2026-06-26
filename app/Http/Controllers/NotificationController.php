@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Middleware\CheckIfBlocked;
 use App\Services\AuthReadNotificationService;
+use Illuminate\Notifications\DatabaseNotification;
 
 class NotificationController extends Controller
 {
@@ -34,5 +35,12 @@ class NotificationController extends Controller
       auth()->user()->notifications()->delete();
       toastr()->success('All notifications deleted successfully',['timeOut'=>1000]);
       return back();
+    }
+
+    public function render(DatabaseNotification $notification)
+    {
+       return response()->json([
+        'html' => view('components.notification', compact('notification'))->render(),
+    ]);
     }
 }

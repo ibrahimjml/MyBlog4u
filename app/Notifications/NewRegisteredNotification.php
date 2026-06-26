@@ -26,7 +26,7 @@ class NewRegisteredNotification extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return ['database','broadcast'];
     }
 
     /**
@@ -46,6 +46,15 @@ class NewRegisteredNotification extends Notification
      * @return array<string, mixed>
      */
     public function toDatabase(object $notifiable): array
+    {
+        return [
+            'user_id' => $this->user->id,
+            'username' => $this->user->username,
+            'message' => "{$this->user->username} has registered a new account",
+            'type' => NotificationType::NEWUSER->value
+        ];
+    }
+    public function toBroadcast(object $notifiable): array
     {
         return [
             'user_id' => $this->user->id,

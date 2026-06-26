@@ -6,6 +6,7 @@ use App\Builders\UserBuilder;
 use App\Enums\FollowerStatus;
 use App\Notifications\VerifyEmailQueued;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -49,6 +50,10 @@ class User extends Authenticatable implements MustVerifyEmail
   {
     return new UserBuilder($query);
   }
+   public function receivesBroadcastNotificationsOn(): string
+    {
+        return 'notifications.' . $this->id;
+    }
   public function sendEmailVerificationNotification()
   {
     $this->notify(new VerifyEmailQueued);

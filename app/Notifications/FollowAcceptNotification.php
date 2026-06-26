@@ -32,7 +32,7 @@ class FollowAcceptNotification extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return ['database','broadcast'];
     }
 
     /**
@@ -52,6 +52,19 @@ class FollowAcceptNotification extends Notification
      * @return array<string, mixed>
      */
     public function toDatabase(object $notifiable): array
+    {
+      return [
+        'user_name' => $this->follower->name,
+        'follower_id' => $this->auth->id,
+        'follower_name' => $this->auth->name,
+        'follower_username' => $this->auth->username,
+        'type'=> NotificationType::FOLLOWACCEPT->value,
+        'status' => $this->status,
+        'message' => "{$this->auth->name} has accepted your follow request.",
+        
+    ];
+    }
+    public function toBroadcast(object $notifiable): array
     {
       return [
         'user_name' => $this->follower->name,

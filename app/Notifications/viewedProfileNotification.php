@@ -28,7 +28,7 @@ class viewedProfileNotification extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return ['database','broadcast'];
     }
 
     /**
@@ -49,19 +49,32 @@ class viewedProfileNotification extends Notification
      */
     public function toArray(object $notifiable): array
     {
-  
-      $message = $notifiable->is_admin
-      ? "{$this->viewer->name} viewed profile {$this->user->name}"
-      : "{$this->viewer->name} viewed your profile";
-
         return [
             'viewer_id' => $this->viewer->id,
             'profile_id' => $this->user->id,
             'user_name' => $this->user->name,
             'viewer_name' =>$this->viewer->name,
             'viewer_username' => $this->viewer->username,
-            'message' => $message,
+            'message' => $this->buildMessage($notifiable),
             'type'=> NotificationType::VIEWEDPROFILE->value
         ];
+    }
+    public function toBroadcast(object $notifiable): array
+    {
+        return [
+            'viewer_id' => $this->viewer->id,
+            'profile_id' => $this->user->id,
+            'user_name' => $this->user->name,
+            'viewer_name' =>$this->viewer->name,
+            'viewer_username' => $this->viewer->username,
+            'message' => $this->buildMessage($notifiable),
+            'type'=> NotificationType::VIEWEDPROFILE->value
+        ];
+    }
+    private function buildMessage(object $notifiable): string
+    {
+        return $notifiable->is_admin
+               ? "{$this->viewer->name} viewed profile {$this->user->name}"
+               : "{$this->viewer->name} viewed your profile";
     }
 }

@@ -144,3 +144,4 @@ Route::get('/notifications/{id}/read', [NotificationController::class, 'markasre
 Route::get('/notifications/read/all', [NotificationController::class, 'markallasread'])->name('notifications.readall');
 Route::delete('/notifications/{id}/delete', [NotificationController::class, 'delete'])->name('notifications.delete');
 Route::delete('/notifications/deleteAll', [NotificationController::class, 'deleteAll'])->name('notifications.deleteAll');
+Route::get('/notification/render/{notification}',[NotificationController::class, 'render'])->name('render');

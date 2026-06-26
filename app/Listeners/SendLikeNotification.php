@@ -34,9 +34,12 @@ class SendLikeNotification implements ShouldQueue
         // Mail::to($post->user)->queue(new postlike($post->user, auth()->user(), $post));
         $post->user->notify(new LikesNotification($liker,$post));
       }
+      
       // Notify  admins
-
-      User::where('is_admin', true)->get()->each(function ($admin) use ($liker, $post) {
+      User::where('is_admin', true)
+         ->whereKeyNot($post->user->id)
+         ->get()
+         ->each(function ($admin) use ($liker, $post) {
       if($admin && $this->allow($admin,NotificationType::LIKE)){
       $admin->notify(new LikesNotification($liker,$post));
       }

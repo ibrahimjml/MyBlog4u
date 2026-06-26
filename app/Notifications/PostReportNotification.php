@@ -29,7 +29,7 @@ class PostReportNotification extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return ['database','broadcast'];
     }
 
     /**
@@ -49,6 +49,17 @@ class PostReportNotification extends Notification
      * @return array<string, mixed>
      */
     public function toDatabase(object $notifiable): array
+    {
+        return [
+          'user_id' => $this->user->id,
+          'user_username'=>$this->user->username,
+          'post_id' => $this->post->id,
+          'post_link'=>$this->post->slug,
+          'type'=> NotificationType::REPORT->value,
+          'message'=>"{$this->user->username} reported this post <b>{$this->post->title}</b>"
+        ];
+    }
+    public function toBroadcast(object $notifiable): array
     {
         return [
           'user_id' => $this->user->id,

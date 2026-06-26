@@ -32,7 +32,7 @@ class CommentNotification extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return ['database','broadcast'];
     }
 
     /**
@@ -53,16 +53,28 @@ class CommentNotification extends Notification
      */
     public function toDatabase(object $notifiable): array
     {
-      $message = $notifiable->is_admin
-      ? "{$this->commenter->name} commented on {$this->post->user->name}'s post "
-      : "{$this->commenter->name} commented on your post {$this->post->title}";
-
         return [
             'comment_id' => $this->comment->id,
             'commenter_username' => $this->commenter->username,
             'post_link'=> $this->post->slug,
-            'message' => $message,
+            'message' => $this->buildMessage($notifiable),
             'type' => NotificationType::COMMENTS->value
         ];
+    }
+    public function toBroadcast(object $notifiable): array
+    {
+        return [
+            'comment_id' => $this->comment->id,
+            'commenter_username' => $this->commenter->username,
+            'post_link'=> $this->post->slug,
+            'message' => $this->buildMessage($notifiable),
+            'type' => NotificationType::COMMENTS->value
+        ];
+    }
+    private function buildMessage(object $notifiable): string
+    {
+        return $notifiable->is_admin
+               ? "{$this->commenter->name} commented on {$this->post->user->name}'s post "
+               : "{$this->commenter->name} commented on your post {$this->post->title}";
     }
 }
