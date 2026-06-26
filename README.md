@@ -59,7 +59,7 @@
   -  **Custom Two-Factor Authentication :** enabling by scanning qrcode or type manually with confirmation code.
   -  **Confirm Password Check:** Laravel middleware for confirmimg passwords on certian actions.
   -  **Identity Check:** Creators by changing their passwords will redirect to identity check page with Otp verification.
-  -  **Email and In-app Notifications:** Creators will recieve mutiple notifications type Views,Mentions,Posted,Following,Requested Following,Reports and by emails.
+  -  **Email and In-app Notifications:** Creators will recieve mutiple notifications type Views,Mentions,Posted,Following,Requested Following,Reports with real-time and by emails.
 
 ### 🧱 Architecture & Performance
 
@@ -79,6 +79,13 @@
 - **Imagick**
 - **intl**
 - **tokenizer**
+
+- **Apache config requirements:**
+- **LoadModule proxy_module modules/mod_proxy.so**
+- **LoadModule proxy_http2_module modules/mod_proxy_http2.so**
+- **LoadModule proxy_wstunnel_module modules/mod_proxy_wstunnel.so**
+- **LoadModule ssl_module modules/mod_ssl.so**
+
 
 1.📦 Install dependencies
 ```
@@ -121,7 +128,13 @@ php artisan db:seed --SmtpSeeder
 ```
 php artisan serve
 ```
-11.🚀 For better performance configure Redis and enable Cache to true
+11.Start Reverb
+```
+enable reverb .env 
+VITE_REVERB_ENABLED=true
+php artisan reverb:start
+```
+12.🚀 For better performance configure Redis and enable Cache to true
 ```
 CACHE_ENABLED=true
 REDIS_CLIENT=predis
