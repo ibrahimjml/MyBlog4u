@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
-use App\Models\{Category, Comment, Hashtag, Like, Permission, Post, PostReport, Role, Setting, SmtpSetting, User};
-use App\Observers\{CommentObserver, LikeObserver, PostObserver, PostReportObserver, TagObserver, CategoryObserver, PermissionObserver, RoleObserver, UserObserver};
+use App\Models\{Category, Like, Post, PostReport, Setting, SmtpSetting, User};
+use App\Observers\{ LikeObserver, PostObserver, PostReportObserver, CategoryObserver, UserObserver};
 use App\Repositories\Caches\CategoryCacheDecorator;
 use App\Repositories\Eloquent\PostRepository;
 use App\Repositories\Caches\PostCacheDecorator;
@@ -66,14 +66,10 @@ class AppServiceProvider extends ServiceProvider
   public function bootEvents()
   {
     Post::observe(PostObserver::class);
-    Comment::observe(CommentObserver::class);
     Like::observe(LikeObserver::class);
     PostReport::observe(PostReportObserver::class);
     User::observe(UserObserver::class);
-    Hashtag::observe(TagObserver::class);
     Category::observe(CategoryObserver::class);
-    Permission::observe(PermissionObserver::class);
-    Role::observe(RoleObserver::class);
   }
   public function bootBladeDirectives()
   {

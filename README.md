@@ -128,16 +128,51 @@ php artisan db:seed --SmtpSeeder
 ```
 php artisan serve
 ```
-11.Start Reverb
+11.Enable Reverb Broadcasting (optional)
 ```
-enable reverb .env 
+BROADCAST_ENABLED=true
+BROADCAST_DRIVER=reverb
+
+REVERB_APP_ID=
+REVERB_APP_KEY=
+REVERB_APP_SECRET=
+REVERB_HOST=127.0.0.1
+REVERB_PORT=8080
+REVERB_SCHEME=http
+
+
 VITE_REVERB_ENABLED=true
+VITE_REVERB_APP_KEY="${REVERB_APP_KEY}"
+VITE_REVERB_HOST="blogpost.test" 
+VITE_REVERB_PORT=443
+VITE_REVERB_SCHEME=https
+
+```
+then start reverb and queue
+```
+php artisan queue:work
 php artisan reverb:start
+
 ```
 12.🚀 For better performance configure Redis and enable Cache to true
 ```
 CACHE_ENABLED=true
 REDIS_CLIENT=predis
+
+```
+13. TNTSearch Scout (optional)
+```
+SCOUT_DRIVER=tntsearch
+SCOUT_QUEUE=true
+
+TNTSEARCH_FUZZINESS=true
+TNTSEARCH_AS_YOU_TYPE=false
+TNTSEARCH_BOOLEAN=false
+TNTSEARCH_MAX_DOCS=500
+```
+Index your posts, run the following command:
+```
+php artisan scout:import App\\Models\\Post
 ```
 ## Testing Notifications
 - **Configure new smtp in adminpanel->settings->smtp settings**

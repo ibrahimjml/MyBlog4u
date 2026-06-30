@@ -31,6 +31,7 @@ class SendMentionedNotification implements ShouldQueue
 
     $mentionedUsers = $comment->mentions()
         ->where('users.id', '!=', $commenter->id)
+        ->where('users.is_admin', false)
         ->get();
 
     foreach ($mentionedUsers as $user) {

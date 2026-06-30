@@ -2,6 +2,10 @@
 
 namespace App\Services;
 
+use App\Actions\AttachPostTagsAction;
+use App\Actions\CreatePostAction;
+use App\Actions\ResolvePostStatusAction;
+use App\Actions\SyncPostTagsAction;
 use App\DTOs\CreatePostDTO;
 use App\DTOs\PostFilterDTO;
 use App\DTOs\UpdatePostDTO;
@@ -9,10 +13,8 @@ use App\Enums\PostStatus;
 use App\Events\PostCreatedEvent;
 use App\Helpers\DeleteFile;
 use App\Models\AdPlacement;
-use App\Models\PostModeration;
 use App\Models\Post;
 use App\Repositories\Interfaces\PostInterface;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 use App\Traits\ImageUploadTrait;
 use Illuminate\Http\Request;
@@ -23,8 +25,11 @@ class PostService
 {
   use ImageUploadTrait;
   public function __construct(
-    protected PostHashtagsService $tagservice,
     private PostInterface $repo,
+    private AttachPostTagsAction $attachPostTagsAction,
+    private SyncPostTagsAction $syncPostTagsAction,
+    private CreatePostAction $createPostAction,
+    private ResolvePostStatusAction $resolveStatusAction,
   ) {
   }
   public function handleBlogPage(Request $request)
@@ -122,21 +127,12 @@ class PostService
       $post = DB::transaction(function () use ($dto, $imageslug, &$newimage) {
 
         $newimage = $this->uploadImage($dto->image, $imageslug);
-        $status = $this->statusForCreatedPost($dto->status);
+        $status = $this->resolveStatusAction->handle($dto->status);
 
-        $post = Post::create(
-          array_merge(
-            $dto->toArray(),
-            [
-              'image_path' => $newimage,
-              'status' => $status,
-              'published_at' => $status === PostStatus::PUBLISHED ? now() : null,
-            ]
-          )
-        );
+        $post = $this->createPostAction->execute($dto,$newimage,$status);
 
         if ($dto->hashtags) {
-          $this->tagservice->attachhashtags($post, $dto->hashtags);
+          $this->attachPostTagsAction->attachTag($post, $dto->hashtags);
         }
         if ($dto->categories) {
           $post->categories()->sync($dto->categories);
@@ -162,19 +158,6 @@ class PostService
     }
   }
 
-  private function statusForCreatedPost($requestedStatus): PostStatus
-  {
-    return match ($requestedStatus) {
-      PostStatus::DRAFT => PostStatus::DRAFT,
-
-      PostStatus::PUBLISHED => (PostModeration::rules()->enable_auto_approve
-        || Gate::allows('bypassModeration', Post::class))
-      ? PostStatus::PUBLISHED
-      : PostStatus::PENDING,
-
-      default => PostStatus::PENDING,
-    };
-  }
 
   public function update(Post $post, UpdatePostDTO $dto): ?Post
   {
@@ -184,7 +167,7 @@ class PostService
     try {
 
       DB::transaction(function () use ($post, $dto, &$newImage) {
-        $status = $this->statusForCreatedPost($dto->status);
+        $status = $this->resolveStatusAction->handle($dto->status);
         $data = array_merge($dto->toArray(), ['status' => $status]);
         if ($dto->image) {
 
@@ -212,14 +195,9 @@ class PostService
 
         $post->update($data);
 
-        $this->tagservice->syncHashtags(
-          $post,
-          $dto->hashtags
-        );
+        $this->syncPostTagsAction->syncTag($post,$dto->hashtags);
 
-        $post->categories()->sync(
-          $dto->categories
-        );
+        $post->categories()->sync($dto->categories);
       });
 
       if ($newImage && $oldImage) {

@@ -2,20 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\CommentException;
+use App\Exceptions\CommentReplyException;
+use App\Http\Requests\App\CreateCommentRequest;
 use App\Models\Post;
 use App\Models\User;
 use App\Models\Comment;
+use App\Services\CommentService;
 use Illuminate\Http\Request;
-use App\Events\ReplyCommentEvent;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Cache;
 use App\Http\Middleware\CheckIfBlocked;
 use Illuminate\Database\Eloquent\Builder;
 use App\Repositories\Interfaces\PostInterface;
 
 class CommentController extends Controller
 {
-  public function __construct()
+  public function __construct(protected CommentService $commentService)
   {
     $this->middleware(['auth','verified',CheckIfBlocked::class]);
   }
@@ -59,93 +60,45 @@ public function search_mentioned(Request $request)
         ->values();
 }
 
-    public function createComment(Post $post,Request $request){
-      $fields = $request->validate([
-        'content'=>'required|string|max:255',
-        'parent_id'=>'nullable|exists:comments,id'
-      ]);
+    public function createComment(Post $post,CreateCommentRequest $request){
+      try{
+      $dto = $request->toDTO($post->id);
 
-    
-      $fields['content']=strip_tags($fields['content']);
-      $fields['user_id']=auth()->id();
-      $fields['post_id']=$post->id;
-
-       if(!$post->allow_comments){
-        return response()->json([
-          'error'=>'comments disabled on post'
-        ]);
-       }
-      $comment = $post->comments()->create($fields);
+      $comment = $this->commentService->create($post,$dto);
 
       return response()->json([
-        'commented'=>true,
-        'html' => view('comments.comments', ['comments' => [$comment]])->render()
+        'commented' => true,
+        'html'      => view('comments.comments', ['comments' => [$comment]])->render()
       ]);
-    }
-
-public function reply(Comment $comment, Request $request){
-    $fields = $request->validate([
-        'content'=>'required|string|max:255',
-        'parent_id'=>'required|exists:comments,id'
-      ]);
-   try{
-      // cannot reply to own reply
-      if ($comment->user_id == auth()->id() && $comment->parent_id !== null) {
-    
+      } catch (CommentException $e){
         return response()->json([
-          'error' =>'Cannot reply to your own reply'
+          'error' => $e->getMessage(),
         ]);
-    }
-    // maximum 3 replies allowed
-    $replyCount = Comment::where('parent_id',$fields['parent_id'])->count();
-    if($replyCount >= 3){
-      return response()->json([
-        'error' =>'maximum 3 replies'
-      ]);
-    }
-    // reply once to your parent comment
-    $selfReplyCount = Comment::where('user_id', auth()->id()) 
-    ->where('parent_id', $comment->id) 
-    ->exists();
-    
-    if ($selfReplyCount) {
-  
-    return response()->json([
-      'error' =>'You can only reply once on comment'
-    ]);
-}
-      $fields['content']=strip_tags($fields['content']);
-      $fields['user_id']=auth()->id();
-      $fields['post_id']=$comment->post_id;
+      }
       
-     $reply = Comment::create($fields);
-     //clear comments cache 
-     Cache::tags(["post:{$comment->post_id}:comments"])->flush();
-     
-     event(new ReplyCommentEvent($comment, $reply,auth()->user()));
+    }
+
+public function reply(Comment $comment, CreateCommentRequest $request){
+  
+      try{
+        $dto = $request->toDTO($comment->post_id);
+        $reply = $this->commentService->reply($comment,$dto);
 
       return response()->json([
         'replied' => true,
         'html' => view('comments.replies',['comments'=>[$reply]])->render()
       ]);
-    }catch (\Exception $e) {
-        Log::error('error applying reply :'.$e->getMessage());
+    }catch (CommentReplyException $e) {
+        return response()->json([
+            'error' => $e->getMessage(),
+        ], 422);
     }
 }
-    public function editComment(Request $request,Comment $comment){
+    public function editComment(CreateCommentRequest $request,Comment $comment){
       
       $this->authorize('edit',$comment);
-      
-      
-      $fields = $request->validate([
-        'content'=>'required|string|max:255',
-        'parent_id'=>'nullable|exists:comments,id'
-      ]);
-
-    
-      $fields['content']=strip_tags($fields['content']);
-
-      $comment->update($fields);
+      $dto = $request->toDTO($comment->post_id);
+      $this->commentService->update($comment,$dto);
 
       return response()->json([
         'Edited'=>true
@@ -156,7 +109,7 @@ public function reply(Comment $comment, Request $request){
     public function deleteComment(Comment $comment){
       $this->authorize('delete',$comment);
 
-      $comment->delete();
+      $this->commentService->delete($comment);
       return response()->json([
         'deleted'=>true
       ]);

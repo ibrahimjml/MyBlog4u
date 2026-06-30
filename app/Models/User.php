@@ -14,10 +14,11 @@ use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
 use App\Traits\HasPermissionsTrait;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Laravel\Scout\Searchable;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-  use HasApiTokens, HasFactory, Notifiable, HasPermissionsTrait;
+  use Searchable, HasApiTokens, HasFactory, Notifiable, HasPermissionsTrait;
 
   /**
    * The attributes that are mass assignable.

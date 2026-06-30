@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 
+use App\Actions\CreatePostViewAction;
 use App\DTOs\{CreatePostDTO, UpdatePostDTO};
-use App\Enums\Adplacements\AdPosition;
 use App\Http\Middleware\CheckIfBlocked;
 use App\Http\Requests\App\{CreatePostRequest, UpdatePostRequest};
 use App\Models\{AdPlacement, Category, Hashtag, Post};
-use App\Services\{PostService, PostViewsService, ViewPostService};
+use App\Services\{PostService, ViewPostService};
 use Illuminate\Http\Request;
 
 
@@ -31,11 +31,11 @@ class PostController extends Controller
      return $this->service->handleBlogPage($request);
   }
   
-  public function viewPost(Post $post,PostViewsService $views)
+  public function viewPost(Post $post,CreatePostViewAction $createPostViewAction)
   {
     $post = $this->postservice->getPost($post);
     // generate post view
-    $views->getViews($post);
+    $createPostViewAction->handle($post);
     // ads
     $ads = AdPlacement::active()->get();
 

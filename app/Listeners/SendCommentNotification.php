@@ -35,7 +35,7 @@ class SendCommentNotification implements ShouldQueue
          }
 
         // Notify  admins
-        User::where('is_admin', true)->get()->each(function ($admin) use ($comment, $commenter, $post) {
+        User::where('is_admin', true)->whereKeyNot($post->user_id)->get()->each(function ($admin) use ($comment, $commenter, $post) {
         if($admin && $this->allow($admin,NotificationType::COMMENTS)){
           $admin->notify(new CommentNotification($comment, $commenter, $post));
         }

@@ -32,7 +32,7 @@ class SendFollowNotification implements ShouldQueue
       
       $user->notify(new FollowersNotification($user,$follower, $status));
       // Notify  admins
-      User::where('is_admin', true)->get()->each(function ($admin) use ($user, $follower, $status) {
+      User::where('is_admin', true)->whereKeyNot($user->id)->get()->each(function ($admin) use ($user, $follower, $status) {
       if($admin && $this->allow($admin,NotificationType::FOLLOW)){
       $admin->notify(new FollowersNotification($user, $follower, $status));
       }

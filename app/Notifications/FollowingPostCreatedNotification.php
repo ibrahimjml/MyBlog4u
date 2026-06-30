@@ -31,7 +31,11 @@ class FollowingPostCreatedNotification extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['database','broadcast','mail'];
+        $channels = ['database', 'mail'];
+
+       if (config('broadcasting.enabled') === true) $channels[] = 'broadcast';
+    
+       return $channels;
     }
 
     /**

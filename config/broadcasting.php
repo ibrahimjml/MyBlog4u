@@ -14,7 +14,8 @@ return [
     | Supported: "pusher", "ably", "redis", "log", "null"
     |
     */
-
+    'enabled' => env('BROADCAST_ENABLED', true),
+    
     'default' => env('BROADCAST_DRIVER', 'null'),
 
     /*

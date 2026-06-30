@@ -33,8 +33,11 @@ class LikesNotification extends Notification
      */
     public function via(object $notifiable): array
     {
+        $channels = ['database'];
 
-        return ['database','broadcast'];
+        if (config('broadcasting.enabled') === true) $channels[] = 'broadcast';
+    
+        return $channels;
     }
     /**
      * Get the mail representation of the notification.

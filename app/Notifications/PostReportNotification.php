@@ -29,7 +29,11 @@ class PostReportNotification extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['database','broadcast'];
+        $channels = ['database'];
+
+        if (config('broadcasting.enabled') === true) $channels[] = 'broadcast';
+    
+        return $channels;
     }
 
     /**
