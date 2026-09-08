@@ -38,3 +38,5 @@ yarn-error.log
 /.idea
 /.vscode
 /dump.rdb
+*.sublime-project
+*.sublime-workspace

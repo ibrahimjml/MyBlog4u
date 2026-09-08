@@ -12,6 +12,7 @@ use Illuminate\Support\Carbon;
 
 class ScrapSettingController extends Controller
 {
+    public function __construct(protected ForceCreateAllScrapSources $forceCreate){}
     public function index()
     {
       $settings = Setting::pluck('value', 'key')->toArray();
