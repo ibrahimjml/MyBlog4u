@@ -192,7 +192,7 @@
         ]
       });
     </script>
-
+@if( config('analytics.analytics_enabled'))
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const rawData = @json($visitors_by_country);
@@ -262,4 +262,5 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 </script>
+@endif
   @endpush

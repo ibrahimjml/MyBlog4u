@@ -41,7 +41,6 @@ class DashboardStatsService
 
 private function getSiteAnalytics()
 {
-  if(! config('analytics.analytics_enabled')) return;
     $analytics = Analytics::fetchTotalVisitorsAndPageViews(Period::days(30));
 
     return [
@@ -53,7 +52,6 @@ private function getSiteAnalytics()
 }
   private function getMostVisitedPages()
   {
-    if(! config('analytics.analytics_enabled')) return;
      $analytics = Analytics::fetchMostVisitedPages(Period::days(30));
      return $analytics
       ->filter(fn($item) =>
@@ -71,7 +69,6 @@ private function getSiteAnalytics()
   }
   private function getTopBrowsers()
   {
-    if(! config('analytics.analytics_enabled')) return;
       $analytics = Analytics::fetchTopBrowsers(Period::days(30));
        return $analytics->map(fn($item) => [
         'browser'        => $item['browser'],
@@ -80,7 +77,6 @@ private function getSiteAnalytics()
   }
   private function getTopReferres()
   {
-    if(! config('analytics.analytics_enabled')) return;
      $response = Analytics::get(
         period: Period::days(30),
         metrics: ['screenPageViews'],
@@ -108,7 +104,6 @@ private function getSiteAnalytics()
   }
   private function getVisitorsByCountry(): array|null
 {
-  if(! config('analytics.analytics_enabled')) return null;
     $response = Analytics::get(
         period: Period::days(30),
         metrics: ['activeUsers'],

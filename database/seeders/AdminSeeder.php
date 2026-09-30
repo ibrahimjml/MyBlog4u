@@ -20,7 +20,9 @@ class AdminSeeder extends Seeder
   {
 
     $modules = [
+      // User management permissions
       'User'              => ['Access', 'user.view', 'user.create', 'user.delete', 'user.activate','user.block', 'user.role', 'user.updateImage', 'user.deleteSocial', 'user.update', 'user.edit'],
+      // Content management permissions
       'Posts'             => ['post.view', 'post.update', 'post.feature', 'post.delete'],
       'Post Moderation'   => ['postmoderation.view', 'postmoderation.update'],
       'Tags'              => ['tag.create', 'tag.view', 'tag.update', 'tag.delete', 'tag.feature'],
@@ -29,23 +31,29 @@ class AdminSeeder extends Seeder
       'Post Reports'      => ['postreport.view', 'postreport.delete', 'postreport.status'],
       'Profile Reports'   => ['profilereport.view',  'profilereport.delete', 'profilereport.status'],
       'Comment Reports'   => ['commentreport.view', 'commentreport.delete', 'commentreport.status'],
+      'Custom Pages'      => ['custompage.view', 'custompage.create', 'custompage.update', 'custompage.delete'],
+      // ACL management
       'Roles'             => ['role.create', 'role.view', 'role.update', 'role.delete'],
       'Permissions'       => ['permission.create',  'permission.view',  'permission.update', 'permission.delete'],
       'Slides'            => ['slide.create',  'slide.view',  'slide.update', 'slide.delete'],
+      // Settings management 
       'Notifications'     => ['notifications.view', 'notifications.update'],
       'Ads'               => ['ad.create', 'ad.view', 'ad.update', 'ad.delete'],
       'Api Rate Limit'    => ['limit.view','limit.create', 'limit.update', 'limit.delete'],
       'Seo Tools'         => ['seo.view', 'seo.update'],
       'SMTP'              => ['smtp.view', 'smtp.update'],
       'Auth and Security' => ['authsecurity.view', 'authsecurity.update'],
-      'Maintenance'       => ['maintenance.view', 'maintenance.update'],
-      'Custom Pages'      => ['custompage.view', 'custompage.create', 'custompage.update', 'custompage.delete'],
       'Backups'           => ['backup.view', 'backup.download', 'backup.delete'],
+      'Google Analytics'  => ['analytics.view','analytics.update'],
+      // Optimization
+      'Maintenance'       => ['maintenance.view', 'maintenance.update'],
       'Media Settings'    => ['media.view', 'media.update'],
       'Image Optimization' => ['imageoptimization.view', 'imageoptimization.update'],
-      'Web Scrpaing'      => ['scrap.view','scrap.source.create','scrap.source.update','scrap.source.delete','scrap.source.crawl','scrap.post.delete','scrap.log.delete'],
+      // System settings
+      'Audit Logs'        => ['audit-logs.view', 'audit-logs.delete'],
+      // Web scraping and cron jobs
+      'Web Scraping'      => ['scrap.view','scrap.source.create','scrap.source.update','scrap.source.delete','scrap.source.crawl','scrap.post.delete','scrap.log.delete'],
       'Cron Scrap'        => ['cron.view','cron.update','cron.token.update','cron.crawl.all'],
-      'Google Analytics'  => ['analytics.view','analytics.update']
     ];
 
     foreach ($modules as $name => $permssions) {

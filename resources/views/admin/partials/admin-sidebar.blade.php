@@ -238,6 +238,20 @@
     </a>
   </li>
 </ul>
+<!-- platform settings -->
+<hr class="my-4 md:min-w-full" />
+<h6 class="md:min-w-full text-blueGray-500 text-sm capitalize font-bold block pt-1 pb-4 no-underline">
+  Platform Settings
+</h6>
+<ul class="md:flex-col md:min-w-full flex flex-col list-none">
+  <li class="items-center">
+    <a href="{{ route('admin.system.audit-logs.index') }}"
+      class="text-sm capitalize py-3 font-bold block {{ Route::is('admin.system.audit-logs.index') ? 'text-blue-500 hover:text-blue-600' : ''}}">
+      <i class="fas fa-file-alt mr-2 text-sm opacity-75"></i>
+      Audit Logs
+    </a>
+  </li>
+</ul>
 <!-- Maintenance -->
 <hr class="my-4 md:min-w-full" />
 <h6 class="md:min-w-full text-blueGray-500 text-sm capitalize font-bold block pt-1 pb-4 no-underline">

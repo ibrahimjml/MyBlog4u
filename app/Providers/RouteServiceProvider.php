@@ -56,6 +56,7 @@ class RouteServiceProvider extends ServiceProvider
                   require base_path('routes/admin/roles-permissions-routes.php');
                   require base_path('routes/admin/seo-routes.php');
                   require base_path('routes/admin/settings-routes.php');
+                  require base_path('routes/admin/system-routes.php');
                   require base_path('routes/admin/slides-routes.php');
                   require base_path('routes/admin/tags-routes.php');
                   require base_path('routes/admin/users-routes.php');

@@ -2,15 +2,19 @@
 
 namespace App\Services\Auth;
 
+use App\Actions\Log\CreateSystemAccessLog;
 use App\Models\User;
+
 use App\Services\User\TrustedDeviceService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class TwoFactorChallengeService
 {
-    public function __construct(protected TrustedDeviceService $trustedDevices)
-    {}
+    public function __construct(
+        protected TrustedDeviceService $trustedDevices,
+        protected CreateSystemAccessLog $auditLog,
+    ) {}
 
     public function prepareLoginChallenge(User $user, bool $remember): void
     {
@@ -34,9 +38,12 @@ class TwoFactorChallengeService
               '2fa:passed_at' => now()->timestamp,
               ]);
             session()->forget(['2fa:user:id']);
-        
+            
+        // log system access
+        $this->auditLog->logAccess($user);
+
         $response = redirect()->intended(
-            $user->is_admin ? route('admin.panel') : route('home')
+            $user->is_admin || $user->hasPermission('Access') ? route('admin.panel') : route('home')
         );
 
         if ($request->boolean('trust_device')) {

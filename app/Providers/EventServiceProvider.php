@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Events\AuditLogCreatedEvent;
 use App\Events\CommentCreatedEvent;
 use App\Events\FollowUserEvent;
 use App\Events\MentionedUserEvent;
@@ -14,6 +15,7 @@ use App\Events\ReplyCommentEvent;
 use App\Events\ReportStatusUpdateEvent;
 use App\Events\SitemapRendering;
 use App\Listeners\BuildSitemap;
+use App\Listeners\LogAuditActivity;
 use App\Listeners\NotifyAdminNewUser;
 use App\Listeners\SendCommentNotification;
 use App\Listeners\SendFollowNotification;
@@ -72,6 +74,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         SitemapRendering::class => [
           BuildSitemap::class,
+        ],
+        AuditLogCreatedEvent::class => [
+          LogAuditActivity::class,
         ],
     ];
 

@@ -185,7 +185,7 @@
             <p class="text-xl font-bold mt-1">{{$article->title}}</p>
           </a>
           </div>
-          
+
       </div>
     @endforeach
   </div>
@@ -262,7 +262,6 @@
         top: 0;
         left: 0;
         right: 0;
-        z-index: 50;
         background-color: #f3f4f6;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         opacity: 0;

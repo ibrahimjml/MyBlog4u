@@ -24,7 +24,7 @@ class LoginController extends Controller
         'require_2fa' => $require_2fa,
         'redirect' => $require_2fa
                       ? route('2fa.confirmation')
-                      : ($user->is_admin
+                      : ($user->is_admin || $user->hasPermission('Access')
                         ? route('admin.panel')
                         : route('home')),
       ]);
