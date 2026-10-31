@@ -13,18 +13,29 @@ class DashboardStatsService
 {
   public function getStats($year)
   {
-    $registeredusers = User::select(DB::raw('COUNT(*) as count'), DB::raw('MONTHNAME(created_at) as month'))
+    $userQuery = User::select(DB::raw('COUNT(*) as count'), DB::raw('MONTHNAME(created_at) as month'))
       ->whereYear('created_at', $year)
-      ->groupBy(DB::raw('MONTH(created_at)'), DB::raw('MONTHNAME(created_at)'))
+      ->groupBy(DB::raw('MONTH(created_at)'), DB::raw('MONTHNAME(created_at)'));
+
+    $registeredusers = (clone $userQuery)
       ->pluck('count', 'month')
       ->toArray();
+
+    $bannedusers = (clone $userQuery)
+      ->where('is_blocked', true)
+      ->pluck('count', 'month')
+      ->toArray();
+
     $numberofposts = Post::select(DB::raw('COUNT(*) as count'), DB::raw('MONTHNAME(created_at) as month'))
       ->whereYear('created_at', $year)
+      ->whereStatus(\App\Enums\PostStatus::PUBLISHED)
       ->groupBy(DB::raw('MONTH(created_at)'), DB::raw('MONTHNAME(created_at)'))
       ->pluck('count', 'month')
       ->toArray();
+
     return [
       'registeredusers' => $registeredusers,
+      'bannedusers' => $bannedusers,
       'numberofposts' => $numberofposts
     ];
   }

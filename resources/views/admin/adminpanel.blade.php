@@ -102,6 +102,7 @@
     <script>
       var datakeys = @json(array_keys($data['registeredusers']));
       var datavalues = @json(array_values($data['registeredusers']));
+      var blockedvalues = @json(array_map(fn($month) => $data['bannedusers'][$month] ?? 0, array_keys($data['registeredusers'])));
       var selectedYear = @json(request('year', now()->year));
 
       Highcharts.chart('container1', {
@@ -130,16 +131,21 @@
         },
         plotOptions: {
           column: {
-            pointPadding: 0,
+            pointPadding: 0.1,
             borderWidth: 0,
-            pointWidth: 50
+            pointWidth: 25
           }
         },
         series: [
           {
-            name: 'Users',
+            name: 'Registered Users',
             data: datavalues,
             color: '#9e9e9e'
+          },
+          {
+            name: 'Banned Users',
+            data: blockedvalues,
+            color: '#ef4444'
           }
 
         ]

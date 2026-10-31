@@ -16,7 +16,7 @@ class AdminController extends Controller
 
      $data = [
         'user' => DB::table('users')->count(),
-        'post' => DB::table('posts')->count(),
+        'post' => DB::table('posts')->whereStatus(\App\Enums\PostStatus::PUBLISHED)->count(),
         'likes' => DB::table('likes')->count(),
         'hashtags' => DB::table('hashtags')->count(),
         'categories' => DB::table('categories')->count(),
