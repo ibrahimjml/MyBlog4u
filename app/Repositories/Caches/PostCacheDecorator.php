@@ -52,17 +52,22 @@ class PostCacheDecorator implements PostInterface
       $Key = "latest_blogs:except:{$post->id}";
       return Cache::remember($Key, 900, fn() => $this->repo->getLatestBlogs($post));
    }
+   public function getLatestForHomeFeed()
+   {
+      $Key = "home_feed_latest";
+      return Cache::remember($Key, 1600, fn() => $this->repo->getLatestForHomeFeed());
+   }
    public function getPostLikes(\App\Models\Post $post)
    {
      return $this->repo->getPostLikes($post);
    }
    public function getFeaturedPosts()
    {
-       return Cache::remember('featuredPosts', now()->addSeconds(20),fn() => $this->repo->getFeaturedPosts());
+       return Cache::remember('featuredPosts', now()->addDay(),fn() => $this->repo->getFeaturedPosts());
    }
    public function getTrendingTagPosts()
    {
-     return Cache::remember('trendingHashtag', now()->addMinutes(2), fn() => $this->repo->getTrendingTagPosts());
+     return Cache::remember('trendingHashtag', now()->endOfDay(), fn() => $this->repo->getTrendingTagPosts());
    }
     public function getPaginatedComments(\App\Models\Post $post, int $page, int $perPage): \Illuminate\Contracts\Pagination\LengthAwarePaginator
    {

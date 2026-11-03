@@ -18,14 +18,14 @@
 @endphp
 
 <div class="space-y-3" data-search-results>
-  <div class="flex gap-2 overflow-x-auto px-2 py-3 border-b border-slate-100">
+  <div class="flex gap-2 overflow-x-auto border-b border-border px-2 py-3">
 
 @foreach(\App\Enums\SearchType::cases() as $tab)
 
 <button
     type="button"
-    class="search-type-tab rounded-full px-3 py-1 text-xs font-semibold
-    {{ $type === $tab ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-600' }}"
+    class="search-type-tab rounded-full px-3 py-1 font-mono text-xs transition-colors
+    {{ $type === $tab ? 'bg-primary text-primary-foreground' : 'bg-secondary text-muted-foreground hover:bg-accent hover:text-accent-foreground' }}"
     data-type="{{ $tab->value }}"
 >
     {{ $tab->label() }}
@@ -37,8 +37,8 @@
   @forelse($sections as $section => $items)
     @continue($items->isEmpty())
 
-    <section class="overflow-hidden rounded-2xl border border-slate-100 bg-white p-1 shadow-sm">
-      <div class="px-2 py-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-400">{{ $labels[$section] }}</div>
+    <section class="overflow-hidden rounded-2xl border border-border bg-card p-1">
+      <div class="px-2 py-1.5 font-mono text-[11px] uppercase tracking-widest text-muted-foreground">{{ $labels[$section] }}</div>
       <div role="group" aria-label="{{ $labels[$section] }}">
         @foreach($items as $item)
           @if($section === 'posts')
@@ -60,8 +60,8 @@
   @endforelse
 
   @if(!$hasResults)
-    <div class="rounded-2xl border border-dashed border-slate-200 px-4 py-10 text-center text-sm text-slate-500">
-      No results found for <span class="font-semibold text-slate-700">{{ $searchquery }}</span>.
+    <div class="rounded-2xl border border-dashed border-border px-4 py-10 text-center font-mono text-xs text-muted-foreground">
+      No results found for <span class="font-semibold text-foreground">{{ $searchquery }}</span>.
     </div>
   @endif
 </div>

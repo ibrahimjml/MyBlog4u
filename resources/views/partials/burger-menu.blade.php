@@ -1,69 +1,98 @@
-<ul id="mobile-menu" class="burger-menu hidden w-[250px]">
+<ul id="mobile-menu"
+  class="burger-menu hidden w-[250px] rounded-xl border border-border bg-card p-2 text-left font-mono text-xs leading-normal text-card-foreground shadow-xl">
 
   @guest
-
-    <li
-      class="border-b-2 hover:border-b-red-500 text-gray-500 hover:text-black hover:font-semibold transition duration-300 flex justify-between items-center gap-2 mb-2">
-      <a href="{{route('login')}}">Login</a>
+    <li>
+      <a href="{{ route('login') }}"
+        class="flex items-center gap-3 rounded-lg px-2.5 py-2 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground">
+        <i class="fas fa-sign-in-alt w-4 text-center text-[11px]"></i>
+        <span>Login</span>
+      </a>
     </li>
-    <li
-      class="border-b-2 hover:border-b-red-500 text-gray-500 hover:text-black hover:font-semibold transition duration-300 flex justify-between items-center gap-2 mb-2">
-      <a href="{{route('register')}}">Register</a>
+    <li>
+      <a href="{{ route('register') }}"
+        class="flex items-center gap-3 rounded-lg px-2.5 py-2 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground">
+        <i class="fas fa-user-plus w-4 text-center text-[11px]"></i>
+        <span>Register</span>
+      </a>
     </li>
-
   @else
+    <li>
+      <a href="{{ route('profile.home', auth()->user()->username) }}"
+        class="flex items-center gap-3 rounded-lg px-2.5 py-2 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground">
+        <img src="{{ auth()->user()->avatar_url }}" alt="{{ auth()->user()->name }}"
+          class="h-5 w-5 shrink-0 rounded-full object-cover">
+        <span>Profile</span>
+      </a>
+    </li>
 
-    <li
-      class="border-b-2 hover:border-b-red-500 text-gray-500 hover:text-black hover:font-semibold transition duration-300 flex justify-between items-center gap-2 mb-2">
-      <a href="{{route('profile.home', auth()->user()->username)}}">Profile</a>
-    </li>
     @if(auth()->user()->hasAnyRole(['Admin', 'Moderator']) || auth()->user()->hasPermission('Access'))
-    <li
-      class="border-b-2 hover:border-b-red-500 text-gray-500 hover:text-black hover:font-semibold transition duration-300 flex justify-between  items-center gap-2 mb-2">
-      <a href="{{route('admin.panel')}}">Admin Panel</a>
-      <i class="fas fa-lock"></i>
-    </li>
+      <li>
+        <a href="{{ route('admin.panel') }}"
+          class="flex items-center gap-3 rounded-lg px-2.5 py-2 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground">
+          <i class="fas fa-lock w-4 text-center text-[11px]"></i>
+          <span>Admin Panel</span>
+        </a>
+      </li>
     @endif
-      <li class="border-b-2 text-gray-500 hover:text-black hover:font-semibold transition duration-300 hover:border-b-red-500 flex justify-between items-center mb-2 ">
-        <a href="{{route('dashboard.index')}}">My Dashboard</a>
-    <i class="fas fa-tachometer-alt mr-1"></i>
-  </li>
-    <li
-      class="border-b-2 hover:border-b-red-500 text-gray-500 hover:text-black hover:font-semibold transition duration-300 flex justify-between  items-center gap-2 mb-2">
-      <a href="{{route('account')}}">Account settings</a>
-      <i class="fas fa-cog"></i>
+
+    <li>
+      <a href="{{ route('dashboard.index') }}"
+        class="flex items-center gap-3 rounded-lg px-2.5 py-2 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground">
+        <i class="fas fa-tachometer-alt w-4 text-center text-[11px]"></i>
+        <span>My Dashboard</span>
+      </a>
     </li>
-      @if(auth()->user()->hasAnyRole(['Admin','Moderator']) || auth()->user()->hasPermission('Access'))
-      @endif
-    <li
-      class="border-b-2 hover:border-b-red-500 text-gray-500 hover:text-black hover:font-semibold transition duration-300 flex justify-between items-center gap-2 mb-2">
-      <a href="/blog">Blog</a>
-      <i class="fas fa-image "></i>
+
+    <li>
+      <a href="{{ route('account') }}"
+        class="flex items-center gap-3 rounded-lg px-2.5 py-2 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground">
+        <i class="fas fa-cog w-4 text-center text-[11px]"></i>
+        <span>Account settings</span>
+      </a>
     </li>
-    <li
-      class="border-b-2 hover:border-b-red-500 text-gray-500 hover:text-black hover:font-semibold transition duration-300 flex justify-between items-center gap-2 mb-2">
-      <a href="{{route('createpage')}}">create post</a>
-      <i class="fas fa-plus "></i>
+
+    <li>
+      <a href="/blog"
+        class="flex items-center gap-3 rounded-lg px-2.5 py-2 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground">
+        <i class="fas fa-image w-4 text-center text-[11px]"></i>
+        <span>Blog</span>
+      </a>
     </li>
-    <li
-      class="border-b-2 hover:border-b-red-500 text-gray-500 hover:text-black hover:font-semibold transition duration-300 flex justify-between items-center gap-2 mb-2">
-      <a href="/getsavedposts">Saved</a>
-      <i class="fas fa-bookmark"></i>
+
+    <li>
+      <a href="{{ route('createpage') }}"
+        class="flex items-center gap-3 rounded-lg px-2.5 py-2 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground">
+        <i class="fas fa-plus w-4 text-center text-[11px]"></i>
+        <span>Create post</span>
+      </a>
+    </li>
+
+    <li>
+      <a href="/getsavedposts"
+        class="flex items-center gap-3 rounded-lg px-2.5 py-2 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground">
+        <i class="fas fa-bookmark w-4 text-center text-[11px]"></i>
+        <span>Saved</span>
+      </a>
     </li>
   @endguest
+
   @unless(request()->routeIs('home'))
-    <li
-      class="border-b-2 hover:border-b-red-500 text-gray-500 hover:text-black hover:font-semibold transition duration-300 flex justify-between items-center gap-2 mb-2">
-      <a href="/">Home</a>
-      <i class="fas fa-home"></i>
+    <li>
+      <a href="/"
+        class="flex items-center gap-3 rounded-lg px-2.5 py-2 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground">
+        <i class="fas fa-home w-4 text-center text-[11px]"></i>
+        <span>Home</span>
+      </a>
     </li>
   @endunless
-  <li
-    class="border-b-2 hover:border-b-red-500 text-gray-500 hover:text-black hover:font-semibold transition duration-300 flex justify-between items-center gap-2 mb-2">
-    <button form="logoutFRM" type="submit">
-      Logout
-    </button>
+
+  <li class="mt-1 border-t border-border pt-1">
     <form id="logoutFRM" action="{{ route('logout') }}" method="POST">@csrf</form>
-    <i class="fas fa-sign-out-alt"></i>
+    <button form="logoutFRM" type="submit"
+      class="flex w-full items-center gap-3 rounded-lg px-2.5 py-2 text-left text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground">
+      <i class="fas fa-sign-out-alt w-4 text-center text-[11px]"></i>
+      <span>Logout</span>
+    </button>
   </li>
 </ul>

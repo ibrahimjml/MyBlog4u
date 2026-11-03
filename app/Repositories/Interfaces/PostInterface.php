@@ -20,6 +20,7 @@ interface PostInterface
     public function getRelatedArticles(Post $post);
 
     public function getLatestBlogs(Post $post);
+    public function getLatestForHomeFeed();
     public function getPostLikes(Post $post);
     public function getFeaturedPosts();
     

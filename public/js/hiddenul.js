@@ -5,52 +5,75 @@ const hiddenul = document.getElementById("hiddenul2");
 const change = document.getElementById("dropdown");
 
 const notificationTriggers = document.querySelectorAll('[data-notification-trigger]');
-let   hideTimeout;
-// show burger menu
-if(mobilebtn){
-mobilebtn.addEventListener('click', (e) => {
-  
-  mobilemenu.classList.toggle('hidden');
 
-  if (!mobilemenu.classList.contains('hidden')) {
-      const closeMenu = (event) => {
+// show burger menu (mobile)
+if (mobilebtn && mobilemenu) {
+  const toggleMobileMenu = (event) => {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
 
-        if (!mobilemenu.contains(event.target) && !mobilebtn.contains(event.target)) {
-          mobilemenu.classList.add('hidden');
-          document.removeEventListener('click', closeMenu);
-        }
-      };
+    mobilemenu.classList.toggle('hidden');
+  };
 
-      document.addEventListener('click', closeMenu);
+  mobilebtn.addEventListener('click', toggleMobileMenu);
+  mobilebtn.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      toggleMobileMenu(event);
+    }
+  });
 
-  }
-});
+  document.addEventListener('click', (event) => {
+    if (
+      !mobilemenu.classList.contains('hidden') &&
+      !mobilemenu.contains(event.target) &&
+      !mobilebtn.contains(event.target)
+    ) {
+      mobilemenu.classList.add('hidden');
+    }
+  });
 }
 
+// show user hover menu
+if (change && hiddenul) {
+  let hideTimer;
 
-// show hover menu user info
-if(change){
-  change.addEventListener("mousemove",(eo) => {
-    hiddenul.style.display="block";
-    });
-    change.addEventListener("mouseout",(eo) => {
-      setTimeout(function() {
-        if (!hiddenul.matches(':hover')) {
-          hiddenul.style.display = "none";
-        }
-      }, 300); 
-    });
+  const showMenu = () => {
+    clearTimeout(hideTimer);
+    hiddenul.style.display = 'block';
+  };
 
-    change.addEventListener("mousemove",(eo) => {
-      hiddenul.style.display="block";
-      });
-      
-      change.addEventListener("mouseout",(eo) => {
-      hiddenul.style.display = "none";
-       });
+  const hideMenu = () => {
+    clearTimeout(hideTimer);
+    hideTimer = setTimeout(() => {
+      if (!change.matches(':hover') && !hiddenul.matches(':hover')) {
+        hiddenul.style.display = 'none';
+      }
+    }, 150);
+  };
+
+  change.addEventListener('mouseenter', showMenu);
+  change.addEventListener('mouseleave', hideMenu);
+  hiddenul.addEventListener('mouseenter', showMenu);
+  hiddenul.addEventListener('mouseleave', hideMenu);
+
+  change.addEventListener('click', (event) => {
+    if (hiddenul.contains(event.target)) {
+      return;
+    }
+
+    event.stopPropagation();
+    hiddenul.style.display = hiddenul.style.display === 'block' ? 'none' : 'block';
+  });
+
+  document.addEventListener('click', (event) => {
+    if (!change.contains(event.target) && !hiddenul.contains(event.target)) {
+      hiddenul.style.display = 'none';
+    }
+  });
 }
-  
-    
+
 // show notification menu on click/tap and hover
 notificationTriggers.forEach((trigger) => {
   const notifications = trigger.nextElementSibling;
@@ -65,7 +88,7 @@ notificationTriggers.forEach((trigger) => {
 
   const hideNotifications = () => {
     notifications.classList.remove('is-open');
-  document.body.classList.remove('no-scroll');
+    document.body.classList.remove('no-scroll');
   };
 
   trigger.addEventListener('click', (event) => {
@@ -80,24 +103,18 @@ notificationTriggers.forEach((trigger) => {
     });
 
     notifications.classList.toggle('is-open', !isOpen);
-
-if (!isOpen) {
-  document.body.classList.add('no-scroll');
-} else {
-  document.body.classList.remove('no-scroll');
-}
-
+    document.body.classList.toggle('no-scroll', !isOpen);
   });
 
   if (window.matchMedia('(hover: hover)').matches) {
     trigger.addEventListener('mousemove', showNotifications);
 
-    trigger.addEventListener('mouseout', function() {
-      setTimeout(function() {
+    trigger.addEventListener('mouseout', function () {
+      setTimeout(function () {
         if (!notifications.matches(':hover')) {
           hideNotifications();
         }
-      }, 300); 
+      }, 300);
     });
 
     notifications.addEventListener('mousemove', showNotifications);

@@ -16,6 +16,7 @@ class HomeController extends Controller
     $featuredPosts = $repo->getFeaturedPosts();
     $news = $news->getAllNewsWithSources();
     $result = $repo->getTrendingTagPosts();
+    $latestPosts = $repo->getLatestForHomeFeed();
     
 
   return view('index', [
@@ -23,12 +24,13 @@ class HomeController extends Controller
                     return Slide::published()
                              ->latest()
                              ->get()
-                             ->take(4);}),
-      'featuredPosts'   => $featuredPosts,
-      'latestTrend'     => $result['latestTrend'],
-      'trendingHashtag' => $result['trendingHashtag'],
-       'latestNews'     => $news['latestNews'],
-       'moreNews'       => $news['moreNews'],
+                             ->take(4);
+                    }),
+       'latest_posts'    => $latestPosts,
+       'featuredPosts'   => $featuredPosts,
+       'latestTrend'     => $result['latestTrend'],
+       'trendingHashtag' => $result['trendingHashtag'],
+       'moreNews'        => $news['moreNews'],
        ]);
 
   }

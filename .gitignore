@@ -40,3 +40,6 @@ yarn-error.log
 /dump.rdb
 *.sublime-project
 *.sublime-workspace
+
+/ui.md
+public/pdfs

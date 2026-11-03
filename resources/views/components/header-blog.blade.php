@@ -1,36 +1,53 @@
 @php
-    $isTransparent = Route::is(['home', 'profile.*']);
+    $isTransparent = Route::is(['profile.*']);
     $isFixed = Route::is(['blog', 'news', 'viewhashtag', 'viewcategory']);
     $isHome = Route::is('home');
+
+    $navItems = [
+        ['label' => 'home', 'href' => route('home'), 'active' => Route::is('home')],
+        ['label' => 'blog', 'href' => route('blog'), 'active' => Route::is('blog')],
+        ['label' => 'news', 'href' => route('news'), 'active' => Route::is('news')]
+    ];
 @endphp
 
-<nav
+<header
     id="blog-navigation"
     @class([
-        'w-screen h-20 px-6 py-5',
-        'absolute z-50 bg-opacity-0' => $isTransparent,
-        'bg-white shadow-[0_2px_5px_rgba(0,0,0,0.1)]' => ! $isTransparent,
+        'w-full',
+        'border-b border-border bg-background' => ! $isTransparent,
+        'absolute z-50 border-transparent bg-transparent' => $isTransparent,
         'fixed top-0 z-50' => $isFixed,
     ])
 >
-    <div class="flex items-center justify-between">
+    <div class="mx-auto flex w-full max-w-6xl items-center justify-between gap-6 px-6 py-4">
+
+        <x-logo />
+
+        <nav class="hidden items-center gap-6 font-mono text-xs lg:flex" aria-label="Primary">
+            @foreach($navItems as $item)
+                <a
+                    href="{{ $item['href'] }}"
+                    @class([
+                        'transition-colors',
+                        'font-medium text-foreground' => $item['active'],
+                        'text-muted-foreground hover:text-foreground' => ! $item['active'],
+                    ])
+                    @if($item['active']) aria-current="page" @endif
+                >
+                    {{ $item['label'] }}
+                </a>
+            @endforeach
+            <x-search-button isFeed=true/>
+        </nav>
 
         <div class="flex items-center gap-4">
-            <x-logo class="cursor-pointer"/>
-
-            @unless($isHome)
-                <div class="hidden lg:block max-w-md">
-                    <x-search-button />
-                </div>
-            @endunless
+            @guest
+                <x-guest-links />
+            @else
+                <x-desktop-nav :transparent="false" />
+                <x-mobile-nav :transparent="false" />
+            @endguest
         </div>
 
-        @guest
-            <x-guest-links :transparent="$isTransparent" />
-        @else
-            <x-desktop-nav :transparent="$isTransparent" />
-            <x-mobile-nav :transparent="$isTransparent" />
-        @endguest
-
     </div>
-</nav>
+</header>

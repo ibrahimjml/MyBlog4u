@@ -2,7 +2,7 @@
     'transparent' => false,
 ])
 
-<div class="flex items-center ml-auto gap-6 lg:hidden">
+<div class="relative flex items-center ml-auto gap-6 lg:hidden">
        {{-- Mobile Search --}}
     <div class="lg:hidden">
         <x-search-button />
@@ -32,7 +32,10 @@
     <img
         id="mobile-btn"
         src="{{ auth()->user()->avatar_url }}"
-        class="h-[26px] w-[26px] rounded-full object-cover"
+        class="h-[26px] w-[26px] cursor-pointer rounded-full object-cover"
+        role="button"
+        tabindex="0"
+        aria-label="Open user menu"
     >
 </div>
 

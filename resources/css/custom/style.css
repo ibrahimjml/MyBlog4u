@@ -1,7 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
-
 html,body{
-  font-family: 'Poppins',sans-serif !important;
+  font-family: 'DM Sans',sans-serif;
   overflow-x: hidden;
   margin: 0;
   padding: 0;
@@ -27,22 +25,6 @@ html,body{
 }
 }
 
-#hiddenul2 {
- display: block;
- position: absolute;
- box-shadow: 0 5px 25px 0 rgb(0 0 0 / 60%);
- padding: 1rem;
- border-radius: 0.5rem;
- color: #3d4a59;
- background-color: #fff;
- transform: translateX(-8px);
- cursor: pointer;
- line-height: 30px;
- text-align: center;
- min-width: 140px;
- z-index: 70;
- margin-top: 28px;
-}
 .burger-menu{
  position: absolute;
  top: 35px;
@@ -64,14 +46,15 @@ html,body{
 .notification-menu {
   display: none;
   position: absolute;
-  top: 50px;
-  box-shadow: 0 5px 25px 0 rgb(0 0 0 / 60%);
-  border-radius: 0.5rem;
-  color: #3d4a59;
-  background-color: #fff;
-  transform: translateX(-200px);
-  line-height: 30px;
-  text-align: center;
+  top: calc(100% + 0.75rem);
+  right: 0;
+  border: 1px solid oklch(var(--border));
+  border-radius: 0.75rem;
+  color: oklch(var(--card-foreground));
+  background-color: oklch(var(--card));
+  box-shadow: 0 24px 48px -24px oklch(var(--foreground) / 0.45);
+  line-height: 1.5;
+  text-align: left;
   min-width: 140px;
   z-index: 70;
 }
@@ -305,19 +288,22 @@ body.no-scroll {
     cursor: pointer;
     align-items: center;
     gap: 0.5rem;
-    border-radius: 0.375rem;
-    padding: 0.375rem 0.5rem;
-    font-size: 0.875rem;
-    color: #334155;
+    border-radius: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+    font-size: 0.75rem;
+    color: oklch(var(--foreground));
+    transition: background-color 150ms ease, color 150ms ease;
   }
 
   .search-list-item:hover {
-    background: #f1f5f9;
+    background: oklch(var(--secondary));
+    color: oklch(var(--foreground));
   }
 
   .search-list-item i {
     width: 1rem;
-    color: #64748b;
+    color: oklch(var(--muted-foreground));
     text-align: center;
   }
 
@@ -330,7 +316,7 @@ body.no-scroll {
     transition: background-color .15s ease;
   }
 
-  .search-result-row:hover { background: #f8fafc; }
+  .search-result-row:hover { background: oklch(var(--secondary)); }
 
   .search-result-icon {
     display: flex;
@@ -340,6 +326,6 @@ body.no-scroll {
     align-items: center;
     justify-content: center;
     border-radius: .5rem;
-    background: #f1f5f9;
-    color: #475569;
+    background: oklch(var(--secondary));
+    color: oklch(var(--muted-foreground));
   }

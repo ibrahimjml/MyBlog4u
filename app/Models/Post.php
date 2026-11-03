@@ -8,6 +8,7 @@ use App\Enums\PostStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Laravel\Scout\Searchable;
 
 class Post extends Model
@@ -134,5 +135,16 @@ class Post extends Model
     return $this->hasMany(Comment::class, 'post_id');
   }
 
+  protected function readingMinutes(): Attribute
+      {
+          return Attribute::make(
+              get: function () {
+                  $text = strip_tags(($this->description ?? '') . ' ' . ($this->short_excerpt ?? ''));
+                  $words = str_word_count($text);
+                  
+                  return max(1, (int) ceil($words / 200));
+              }
+          );
+      }
 
 }

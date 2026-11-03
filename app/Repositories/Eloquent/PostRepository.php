@@ -95,6 +95,14 @@ class PostRepository implements PostInterface
                    ->take(8)
                    ->get();
     }
+    public function getLatestForHomeFeed()
+    {
+      return Post::published()
+                    ->latest()
+                    ->with(['user:id,name,username,avatar', 'hashtags:id,name'])
+                   ->take(3)
+                   ->get();
+    }
 
     public function getPostLikes(Post $post)
     {
@@ -108,6 +116,7 @@ class PostRepository implements PostInterface
     {
         return Post::published()
                 ->featured()
+                ->with('hashtags:id,name')
                 ->withCount( 'totalcomments')
                 ->latest()
                 ->take(7)
@@ -115,29 +124,33 @@ class PostRepository implements PostInterface
     }
     public function getTrendingTagPosts()
     {
-      $trendingHashtag = Hashtag::active()
-        ->withCount('posts')
-        ->orderByDesc('posts_count')
-        ->first();
+        $trendingHashtags = Hashtag::active()
+               ->withCount('posts')
+               ->orderByDesc('posts_count')
+               ->take(5) 
+               ->get();
 
-    $latesttrend = collect();
+         $trendingHashtagIds = $trendingHashtags->pluck('id')->toArray();
 
-    if ($trendingHashtag) {
-        $latesttrend = Post::published()
-            ->with(['user', 'hashtags', 'comments'])
-            ->withCount('totalcomments')
-            ->whereHas('hashtags', function ($query) use ($trendingHashtag) {
-                $query->where('hashtags.id', $trendingHashtag->id);
-            })
-            ->oldest()
-            ->take(3)
-            ->get();
-    }
+         $latesttrend = collect();
 
-    return [
-        'trendingHashtag' => $trendingHashtag,
-        'latestTrend' => $latesttrend,
-    ];
+       if (!empty($trendingHashtagIds)) {
+           $latesttrend = Post::published()
+               ->with(['user', 'hashtags', 'comments'])
+               ->withCount('totalcomments')
+               ->whereHas('hashtags', function ($query) use ($trendingHashtagIds) {
+                   $query->whereIn('hashtags.id', $trendingHashtagIds);
+               })
+               // Order posts by the priority
+               ->orderByRaw('FIELD((SELECT hashtag_id FROM post_hashtag WHERE post_id = posts.id AND hashtag_id IN (' . implode(',', $trendingHashtagIds) . ') LIMIT 1), ' . implode(',', $trendingHashtagIds) . ')')
+               ->take(3)
+               ->get();
+       }
+       
+       return [
+           'trendingHashtag' => $trendingHashtags->first(),
+           'latestTrend' => $latesttrend,
+       ];
     }
      public function getPaginatedComments(Post $post, int $page, int $perPage): LengthAwarePaginator
    {

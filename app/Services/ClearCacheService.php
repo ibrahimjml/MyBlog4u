@@ -26,7 +26,10 @@ class ClearCacheService
     Cache::tags(["post:{$post->id}:comments"])->flush();
         
     Cache::forget("post:{$post->id}:more_articles");
+
     Cache::forget("latest_blogs:except:{$post->id}");
+
+    Cache::forget("home_feed_latest");
     
     Cache::tags(["search_posts"])->flush();
     

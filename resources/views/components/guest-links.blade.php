@@ -1,8 +1,3 @@
-@props([
-    'transparent' => false,
-])
-
-<div class="flex items-center gap-4">
 
     {{-- Mobile Search --}}
     <div class="lg:hidden">
@@ -12,14 +7,8 @@
     @unless(Route::is('login'))
         <a
             href="{{ route('login') }}"
-            @class([
-                'rounded-xl px-4 py-2 text-sm font-bold uppercase transition',
-                'bg-white text-black hover:bg-slate-100' => $transparent,
-                'bg-black text-white hover:bg-slate-800' => ! $transparent,
-            ])
+            class="inline-flex items-center rounded-full bg-foreground px-4 py-1.5 font-mono text-xs text-background transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
-            Sign In
+            sign in
         </a>
     @endunless
-
-</div>

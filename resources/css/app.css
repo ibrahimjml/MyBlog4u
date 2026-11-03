@@ -7,3 +7,71 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  :root {
+    --background: 0.98 0.008 80;
+    --foreground: 0.18 0.02 265;
+    --card: 1 0 0;
+    --card-foreground: 0.18 0.02 265;
+    --primary: 0.64 0.21 40;
+    --primary-foreground: 0.99 0.005 80;
+    --secondary: 0.95 0.008 80;
+    --secondary-foreground: 0.18 0.02 265;
+    --muted: 0.95 0.008 80;
+    --muted-foreground: 0.53 0.015 270;
+    --accent: 0.93 0.045 65;
+    --accent-foreground: 0.42 0.12 40;
+    --border: 0.91 0.008 80;
+    --input: 0.91 0.008 80;
+    --ring: 0.64 0.21 40;
+    --destructive: 0.58 0.22 27;
+    --destructive-foreground: 0.99 0.005 80;
+    --radius: 0.75rem;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+
+  ::selection {
+    background: oklch(var(--primary) / 0.2);
+  }
+}
+
+@layer components {
+  .hero-swiper {
+    --swiper-theme-color: oklch(var(--primary));
+  }
+
+  .hero-swiper .swiper-button-prev,
+  .hero-swiper .swiper-button-next {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 9999px;
+    background: oklch(var(--card) / 0.92);
+    border: 1px solid oklch(var(--border));
+    color: oklch(var(--foreground));
+    box-shadow: 0 4px 14px -6px oklch(var(--foreground) / 0.35);
+  }
+
+  .hero-swiper .swiper-button-prev::after,
+  .hero-swiper .swiper-button-next::after {
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+
+  .hero-swiper .swiper-pagination-bullet {
+    width: 0.5rem;
+    height: 0.5rem;
+    opacity: 1;
+    background: oklch(var(--foreground) / 0.2);
+    transition: width 200ms ease, background-color 200ms ease;
+  }
+
+  .hero-swiper .swiper-pagination-bullet-active {
+    width: 1.5rem;
+    border-radius: 9999px;
+    background: oklch(var(--primary));
+  }
+}
+

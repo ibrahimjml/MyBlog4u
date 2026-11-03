@@ -2,7 +2,7 @@
     'transparent' => false,
 ])
 
-<ul class="hidden md:flex items-center space-x-6">
+<ul class="relative hidden items-center space-x-6 md:flex">
 
     {{-- User dropdown --}}
     <li
@@ -15,21 +15,14 @@
     >
         @include('partials.hover-menu')
 
-        <span class="cursor-pointer">
+        <span class="flex cursor-pointer items-center gap-2 font-mono text-xs text-foreground">
+            <img
+              src="{{ auth()->user()->avatar_url }}"
+              class="h-[26px] w-[26px] rounded-full object-cover"
+            >
             {{ auth()->user()->name }}
             <i class="fas fa-angle-down ml-1"></i>
         </span>
-    </li>
-
-    {{-- Blog --}}
-    <li
-        @class([
-            'pt-2 text-lg',
-            'text-white' => $transparent,
-            'text-gray-700' => ! $transparent,
-        ])
-    >
-        <a href="{{ route('blog') }}">Blog</a>
     </li>
 
     {{-- Notifications --}}
@@ -54,49 +47,6 @@
         </li>
 
         @include('partials.notifications-menu')
-    @endunless
-
-    {{-- Bookmarks --}}
-    <li
-        @class([
-            'pt-2 text-lg',
-            'text-white' => $transparent,
-            'text-gray-700' => ! $transparent,
-        ])
-    >
-        <a href="{{ route('bookmarks') }}">
-            <i class="far fa-bookmark"></i>
-        </a>
-    </li>
-
-    {{-- Admin --}}
-    @if(auth()->user()->hasAnyRole(['Admin','Moderator']) || auth()->user()->hasPermission('Access'))
-        <li
-            @class([
-                'pt-2 text-lg',
-                'text-white' => $transparent,
-                'text-gray-700' => ! $transparent,
-            ])
-        >
-            <a href="{{ route('admin.panel') }}">
-                Admin Panel
-            </a>
-        </li>
-    @endif
-
-    {{-- Home --}}
-    @unless(Route::is('home'))
-        <li
-            @class([
-                'pt-2 text-lg',
-                'text-white' => $transparent,
-                'text-gray-700' => ! $transparent,
-            ])
-        >
-            <a href="{{ route('home') }}">
-                Home
-            </a>
-        </li>
     @endunless
 
 </ul>
