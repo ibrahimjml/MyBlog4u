@@ -1,138 +1,147 @@
-<article
-  class="container mx-auto  max-w-3xl border rounded-xl my-4 border-gray-200 bg-white grid grid-cols-1 sm:grid-cols-2 ">
+@php
+  $isSaved = in_array($post->id, session('saved-to', []));
+@endphp
 
-  <!-- Left Section: User Info + Image + Buttons -->
-  <section class="flex flex-col gap-3 p-4 lg:w-90">
-    <!-- User Info -->
-    <div class="flex items-center gap-4 w-full">
-      <a href="{{ route('profile.home', $post->user->username) }}">
-        <img src="{{ $post->user->avatar_url }}" class="w-8 h-8 rounded-full object-cover border" alt="avatar">
-      </a>
-      <div>
-        <div class="flex items-center justify-center gap-3">
-          <a href="{{ route('profile.home', $post->user->username) }}"
-            class="text-base font-semibold hover:underline truncate">
-            {{ $post->user->username }}
-          </a>
-          @if(auth()->check() && auth()->id() !== $post->user_id)
-            <strong>·</strong>
-            <x-follow-button :status="$authFollowings[$post->user_id] ?? null" :user-id="$post->user_id" type="label"
-              onclick="fetchfollow(this)" class="follow px-3 py-1 rounded-lg text-xs font-bold" />
-          @endif
+<article
+  class="group grid h-full mb-4 overflow-hidden rounded-2xl border border-border bg-card transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/40 sm:grid-cols-5">
+
+  {{-- Media --}}
+  <div class="relative min-h-[220px] bg-secondary sm:col-span-2">
+    <a href="{{ route('single.post', $post->slug) }}" class="absolute inset-0 block overflow-hidden">
+      <img loading="lazy" src="{{ $post->image_url }}" alt="{{ $post->title }}"
+           class="h-full w-full object-center blur-md bg-gray-200 transition-transform duration-500 ease-out group-hover:scale-105"
+           onload="this.classList.remove('blur-md', 'bg-gray-200')"
+        >
+    </a>
+
+    @if($post->is_featured)
+      <span
+        class="absolute left-3 top-3 rounded-full bg-primary px-2.5 py-1 font-mono text-[10px] font-semibold uppercase tracking-widest text-primary-foreground">
+        Featured
+      </span>
+    @endif
+  </div>
+
+  {{-- Content --}}
+  <div class="flex min-w-0 flex-col gap-3 p-4 sm:col-span-3 sm:p-5">
+
+    {{-- Author + follow + save --}}
+    <div class="flex items-start justify-between gap-3">
+      <div class="flex min-w-0 items-center gap-3">
+        <a href="{{ route('profile.home', $post->user->username) }}" class="shrink-0">
+          <img src="{{ $post->user->avatar_url }}" alt="{{ $post->user->name }}"
+            class="h-8 w-8 rounded-full border border-border object-cover">
+        </a>
+        <div class="min-w-0">
+          <div class="flex flex-wrap items-center gap-2">
+            <a href="{{ route('profile.home', $post->user->username) }}"
+              class="truncate font-display text-sm font-semibold text-foreground transition-colors hover:text-primary">
+              {{ $post->user->username }}
+            </a>
+            @if(auth()->check() && auth()->id() !== $post->user_id)
+              <x-follow-button :status="$authFollowings[$post->user_id] ?? null" :user-id="$post->user_id" type="label"
+                onclick="fetchfollow(this)"
+                class="follow rounded-full px-2.5 py-0.5 font-mono text-[10px] font-semibold transition-colors" />
+            @endif
+          </div>
+          <p class="font-mono text-[11px] text-muted-foreground">{{ $post->created_at->diffForHumans() }}</p>
         </div>
-        <p class="text-xs text-gray-500">{{ $post->created_at->diffForHumans() }}</p>
+      </div>
+
+      <div class="shrink-0">
+        @if (!empty($showSaveButton))
+          <button type="button" onclick="unsavedposts({{ $post->id }})"
+            class="rounded-full border border-destructive/40 px-3 py-1 font-mono text-[11px] text-destructive transition-colors hover:bg-destructive/10">
+            Remove
+          </button>
+        @else
+          @auth
+            <button type="button" onclick="save(this,{{ $post->id }})"
+              class="relative flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-border bg-secondary transition-colors hover:text-primary {{ $isSaved ? 'text-primary' : 'text-muted-foreground' }}">
+              <i class="{{ $isSaved ? 'fas' : 'far' }} fa-bookmark text-xs"></i>
+              <span
+                class="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[11px] leading-none {{ $isSaved ? 'text-primary' : 'text-muted-foreground' }}">
+                {{ $isSaved ? '✓' : '+' }}
+              </span>
+            </button>
+          @else
+            <a href="{{ route('login') }}" title="Login to save"
+              class="relative flex h-8 w-8 items-center justify-center rounded-full border border-border bg-secondary text-muted-foreground transition-colors hover:text-primary">
+              <i class="far fa-bookmark text-xs"></i>
+              <span
+                class="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[11px] leading-none">+</span>
+            </a>
+          @endauth
+        @endif
       </div>
     </div>
 
-    <!-- Post Image -->
-    <div class="relative lg:aspect-[4/2] aspect-[4/2] lg:w-full rounded-lg overflow-hidden  group">
-      <a href="{{route('single.post', $post->slug)}}">
-        <img loading="lazy" src="{{ $post->image_url }}" alt="{{ $post->title }}"
-          class=" w-full h-full object-fill blur-md bg-gray-200 shadow-md transition-all duration-700 ease-out group-hover:scale-110"
-          onload="this.classList.remove('blur-md', 'bg-gray-200')">
-      </a>
-      @if($post->is_featured)
-        <span
-          class="absolute top-2 left-2 bg-amber-400 bg-opacity-80 text-white text-xs font-medium px-3 py-1 rounded-md">
-          Featured
-        </span>
+    {{-- Title + excerpt --}}
+    <a href="{{ route('single.post', $post->slug) }}" class="block">
+      <h2 class="font-display text-lg font-semibold leading-snug line-clamp-2 transition-colors group-hover:text-primary">
+        {{ $post->title }}
+      </h2>
+      @if($post->short_excerpt)
+        <p class="mt-2 font-sans text-sm leading-relaxed text-muted-foreground line-clamp-3">
+          {!! $post->short_excerpt !!}
+        </p>
       @endif
-    </div>
+    </a>
 
-    <!-- Interactions -->
-    @if($post->categories->isNotEmpty())
-      <div class="flex items-center gap-2 text-sm text-gray-600">
-        <b class="text-sm">in:</b>
+    {{-- Categories + hashtags --}}
+    @if($post->categories->isNotEmpty() || $post->hashtags->isNotEmpty())
+      <div class="flex flex-wrap items-center gap-2">
         @foreach($post->categories as $category)
           @php
             $isActive = isset($currentCategory) && $currentCategory->name == $category->name;
           @endphp
-          <a href="{{route('viewcategory', $category->name)}}" @class([
-            'px-2 py-1 text-xs rounded-md',
-            'bg-[#f5b576] text-gray-700 font-semibold' => $category->is_featured,
-            'bg-gray-600 text-white' => !$category->is_featured,
-            'bg-yellow-500' => $isActive
+          <a href="{{ route('viewcategory', $category->name) }}" @class([
+              'rounded-full px-2 py-0.5 font-mono text-[10px] transition-colors',
+              'bg-primary text-primary-foreground' => $isActive,
+              'bg-accent text-accent-foreground' => !$isActive && $category->is_featured,
+              'border border-border bg-secondary text-muted-foreground hover:text-foreground' =>
+                  !$isActive && !$category->is_featured,
           ])>
-            @if($category->is_featured) &#x1F525; @endif {{ $category->name }}
+            {{ $category->name }}
           </a>
         @endforeach
-      </div>
-    @endif
-    <div class="flex justify-between items-center ">
-      <div class="flex gap-2 text-xs text-gray-600">
-        @if($post->likes_count)
-          <span class="whitespace-nowrap">{{ $post->likes_count }} {{ Str::plural('like', $post->likes_count) }}</span>
-          <b>·</b>
-        @endif
-        @if($post->totalcomments_count)
-          <span class="whitespace-nowrap">{{$post->totalcomments_count}}
-            {{ Str::plural('comment', $post->totalcomments_count) }}</span>
-          <b>·</b>
-        @endif
-        <span class="whitespace-nowrap">{{$post->views}} {{ Str::plural('view', $post->views)}}</span>
-      </div>
-      <div class="flex items-center">
-        @if (!empty($showSaveButton))
-          <button onclick="unsavedposts({{ $post->id }})"
-            class="border-2 border-red-600 text-red-600 font-semibold px-4 py-1 text-sm rounded-md hover:bg-red-50 transition">
-            Remove
-          </button>
-        @else
 
-          @auth
-            <div onclick="save(this,{{ $post->id }})"
-              class="relative inline-flex items-center justify-center text-md cursor-pointer">
-              <i
-                class="text-gray-600 {{ in_array($post->id, session('saved-to', [])) ? 'fas fa-bookmark' : 'far fa-bookmark' }}"></i>
-              <span
-                class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-[12px] pb-1 {{ in_array($post->id, session('saved-to', [])) ? 'text-white' : 'text-gray-600' }}">
-                {{ in_array($post->id, session('saved-to', [])) ? '✓' : '+' }}
-              </span>
-            </div>
-          @else
-            <a href="{{ route('login') }}" class="relative inline-flex items-center justify-center text-md cursor-pointer">
-              <i class="far fa-bookmark text-gray-600"></i>
-              <span
-                class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-[12px] pb-1 text-gray-600">
-                +
-              </span>
-            </a>
-          @endauth
-
-        @endif
-      </div>
-    </div>
-  </section>
-  <!-- Right Section: Title + Description + Hashtags -->
-  <section class="flex flex-col gap-3 lg:mt-12 p-2">
-    <a href="{{route('single.post', $post->slug)}}">
-      <h2 class="text-xl font-bold text-gray-800 line-clamp-2">
-        {{ $post->title }}
-      </h2>
-      <div class="text-gray-600 leading-relaxed text-sm line-clamp-3 mt-2">
-        {{ $post->short_excerpt }}
-      </div>
-    </a>
-    @if($post->hashtags->isNotEmpty())
-      <div class="flex flex-wrap gap-2 mt-1">
         @foreach($post->hashtags as $hashtag)
           @php
             $isActive = isset($currentHashtag) && $currentHashtag->name == $hashtag->name;
           @endphp
           <a href="{{ route('viewhashtag', $hashtag->name) }}" @class([
-            'px-2 py-1 text-xs rounded-md font-semibold',
-            'bg-[#f5b576] text-gray-700' => $hashtag->is_featured,
-            'bg-blueGray-200 text-blueGray-500' => !$hashtag->is_featured,
-            'bg-yellow-400' => $isActive
+              'rounded-full px-2 py-0.5 font-mono text-[10px] transition-colors',
+              'bg-primary text-primary-foreground' => $isActive,
+              'bg-accent text-accent-foreground' => !$isActive && $hashtag->is_featured,
+              'border border-border bg-secondary text-muted-foreground hover:text-foreground' =>
+                  !$isActive && !$hashtag->is_featured,
           ])>
-            @if($hashtag->is_featured) &#x1F525; @else &#x23; @endif {{ $hashtag->name }}
+            #{{ $hashtag->name }}
           </a>
         @endforeach
       </div>
     @endif
-  </section>
+
+    {{-- Stats --}}
+    <div
+      class="mt-auto flex flex-wrap items-center gap-x-3 gap-y-1 border-t border-border pt-3 font-mono text-[11px] text-muted-foreground">
+      @if($post->likes_count)
+        <span>{{ $post->likes_count }} {{ Str::plural('like', $post->likes_count) }}</span>
+      @endif
+      @if($post->totalcomments_count ?? $post->comments_count)
+        <span>{{ $post->totalcomments_count ?? $post->comments_count }}
+          {{ Str::plural('comment', $post->totalcomments_count ?? $post->comments_count) }}</span>
+      @endif
+      <span>{{ $post->views ?? 0 }} {{ Str::plural('view', $post->views ?? 0) }}</span>
+      <span class="ml-auto">{{ $post->readingMinutes }} min</span>
+    </div>
+
+  </div>
 </article>
 
-@push('scripts')
-  <script src="{{asset('js/savepost.js')}}"></script>
-@endpush
+@once
+  @push('scripts')
+    <script src="{{ asset('js/savepost.js') }}"></script>
+  @endpush
+@endonce

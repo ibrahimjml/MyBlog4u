@@ -1,108 +1,101 @@
 <x-layout>
-  
-  <div><!-- start container filters -->
-    <div class="container mx-auto px-4 ">
-  
-      <div class="flex flex-col gap-4 lg:hidden"><!-- start mobile layout -->
 
-        <div class="px-0 flex items-center gap-3"><!-- start sidebar, sort & news -->
-            <button
-                class="lg:hidden flex items-center justify-center w-10 h-10 text-gray-800 rounded-xl border border-slate-200 text-sm shadow-md focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent px-4 py-2.5  transition-all duration-200"
-                id="open-sidebar" aria-label="Toggle menu">
-              <i class="fa fa-bars text-lg"></i>
-            </button>
-          @include('blog.partials.filter')
+  <div class="mx-auto w-full max-w-6xl px-6 py-4">
 
-          @if($news->isNotEmpty())
-            <div class="lg:hidden  mt-5 ">
-              <button id="show-news"
-                class=" sm:flex  w-fit  border border-slate-200 text-sm shadow-sm py-2 px-5 rounded-lg font-bold capitalize mb-6 text-gray-800  focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent  pr-10 transition-all duration-200">
-                <i class="fas fa-rss mr-2 text-sm text-yellow-400"></i>
-                <span class="label">All News</span>
-              </button>
-            </div>
-          @endif
-        </div><!-- end sidebar,sort & news -->
+    {{-- Page header --}}
+    <header class="max-w-2xl">
+      <p class="font-mono text-xs text-primary">~/blog</p>
+    </header>
 
-      </div><!-- end mobile layout -->
+    {{--  sort + sources --}}
+    <div
+      class="mt-8 flex flex-col gap-4 border-b border-border pb-6 lg:flex-row lg:items-center lg:justify-between">
 
-      <!-- sidebar menu -->
-      @include('blog.partials.__sidebar')
-      
-      <div class="hidden lg:flex items-center justify-between gap-6"><!-- start desktop layout -->
+      <div class="flex flex-wrap items-center gap-3">
+        @include('blog.partials.filter')
 
-        <!-- Sort -->
-        <div class="flex-shrink-0">
-          @include('blog.partials.filter')
-        </div>
-      </div><!-- end desktop layout -->
-    </div>
-  </div><!-- end container filters -->
-
-  <div id="news-container" class="flex flex-wrap justify-center mt-5 gap-2 px-3 mb-3 w-full  max-w-full transition-all duration-500 ease-in-out h-0 overflow-hidden"><!-- start news container-->
-    @foreach($news as $new)
-      <a href="{{ route('news') }}?source={{ $new->name }}"
-        class="flex items-center gap-3 rounded-full border border-slate-200 bg-white px-4 py-2 lg:text-sm text-xs font-medium text-slate-700 transition duration-200 hover:border-slate-900">
-          <img src="{{ $new->favicon_url }}" alt="{{ $new->name }}" width="26" height="26" class="rounded-full">
-          <b>{{ $new->name }}</b>
-          <b>{{ '(' . $new->posts_count . ')' }}</b>
-
-  </a>
-    @endforeach
-  </div><!-- end news container-->
-
-  <hr>
-  <!-- Posts feed -->
-  <div class="container mx-auto px-4">
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-      <!-- Main Content  - Posts -->
-      @if($posts->count() == 0)
-        <h1 class=" text-4xl p p-36 font-semibold text-center w-54">No Posts Yet</h1>
-      @else
-        <div id="posts-container" class="lg:col-span-2">
-          @include('blog.partials.posts-ajax', ['posts' => $posts])
-        </div>
-      @endif
-      <!-- Sidebar content - Recent Tags & Posts -->
-      <div class="hidden lg:block mt-4 transform -translate-x-16 ">
-        <!-- Popular Tags Section -->
-        @include('blog.popular-tags')
-        <!-- Categories Section -->
-        @include('blog.categories')
-        <!-- latest news -->
-        @include('blog.latest-news')
-        <!-- Who To Follow Section -->
-        @include('blog.whotofollow')
+        @if($news->isNotEmpty())
+          <button id="show-news" type="button"
+            class="inline-flex w-fit items-center gap-2 rounded-full border border-border bg-card px-4 py-2 font-mono text-xs text-foreground transition-colors hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+            <i class="fas fa-rss text-primary" aria-hidden="true"></i>
+            <span class="label">Sources</span>
+          </button>
+        @endif
       </div>
     </div>
+
+    {{-- News sources --}}
+    <div id="news-container"
+      class="mt-4 flex h-0 w-full flex-wrap gap-2 overflow-hidden transition-all duration-500 ease-in-out">
+      @foreach($news as $new)
+        <a href="{{ route('news') }}?source={{ $new->name }}" rel="nofollow"
+          class="flex items-center gap-3 rounded-full border border-border bg-card px-4 py-2 font-mono text-xs text-foreground transition-colors hover:border-primary/40 hover:bg-secondary">
+          <img src="{{ $new->favicon_url }}" alt="{{ $new->name }}" width="22" height="22"
+            class="rounded-full">
+          <span class="font-semibold">{{ $new->name }}</span>
+          <span class="text-muted-foreground">({{ $new->posts_count }})</span>
+        </a>
+      @endforeach
+    </div>
+
+    {{-- Feed + sidebar --}}
+    <div class="mt-6 grid gap-8 lg:grid-cols-3">
+      <div class="min-w-0 lg:col-span-2">
+          {{-- Grid --}}
+          <article id="posts-container" class="mt-8 grid gap-6 md:grid-cols-1">
+            @include('blog.partials.posts-ajax', ['posts' => $posts])
+          </article>
+
+        <x-infinte-scroll container="posts-container" :route="route('blog')" page-name="blog_page"
+          :current-page="$posts->currentPage()" :has-more="$posts->hasMorePages()" />
+      </div>
+
+      {{-- Desktop sidebar --}}
+      <aside class="hidden mt-8 lg:block">
+        <div class="sticky top-28 space-y-6">
+          @include('blog.popular-tags')
+          @include('blog.categories')
+          @include('blog.latest-news')
+          @include('blog.whotofollow')
+        </div>
+      </aside>
+    </div>
+
   </div>
 
-  <!-- infinte scroll pagination -->
-<x-infinte-scroll container="posts-container" 
-                  :route="route('blog')" 
-                  page-name="blog_page"
-                  :current-page="$posts->currentPage()"
-                  :has-more="$posts->hasMorePages()"/>
+  {{-- Mobile sidebar --}}
+  @include('blog.partials.__sidebar')
+
+  {{-- Open sidebar button --}}
+  <button id="open-sidebar" type="button" aria-label="Open sidebar menu"
+    class="fixed bottom-6 right-6 z-40 flex h-11 w-11 items-center justify-center rounded-full border border-border bg-card text-foreground shadow-lg transition-all duration-200 hover:border-primary/40 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring lg:hidden">
+    <i class="fa fa-bars text-sm" aria-hidden="true"></i>
+  </button>
 
   @push('scripts')
     <script>
-      const newsContainer = document.getElementById('news-container');
-      const showNews = document.getElementById('show-news');
-      if(showNews){
-         const label = showNews.querySelector('.label');
-         let expanded = false;
-         showNews.addEventListener('click', () => {
-           if (!expanded) {
-             newsContainer.style.height = `${newsContainer.scrollHeight}px`;
-             expanded = true;
-             label.textContent = 'Hide News';
-           } else {
-             newsContainer.style.height = '0';
-             expanded = false;
-             label.textContent = 'All News';
-            }
+      document.addEventListener('DOMContentLoaded', () => {
+        const newsContainer = document.getElementById('news-container');
+        const showNews = document.getElementById('show-news');
+
+        if (!showNews || !newsContainer) return;
+
+        const label = showNews.querySelector('.label');
+        let expanded = false;
+
+        showNews.addEventListener('click', () => {
+          if (!expanded) {
+            newsContainer.style.height = `${newsContainer.scrollHeight}px`;
+            expanded = true;
+            label.textContent = 'Hide Sources';
+          } else {
+            newsContainer.style.height = '0';
+            expanded = false;
+            label.textContent = 'Sources';
+          }
         });
-      }
+      });
     </script>
   @endpush
+
 </x-layout>

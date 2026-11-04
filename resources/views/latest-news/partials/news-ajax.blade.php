@@ -24,7 +24,7 @@
             </div>
             <h2 class="mt-4 text-lg font-semibold text-slate-900">{{ $item->title }}</h2>
             <p class="mt-3 text-sm leading-6 text-slate-600" style="max-height: 4.5rem; overflow: hidden;">
-              {{ $item->description ?? 'Read the latest story from this source.' }}
+              {!! $item->description ?? 'Read the latest story from this source.' !!}
             </p>
           </div>
         </a>

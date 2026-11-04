@@ -24,7 +24,7 @@
     <a href="{{ route('single.post', $post->slug) }}" class="block">
         <div class="aspect-[16/10] overflow-hidden rounded-xl border border-border bg-secondary">
             <img src="{{ $post->image_url }}" alt="{{ $post->title }}" loading="lazy"
-                class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]">
+                class="h-full w-full object-center transition-transform duration-300 group-hover:scale-[1.03]">
         </div>
     </a>
 

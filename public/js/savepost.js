@@ -17,9 +17,13 @@ function save(eo,postId) {
     .then(data => {
       if (data.status === 'removed') {
         toastr.success("Bookmark Removed ");
-        icon.classList.replace('fas','far');
+        icon.classList.remove('fas');
+        icon.classList.add('far');
         span.textContent = '+';
-        span.classList.replace('text-white','text-gray-600');
+        eo.classList.remove('text-primary');
+        eo.classList.add('text-muted-foreground');
+        span.classList.remove('text-primary');
+        span.classList.add('text-muted-foreground');
 
       } else if (data.status === 'added') {
         toastr.options = {
@@ -28,12 +32,17 @@ function save(eo,postId) {
           "timeOut": 1000
         };
         toastr.success("Bookmark Added ");
-        icon.classList.replace('far','fas');
+        icon.classList.remove('far');
+        icon.classList.add('fas');
         span.textContent = '✓';
-        span.classList.replace('text-gray-600','text-white');
+        eo.classList.remove('text-muted-foreground');
+        eo.classList.add('text-primary');
+        span.classList.remove('text-muted-foreground');
+        span.classList.add('text-primary');
       }
     })
     .catch(error => {
       console.error('Error:', error);
     });
 }
+

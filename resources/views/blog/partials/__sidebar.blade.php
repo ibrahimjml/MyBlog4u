@@ -1,65 +1,87 @@
-<div id="sidebar-menu" class="fixed hidden inset-0 z-50 opacity-0 bg-black bg-opacity-50 transition-opacity duration-300 ease-in-out">
-  
-  <div id="content-menu" class="relative h-[100vh] w-screen md:w-[40%] overflow-x-hidden bg-white overflow-y-auto shadow-xl translate-x-[-110vw] transition-all duration-300 ease-in-out">
-  <span id="close-menu" title="close" class="cursor-pointer absolute top-4 right-4 text-xl">
-    <i class="fas fa-times"></i>
-  </span>
-    <div class="block mt-4  p-6">
-        <!-- Popular Tags Section -->
-        @include('blog.popular-tags')
-        <!-- Categories Section -->
-        @include('blog.categories')
-        <!-- Latest News Section -->
-        @include('blog.latest-news')
-        <!-- Who To Follow Section -->
-        @include('blog.whotofollow')
-      </div>
+<div id="sidebar-menu"
+  class="fixed inset-0 z-50 hidden bg-foreground/50 opacity-0 backdrop-blur-sm transition-opacity duration-300 ease-in-out">
 
+  <div id="content-menu"
+    class="relative ml-auto h-full w-[85vw] max-w-sm translate-x-full overflow-y-auto bg-background shadow-2xl transition-transform duration-300 ease-in-out sm:w-96">
+
+    <div class="sticky top-0 z-10 flex items-center justify-between border-b border-border bg-background px-5 py-4">
+      <p class="font-display text-lg font-semibold text-foreground">Browse</p>
+      <button id="close-menu" type="button" title="Close menu" aria-label="Close sidebar menu"
+        class="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+        <i class="fas fa-times" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <div class="space-y-4 p-5">
+      @include('blog.popular-tags')
+      @include('blog.categories')
+      @include('blog.latest-news')
+      @include('blog.whotofollow')
+    </div>
   </div>
 </div>
 
-<!-- begin script -->
 @push('scripts')
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const openSidebar = document.getElementById('open-sidebar');
-    const closeSidebar = document.getElementById('close-menu');
-    const contentMenu = document.getElementById('content-menu');
-    const sidebarMenu = document.getElementById('sidebar-menu');
-  
-    openSidebar.addEventListener('click', () => {
-      document.body.classList.add('no-scroll');
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const openSidebar = document.getElementById('open-sidebar');
+      const closeSidebar = document.getElementById('close-menu');
+      const contentMenu = document.getElementById('content-menu');
+      const sidebarMenu = document.getElementById('sidebar-menu');
+      const footer = document.querySelector('footer');
 
-      sidebarMenu.classList.remove('hidden');
-      setTimeout(() => {
-        sidebarMenu.classList.add('opacity-100');
-        sidebarMenu.classList.remove('opacity-0');
+      if (!openSidebar || !closeSidebar || !contentMenu || !sidebarMenu) return;
 
-        contentMenu.classList.remove('translate-x-[-110vw]');
-      contentMenu.classList.add('translate-x-[0]');
-      }, 10); 
-    });
-  
-    closeSidebar.addEventListener('click', () => {
-      document.body.classList.remove('no-scroll');
-      
-      sidebarMenu.classList.remove('opacity-100');
-      sidebarMenu.classList.add('opacity-0');
-  
-      contentMenu.classList.remove('translate-x-[0]');
-      contentMenu.classList.add('translate-x-[-110vw]');
-  
-      setTimeout(() => {
-        sidebarMenu.classList.add('hidden');
-      }, 300); 
-    });
+      const showSidebar = () => {
+        document.body.classList.add('no-scroll');
 
-    // Close sidebar 
-    sidebarMenu.addEventListener('click', (e) => {
-      if (e.target === sidebarMenu) {
-        closeSidebar.click();
+        sidebarMenu.classList.remove('hidden');
+        requestAnimationFrame(() => {
+          sidebarMenu.classList.add('opacity-100');
+          sidebarMenu.classList.remove('opacity-0');
+          contentMenu.classList.remove('translate-x-full');
+          contentMenu.classList.add('translate-x-0');
+        });
+      };
+
+      const hideSidebar = () => {
+        document.body.classList.remove('no-scroll');
+
+        sidebarMenu.classList.remove('opacity-100');
+        sidebarMenu.classList.add('opacity-0');
+        contentMenu.classList.remove('translate-x-0');
+        contentMenu.classList.add('translate-x-full');
+
+        setTimeout(() => {
+          sidebarMenu.classList.add('hidden');
+        }, 300);
+      };
+
+      openSidebar.addEventListener('click', showSidebar);
+      closeSidebar.addEventListener('click', hideSidebar);
+
+      sidebarMenu.addEventListener('click', (event) => {
+        if (event.target === sidebarMenu) {
+          hideSidebar();
+        }
+      });
+
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && !sidebarMenu.classList.contains('hidden')) {
+          hideSidebar();
+        }
+      });
+
+      // Hide the floating menu button when the footer enters the viewport.
+      if (footer && 'IntersectionObserver' in window) {
+        const footerObserver = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            openSidebar.classList.toggle('hidden', entry.isIntersecting);
+          });
+        }, { threshold: 0.01 });
+
+        footerObserver.observe(footer);
       }
     });
-  });
   </script>
 @endpush

@@ -3,8 +3,9 @@
         ->filter(fn ($ad) => $ad->ad_position === $position);
     [$width, $height] = explode('x', $positionAds->first()->ad_dimension ?? '0x0');
 @endphp
+
 @foreach ($positionAds as $ad)
-    <div class=" mx-auto my-6 p-4 bg-gray-100 rounded-lg shadow-md overflow-hidden" style="max-width: {{ $width }}px; height: {{ $height }}px;">
+    <div class="mx-auto my-6 overflow-hidden rounded-xl border border-primary bg-secondary p-3" style="max-width: {{ $width }}px; height: {{ $height }}px;">
         @if ($ad->ad_type === \App\Enums\Adplacements\AdType::CUSTOM_BANNER)
             <a href="{{ $ad->link_url ?? '#' }}" target="_blank" rel="noopener noreferrer">
                 <img

@@ -7,14 +7,15 @@
 ])
 
 <!-- spinner  -->
-<div id="loading-spinner" class="hidden text-center mt-4">
-    <div class="inline-flex items-center">
-        <i class="fas fa-spinner fa-spin text-gray-600 text-lg mr-2"></i>
+<div id="loading-spinner" class="hidden mt-6 text-center">
+    <div class="inline-flex items-center gap-2 font-mono text-xs text-muted-foreground">
+        <i class="fas fa-spinner fa-spin text-primary" aria-hidden="true"></i>
+        <span>Loading more&hellip;</span>
     </div>
 </div>
 
-<p id="reach-end" class="hidden container w-fit mx-auto">
-    You've reached the end! 👋
+<p id="reach-end" class="hidden mt-6 w-fit mx-auto font-mono text-xs text-muted-foreground">
+    You've reached the end.
 </p>
 <!-- observer trigger -->
 <div id="scroll-loading" class="h-10"></div>

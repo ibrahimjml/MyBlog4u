@@ -1,42 +1,37 @@
-<div class="bg-white border border-gray-200 rounded-2xl p-6 mt-6">
-  <h3 class="text-xl font-bold text-gray-800 mb-2">Who to Follow</h3>
-  <div class="w-20 h-1 bg-red-600 mb-4"></div>
+<section class="rounded-2xl border border-border bg-card p-6">
+  <h3 class="font-display text-lg font-semibold text-foreground">Who to Follow</h3>
+  <div class="mt-2 h-0.5 w-10 bg-primary"></div>
+
   @auth
-
-
-    <div class="flex flex-wrap gap-2">
+    <div class="mt-4 flex flex-col gap-1">
       @foreach($users as $user)
-        <div
-          class="rounded-xl flex items-center gap-2 mb-2 mt-4 w-full py-1 px-2 hover:bg-gray-200 transition-bg duration-200 ease-in-out">
-          <a href="{{route('profile.home', $user->username)}}" class="flex items-center gap-3">
-            <img src="{{$user->avatar_url}}"
-            alt="{{ $user->name }} profile"
-              class="w-8 h-8 overflow-hidden flex justify-center items-center  shrink-0 grow-0 rounded-full ">
-            <div class="flex flex-col gap-1">
-              <strong>{{ $user->name }}</strong>
-              <small>{{'@' . $user->username}}</small>
-              <div>
-
-              </div>
+        <div class="flex items-center gap-3 rounded-lg px-2 py-2 transition-colors hover:bg-secondary">
+          <a href="{{ route('profile.home', $user->username) }}" class="flex min-w-0 flex-1 items-center gap-3">
+            <img src="{{ $user->avatar_url }}" alt="{{ $user->name }} profile"
+              class="h-8 w-8 shrink-0 rounded-full object-cover">
+            <div class="flex min-w-0 flex-col">
+              <strong class="truncate text-sm font-semibold text-foreground">{{ $user->name }}</strong>
+              <small class="truncate font-mono text-[11px] text-muted-foreground">{{ '@' . $user->username }}</small>
             </div>
           </a>
+
           @if(auth()->user()->isNot($user))
             <x-follow-button :status="$authFollowings[$user->id] ?? null" :user-id="$user->id" type="icon"
               onclick="follow(this)"
-              class="follows w-5 h-5 text-xs ml-auto text-white rounded-full flex items-center justify-center" />
+              class="follows flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs text-white" />
           @endif
         </div>
       @endforeach
     </div>
   @else
-    <div class="flex flex-col items-center justify-center gap-4">
-      <span class="h-16 w-16 px-5 py-5 flex place-content-center rounded-full border-2 border-black/50">
-        <i class="fas fa-lock text-black/50"></i>
+    <div class="mt-6 flex flex-col items-center justify-center gap-3 text-center">
+      <span class="flex h-14 w-14 items-center justify-center rounded-full border border-border bg-secondary">
+        <i class="fas fa-lock text-muted-foreground"></i>
       </span>
-      <p>Login to start following people.</p>
+      <p class="font-mono text-xs text-muted-foreground">Login to start following people.</p>
     </div>
   @endauth
-</div>
+</section>
 
 @push('scripts')
   <script>

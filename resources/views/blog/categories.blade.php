@@ -1,12 +1,14 @@
-<div class="bg-white border border-gray-200 rounded-2xl p-6 mb-6">
-  <h3 class="text-xl font-bold text-gray-800 mb-2">categories</h3>
-  <div class="w-20 h-1 bg-red-600 mb-4"></div>
-  <div class="flex flex-wrap gap-2">
+<section class="rounded-2xl border border-border bg-card p-6">
+  <h3 class="font-display text-lg font-semibold text-foreground">Categories</h3>
+  <div class="mt-2 h-0.5 w-10 bg-primary"></div>
+
+  <div class="mt-4 flex flex-col gap-1">
     @foreach($categories->take(6) as $category)
       <a href="{{ route('viewcategory', $category->name) }}"
-        class="px-3 py-1 text-sm rounded-xl font-semibold {{ $category->is_featured ? 'bg-[#f5b576] text-gray-700' : 'border-2 border-gray-300 bg-white text-blueGray-500' }}">
-        @if($category->is_featured) &#x1F525; @endif {{ $category->name . ' (' . $category->posts_count . ')'}}
+        class="flex items-center justify-between rounded-lg px-2 py-1.5 font-mono text-xs text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground">
+        <span>{{ $category->name }}</span>
+        <span class="text-[10px] text-muted-foreground">{{ $category->posts_count }}</span>
       </a>
     @endforeach
   </div>
-</div>
+</section>

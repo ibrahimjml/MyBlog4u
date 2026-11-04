@@ -11,8 +11,6 @@
 @endphp
 
 <x-layout>
-  <h1 class="sr-only">myblog4u — notes from the server room</h1>
-
   <div class="mx-auto w-full max-w-6xl px-6">
 
     {{-- Hero slides --}}
@@ -70,7 +68,7 @@
               <a href="{{ route('single.post', $featured_one->slug) }}" class="flex h-full flex-col">
                 <div class="aspect-video overflow-hidden bg-foreground">
                   <img src="{{ $featured_one->image_url }}" alt="{{ $featured_one->title }}" loading="lazy"
-                    class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]">
+                    class="h-full w-full object-scale-down transition-transform duration-300 group-hover:scale-[1.02]">
                 </div>
                 <div class="flex flex-1 flex-col p-6 bg-white">
                   <p class="font-mono text-[11px] uppercase tracking-widest text-primary">
