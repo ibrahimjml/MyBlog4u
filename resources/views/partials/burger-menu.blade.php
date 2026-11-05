@@ -29,7 +29,7 @@
     @if(auth()->user()->hasAnyRole(['Admin', 'Moderator']) || auth()->user()->hasPermission('Access'))
       <li>
         <a href="{{ route('admin.panel') }}"
-          class="flex items-center gap-3 rounded-lg px-2.5 py-2 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground">
+          class="flex items-center gap-3 rounded-lg px-2.5 py-2 bg-primary/20 text-muted-foreground transition-colors hover:bg-primary/40 hover:text-foreground">
           <i class="fas fa-lock w-4 text-center text-[11px]"></i>
           <span>Admin Panel</span>
         </a>

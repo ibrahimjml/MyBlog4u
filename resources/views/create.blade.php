@@ -2,249 +2,265 @@
   @push('vite')
     @vite(['resources/js/tinymce.js'])
   @endpush
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
 
-    <div class="bg-white shadow-xl rounded-lg overflow-hidden"><!--start page card-->
-      <div class="bg-gray-50 py-6 px-6 border-b border-gray-200"><!--start header-->
-        <h1 class="text-3xl font-extrabold text-gray-800 text-center">
-          Create New Article
-        </h1>
-      </div><!--end header-->
-      <div class="grid grid-cols-12 gap-6 p-6"><!--start grid layout-->
+  @php
+    $labelClass = 'mb-2 block font-mono text-[11px] uppercase tracking-widest text-muted-foreground';
+    $inputClass = 'w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring/30';
+    $errorClass = 'mt-1.5 font-mono text-[11px] text-destructive';
+    $sectionClass = 'rounded-2xl border border-border bg-card p-5 md:p-6';
+  @endphp
 
-        <div class="col-span-12 lg:col-span-8">
-          <form action="{{ route('create') }}" method="POST" enctype="multipart/form-data" class="space-y-8">
-            @csrf
+  <div class="mx-auto w-full max-w-6xl px-6 py-10 md:py-14">
 
-            {{-- Section 1: Post Details --}}
-            <fieldset id="post-details" class="border border-gray-300 rounded-md p-5 bg-gray-50/50">
-              <legend class="text-lg font-semibold text-gray-700 px-2 bg-white rounded">
-                Post Details
-              </legend>
+    <header class="mb-8 flex flex-wrap items-end justify-between gap-4">
+      <div>
+        <p class="font-mono text-xs text-primary">~/write</p>
+        <h1 class="mt-2 font-display text-3xl font-bold tracking-tight md:text-4xl">New Article</h1>
+        <p class="mt-2 max-w-xl text-sm leading-relaxed text-muted-foreground">
+          Draft your next post, add a cover image, and publish when it is ready.
+        </p>
+      </div>
 
-              <div class="space-y-6">
-                {{-- Title --}}
-                <div>
-                  <label class="block text-sm font-bold text-gray-700 mb-2">
-                    Title <span class="text-red-500">*</span>
-                  </label>
-                  <input type="text" name="title" value="{{ old('title') }}" required
-                    class="w-full rounded-md border-gray-300 focus:ring-blue-500 focus:border-blue-500 p-2">
-                  @error('title')
-                    <p class="text-red-500 text-xs italic mt-4">
-                      {{ $message }}
-                    </p>
-                  @enderror
-                </div>
-                {{-- short excerpt --}}
-                <div>
-                  <label class="block text-sm font-bold text-gray-700 mb-2">
-                    Short Excerpt <span class="text-red-500">*</span>
-                  </label>
-                  <textarea name="short_excerpt"  
-                            rows="5"
-                            required
-                            class="w-full rounded-md border-gray-300 focus:ring-blue-500 focus:border-blue-500 p-2">{{ old('short_excerpt') }}</textarea>
-                  @error('short_excerpt')
-                    <p class="text-red-500 text-xs italic mt-4">
-                      {{ $message }}
-                    </p>
-                  @enderror
-                </div>
+      <a href="{{ route('dashboard.posts') }}"
+        class="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 font-mono text-xs text-foreground transition-colors hover:bg-secondary">
+        <i class="fas fa-arrow-left text-primary" aria-hidden="true"></i>
+        back to my dashboard
+      </a>
+    </header>
 
-                {{-- Description --}}
+    <div class="grid gap-6 lg:grid-cols-3">
+      <div class="lg:col-span-2">
+        <form id="postForm" action="{{ route('create') }}" method="POST" enctype="multipart/form-data"
+          class="space-y-6">
+          @csrf
 
-              </div>
-            </fieldset>
-            {{-- Section 2: post content --}}
-            <fieldset id="post-content" class="border border-gray-300 rounded-md p-5 bg-gray-50/50">
-              <legend
-                class="text-lg font-semibold text-gray-700 px-2 bg-white rounded border border-gray-200 shadow-sm">
-                Post Content
-              </legend>
+          {{-- Post details --}}
+          <section id="post-details" class="{{ $sectionClass }}">
+            <div class="mb-5 flex items-center gap-3">
+              <span
+                class="flex h-8 w-8 items-center justify-center rounded-full bg-accent font-mono text-xs text-accent-foreground">01</span>
               <div>
-                <label class="block text-sm font-bold text-gray-700 mb-2">
-                  Description
-                </label>
-                <textarea name="description" id="textarea" rows="5"
-                  class="w-full rounded-md border-gray-300 focus:ring-blue-500 focus:border-blue-500 p-2">{{ old('description') }}</textarea>
-                @error('description')
-                  <p class="text-red-500 text-xs italic mt-4">
-                    {{ $message }}
-                  </p>
+                <h2 class="font-display text-lg font-semibold text-foreground">Post details</h2>
+                <p class="font-mono text-[11px] text-muted-foreground">Title and short summary</p>
+              </div>
+            </div>
+
+            <div class="space-y-5">
+              <div>
+                <label for="title" class="{{ $labelClass }}">Title <span class="text-primary">*</span></label>
+                <input id="title" type="text" name="title" value="{{ old('title') }}" required
+                  class="{{ $inputClass }}" placeholder="A clear, specific headline">
+                @error('title')
+                  <p class="{{ $errorClass }}">{{ $message }}</p>
                 @enderror
               </div>
-            </fieldset>
-            {{-- Section 3: Media --}}
-            <fieldset id="media" class="border border-gray-300 rounded-md p-5 bg-gray-50/50">
-              <legend
-                class="text-lg font-semibold text-gray-700 px-2 bg-white rounded border border-gray-200 shadow-sm">
-                Media
-              </legend>
-              <div class="flex flex-col">
-                <label for="imageSelected" class="block text-gray-700 text-sm font-bold mb-2">
-                  Upload Image
-                </label>
-                <input type="file" id="imageSelected" name="image"
-                  class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 border border-gray-300 rounded-md cursor-pointer @error('image') border-red-500 @enderror">
-                {{-- Image Preview --}}
-                <div class="mt-4 relative w-fit hidden" id="imageContainer">
-                  <img id="imagePreview" src="#" alt="Image Preview"
-                    class="max-w-[300px] rounded-md shadow-lg border-2 border-gray-200">
-                  <button type="button" id="cancelPreview"
-                    class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 shadow-md focus:outline-none"
-                    title="Remove image"> &times;
-                  </button>
-                  <span id="fileSize"
-                    class="absolute bottom-2 left-2 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded">
-                  </span>
-                </div> @error('image') <p class="text-red-500 text-xs italic mt-1"> {{ $message }} </p> @enderror
+
+              <div>
+                <label for="short_excerpt" class="{{ $labelClass }}">Short excerpt <span class="text-primary">*</span></label>
+                <textarea id="short_excerpt" name="short_excerpt" rows="4" required class="{{ $inputClass }}"
+                  placeholder="One or two sentences that appear on cards and previews">{{ old('short_excerpt') }}</textarea>
+                @error('short_excerpt')
+                  <p class="{{ $errorClass }}">{{ $message }}</p>
+                @enderror
               </div>
-            </fieldset>
-            {{-- Section 3: Tags & Categories --}}
-            <fieldset id="tags-categories" class="border border-gray-300 rounded-md p-5 bg-gray-50/50">
-              <legend
-                class="text-lg font-semibold text-gray-700 px-2 bg-white rounded border border-gray-200 shadow-sm">
-                Tags & Categories</legend>
+            </div>
+          </section>
 
-              <div class="space-y-6">
-                {{-- Hashtags --}}
-                <div class="flex flex-col w-full">
-                  <label for="hashtagInput" class="block text-gray-700 text-sm font-bold mb-2">Hashtags
-                    (Optional)</label>
+          {{-- Content --}}
+          <section id="post-content" class="{{ $sectionClass }}">
+            <div class="mb-5 flex items-center gap-3">
+              <span
+                class="flex h-8 w-8 items-center justify-center rounded-full bg-accent font-mono text-xs text-accent-foreground">02</span>
+              <div>
+                <h2 class="font-display text-lg font-semibold text-foreground">Post content</h2>
+                <p class="font-mono text-[11px] text-muted-foreground">The main article body</p>
+              </div>
+            </div>
 
-                  <input type="hidden" name="hashtag" id="hashtagsHidden">
-                  <div id="tagContainer" class="flex flex-wrap gap-2 mb-3 min-h-[2rem]"></div><!-- Tags container -->
+            <label for="textarea" class="{{ $labelClass }}">Description</label>
+            <textarea name="description" id="textarea" rows="12" class="{{ $inputClass }}">{{ old('description') }}</textarea>
+            @error('description')
+              <p class="{{ $errorClass }}">{{ $message }}</p>
+            @enderror
+          </section>
 
-                  <!-- Add new tags -->
-                  <input type="text" id="hashtagInput" placeholder="Type a hashtag and press Enter"
-                    class="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 w-full p-2 border" />
+          {{-- Media --}}
+          <section id="media" class="{{ $sectionClass }}">
+            <div class="mb-5 flex items-center gap-3">
+              <span
+                class="flex h-8 w-8 items-center justify-center rounded-full bg-accent font-mono text-xs text-accent-foreground">03</span>
+              <div>
+                <h2 class="font-display text-lg font-semibold text-foreground">Cover image</h2>
+                <p class="font-mono text-[11px] text-muted-foreground">Used on cards and search results</p>
+              </div>
+            </div>
 
-                  @error('hashtag')<p class="text-red-500 text-xs italic mt-1"> {{ $message }}</p>@enderror
-                  <!-- or select existing tags -->
-                  @if($allhashtags->isNotEmpty())
-                    <div class="relative flex py-5 items-center">
-                      <div class="flex-grow border-t border-gray-300"></div>
-                      <span class="flex-shrink-0 mx-4 text-gray-400 text-xs uppercase font-bold">Or select existing</span>
-                      <div class="flex-grow border-t border-gray-300"></div>
-                    </div>
+            <label for="imageSelected" class="{{ $labelClass }}">Upload image</label>
+            <input type="file" id="imageSelected" name="image" accept="image/*"
+              class="block w-full cursor-pointer rounded-lg border border-border bg-background text-sm text-muted-foreground file:mr-4 file:border-0 file:bg-secondary file:px-4 file:py-2.5 file:font-mono file:text-xs file:text-foreground hover:file:bg-accent hover:file:text-accent-foreground @error('image') border-destructive @enderror">
 
-                    <div class="bg-white p-3 rounded border border-gray-200">
-                      <label for="selectedHashtag" class="block text-xs font-bold text-gray-500 mb-1">Available
-                        Hashtags</label>
-                      <select id="selectedHashtag" multiple
-                        class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 p-2 h-32">
-                        @foreach($allhashtags as $all)
-                          <option value="{{ $all }}">{{ $all }}</option>
-                        @endforeach
-                      </select>
-                      <div class="flex justify-between items-center mt-2">
-                        <p class="text-gray-500 text-xs">
-                          <i class="fas fa-info-circle mr-1"></i> Select one or more (Max: 5)
-                        </p>
-                        <button type="button" onclick="addSelectedHashtags()"
-                          class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-1 px-3 rounded transition duration-150 ease-in-out">
-                          Add Selected
-                        </button>
-                      </div>
-                    </div>
-                  @endif
-                </div>
+            <div class="relative mt-4 hidden w-fit" id="imageContainer">
+              <img id="imagePreview" src="#" alt="Image preview"
+                class="max-w-[280px] rounded-xl border border-border object-cover shadow-lg">
+              <button type="button" id="cancelPreview"
+                class="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-destructive text-destructive-foreground shadow-md transition-opacity hover:opacity-80"
+                title="Remove image">&times;</button>
+              <span id="fileSize"
+                class="absolute bottom-2 left-2 rounded bg-foreground/80 px-2 py-1 font-mono text-[10px] text-background backdrop-blur-sm"></span>
+            </div>
 
-                {{-- Categories --}}
-                @if($categories->isNotEmpty())
-                  <div class="flex flex-col">
-                    <label for="categories" class="block text-gray-700 text-sm font-bold mb-2">
-                      Categories (Optional)
-                    </label>
-                    <select name="categories[]" id="categories" multiple
-                      class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 p-2 h-32">
-                      @foreach($categories as $category)
-                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+            @error('image')
+              <p class="{{ $errorClass }}">{{ $message }}</p>
+            @enderror
+          </section>
+
+          {{-- Tags & categories --}}
+          <section id="tags-categories" class="{{ $sectionClass }}">
+            <div class="mb-5 flex items-center gap-3">
+              <span
+                class="flex h-8 w-8 items-center justify-center rounded-full bg-accent font-mono text-xs text-accent-foreground">04</span>
+              <div>
+                <h2 class="font-display text-lg font-semibold text-foreground">Tags &amp; categories</h2>
+                <p class="font-mono text-[11px] text-muted-foreground">Help readers discover this post</p>
+              </div>
+            </div>
+
+            <div class="space-y-6">
+              <div>
+                <label for="hashtagInput" class="{{ $labelClass }}">Hashtags (optional)</label>
+                <input type="hidden" name="hashtag" id="hashtagsHidden">
+                <div id="tagContainer" class="mb-3 flex min-h-[2rem] flex-wrap gap-2"></div>
+
+                <input type="text" id="hashtagInput" placeholder="Type a hashtag and press Enter"
+                  class="{{ $inputClass }}">
+                @error('hashtag')
+                  <p class="{{ $errorClass }}">{{ $message }}</p>
+                @enderror
+
+                @if($allhashtags->isNotEmpty())
+                  <div class="relative flex items-center py-5">
+                    <div class="flex-grow border-t border-border"></div>
+                    <span class="mx-4 flex-shrink-0 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Or select existing</span>
+                    <div class="flex-grow border-t border-border"></div>
+                  </div>
+
+                  <div class="rounded-xl border border-border bg-background p-3">
+                    <label for="selectedHashtag" class="{{ $labelClass }}">Available hashtags</label>
+                    <select id="selectedHashtag" multiple
+                      class="{{ $inputClass }} h-32">
+                      @foreach($allhashtags as $all)
+                        <option value="{{ $all }}">{{ $all }}</option>
                       @endforeach
                     </select>
-                    <p class="text-gray-500 text-xs mt-2">
-                      <i class="fas fa-info-circle mr-1"></i> Hold Ctrl/Cmd to select multiple (Max: 4)
-                    </p>
-                    @error('categories')
-                      <p class="text-red-500 text-xs italic mt-1">{{ $message }}</p>
-                    @enderror
+                    <div class="mt-3 flex flex-wrap items-center justify-between gap-2">
+                      <p class="font-mono text-[11px] text-muted-foreground">Select one or more (max 5)</p>
+                      <button type="button" onclick="addSelectedHashtags()"
+                        class="rounded-full bg-secondary px-3 py-1.5 font-mono text-[11px] text-foreground transition-colors hover:bg-accent hover:text-accent-foreground">
+                        Add selected
+                      </button>
+                    </div>
                   </div>
                 @endif
               </div>
-            </fieldset>
-            {{-- publish settings --}}
-            <fieldset id="publish-settings" class="border border-gray-300 rounded-md p-5 bg-gray-50/50">
-              <legend
-                class="text-lg font-semibold text-gray-700 px-2 bg-white rounded border border-gray-200 shadow-sm">
-                Publish Settings
-              </legend>
-              <label for="status" class="block text-gray-700 text-sm font-bold mb-2">post status</label>
-              <select name="status" id="status"
-                class="pl-3 pr-8 appearance-none font-bold cursor-pointer bg-blueGray-200 text-blueGray-500 border-0 text-sm rounded-lg p-2.5">
-                @foreach(\App\Enums\PostStatus::forUserCreation() as $status => $label)
-                  <option value="{{ $status }}" {{ old('status') === $status ? 'selected' : '' }}>
-                    {{ $label }}
-                  </option>
-                @endforeach
-              </select>
-              <label for="enabled" class="block text-sm font-bold text-gray-700 mb-2 mt-5">
-                Allow comments
-              </label>
-              <x-toggle name="enabled" :checked="old('enabled')" value="1" label="let users reply to this post" />
-            </fieldset>
-        </div>
 
-        {{-- Quick Navigation --}}
-        <div class=" col-span-12 lg:col-span-4 space-y-6 mt-8 lg:fixed lg:top-48 lg:right-64 self-end z-10">
+              @if($categories->isNotEmpty())
+                <div>
+                  <label for="categories" class="{{ $labelClass }}">Categories (optional)</label>
+                  <select name="categories[]" id="categories" multiple class="{{ $inputClass }} h-32">
+                    @foreach($categories as $category)
+                      <option value="{{ $category->id }}">{{ $category->name }}</option>
+                    @endforeach
+                  </select>
+                  <p class="mt-2 font-mono text-[11px] text-muted-foreground">Hold Ctrl/Cmd to select multiple (max 4)</p>
+                  @error('categories')
+                    <p class="{{ $errorClass }}">{{ $message }}</p>
+                  @enderror
+                </div>
+              @endif
+            </div>
+          </section>
 
-          {{-- Quick Navigation --}}
-          <fieldset class="hidden lg:block border border-gray-300 rounded-md p-5 bg-gray-50/50">
-            <legend class="text-lg font-semibold text-gray-700 px-2 bg-white rounded">
-              Quick Navigation
-            </legend>
-            <div class="flex flex-col gap-2 rounded-2xl bg-white p-4 shadow-sm border border-gray-100 w-full">
-              <a href="#post-details" class="quick-nav-link flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 transition" data-target="post-details">
-                <i class="fas fa-file-alt w-4 text-blue-500"></i>
-                <span>Post Details</span>
-              </a>
-
-              <a href="#post-content" class="quick-nav-link flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 transition" data-target="post-content">
-                <i class="fas fa-align-left w-4 text-indigo-500"></i>
-                <span>Post Content</span>
-              </a>
-
-              <a href="#media" class="quick-nav-link flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 transition" data-target="media">
-                <i class="fas fa-image w-4 text-pink-500"></i>
-                <span>Media</span>
-              </a>
-
-              <a href="#tags-categories" class="quick-nav-link flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 transition" data-target="tags-categories">
-                <i class="fas fa-tags w-4 text-emerald-500"></i>
-                <span>Tags & Categories</span>
-              </a>
-
-              <a href="#publish-settings" class="quick-nav-link flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 transition" data-target="publish-settings">
-                <i class="fas fa-globe w-4 text-orange-500"></i>
-                <span>Publish Settings</span>
-              </a>
+          {{-- Publish settings --}}
+          <section id="publish-settings" class="{{ $sectionClass }}">
+            <div class="mb-5 flex items-center gap-3">
+              <span
+                class="flex h-8 w-8 items-center justify-center rounded-full bg-accent font-mono text-xs text-accent-foreground">05</span>
+              <div>
+                <h2 class="font-display text-lg font-semibold text-foreground">Publish settings</h2>
+                <p class="font-mono text-[11px] text-muted-foreground">Visibility and comments</p>
+              </div>
             </div>
 
-          </fieldset>
-          {{-- Submit --}}
-          <div class="">
-            <button type="submit"
-              class="w-full bg-gray-800 hover:bg-gray-700 text-white font-bold py-3 rounded-lg shadow">
-              Create Post
-            </button>
+            <div class="space-y-5">
+              <div>
+                <label for="status" class="{{ $labelClass }}">Post status</label>
+                <select name="status" id="status" class="{{ $inputClass }} cursor-pointer">
+                  @foreach(\App\Enums\PostStatus::forUserCreation() as $status => $label)
+                    <option value="{{ $status }}" {{ old('status') === $status ? 'selected' : '' }}>
+                      {{ $label }}
+                    </option>
+                  @endforeach
+                </select>
+              </div>
+
+              <div>
+                <p class="{{ $labelClass }}">Allow comments</p>
+                <x-toggle name="enabled" :checked="old('enabled')" value="1" label="Let users reply to this post" />
+              </div>
+            </div>
+          </section>
+        </form>
+      </div>
+
+      {{-- Sidebar --}}
+      <aside class="space-y-4 lg:sticky lg:top-6 lg:self-start">
+        <div class="rounded-2xl border border-border bg-card p-5">
+          <div class="mb-4">
+            <h2 class="font-display text-lg font-semibold text-foreground">Quick navigation</h2>
+            <p class="mt-1 font-mono text-[11px] text-muted-foreground">Jump to a section</p>
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <a href="#post-details" data-target="post-details"
+              class="quick-nav-link flex items-center gap-3 rounded-lg px-3 py-2 font-mono text-xs text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground">
+              <i class="fas fa-file-alt w-4 text-primary" aria-hidden="true"></i>
+              Post details
+            </a>
+            <a href="#post-content" data-target="post-content"
+              class="quick-nav-link flex items-center gap-3 rounded-lg px-3 py-2 font-mono text-xs text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground">
+              <i class="fas fa-align-left w-4 text-primary" aria-hidden="true"></i>
+              Post content
+            </a>
+            <a href="#media" data-target="media"
+              class="quick-nav-link flex items-center gap-3 rounded-lg px-3 py-2 font-mono text-xs text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground">
+              <i class="fas fa-image w-4 text-primary" aria-hidden="true"></i>
+              Cover image
+            </a>
+            <a href="#tags-categories" data-target="tags-categories"
+              class="quick-nav-link flex items-center gap-3 rounded-lg px-3 py-2 font-mono text-xs text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground">
+              <i class="fas fa-tags w-4 text-primary" aria-hidden="true"></i>
+              Tags &amp; categories
+            </a>
+            <a href="#publish-settings" data-target="publish-settings"
+              class="quick-nav-link flex items-center gap-3 rounded-lg px-3 py-2 font-mono text-xs text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground">
+              <i class="fas fa-globe w-4 text-primary" aria-hidden="true"></i>
+              Publish settings
+            </a>
           </div>
         </div>
-
-        </form>
-      </div><!--end grid layout -->
-    </div><!--end page card -->
+        <div class="mt-2 flex items-center gap-2">
+           <a href="{{ route('dashboard.posts') }}"
+              class="rounded-full border border-border bg-card px-4 py-2 font-mono text-xs text-foreground transition-colors hover:bg-secondary">
+              Cancel
+            </a>
+        <button type="submit" form="postForm"
+          class="w-full rounded-full bg-primary px-5 py-3 font-mono text-xs font-semibold text-primary-foreground transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+          Publish article
+        </button>
+        </div>
+      </aside>
+    </div>
   </div>
-
 
   @php
     $initialTags = old('hashtag') ? explode(',', old('hashtag')) : [];
@@ -262,16 +278,18 @@
       const cancelPreview = document.getElementById('cancelPreview');
       const fileSize = document.getElementById('fileSize');
 
-      imageSelected.addEventListener('change', event => {
+      imageSelected.addEventListener('change', (event) => {
         const file = event.target.files[0];
+
         if (file) {
           const reader = new FileReader();
 
-          reader.onload = eo => {
+          reader.onload = (eo) => {
             imagePreview.src = eo.target.result;
             imageContainer.classList.remove('hidden');
             fileSize.textContent = `${(file.size / (1024 * 1024)).toFixed(2)} MB / {{ image_upload_size() }} MB`;
-          }
+          };
+
           reader.readAsDataURL(file);
         } else {
           imagePreview.src = '#';
@@ -279,7 +297,7 @@
         }
       });
 
-      cancelPreview.addEventListener('click', function () {
+      cancelPreview.addEventListener('click', () => {
         imageSelected.value = '';
         imagePreview.src = '#';
         imageContainer.classList.add('hidden');
@@ -287,18 +305,17 @@
     </script>
 
     <script>
-      
       (function () {
-        const OFFSET = 80; // scroll offset for fixed headers
+        const OFFSET = 110;
         const links = document.querySelectorAll('a.quick-nav-link');
-        const sections = Array.from(links).map(l => document.getElementById(l.dataset.target));
 
-        links.forEach(link => {
-          link.addEventListener('click', function (e) {
+        links.forEach((link) => {
+          link.addEventListener('click', (e) => {
             e.preventDefault();
-            const targetId = this.dataset.target;
+            const targetId = link.dataset.target;
             const el = document.getElementById(targetId);
             if (!el) return;
+
             const top = el.getBoundingClientRect().top + window.scrollY - OFFSET;
             window.scrollTo({ top, behavior: 'smooth' });
           });
@@ -307,3 +324,5 @@
     </script>
   @endpush
 </x-layout>
+
+

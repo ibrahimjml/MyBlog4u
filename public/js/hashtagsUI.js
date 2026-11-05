@@ -10,11 +10,11 @@
     tags.forEach((tag, index) => {
       if(tag){
         const span = document.createElement('span');
-        span.className = 'bg-blue-400 text-slate-300 border border-blue-600 px-2 py-1 rounded-full text-sm flex items-center gap-1';
+        span.className = 'inline-flex items-center gap-1.5 rounded-full border border-border bg-secondary px-2.5 py-1 font-mono text-[11px] text-foreground';
     
         span.innerHTML = `
-          <span>${tag}</span>
-          <button type="button" class="text-slate-300 hover:text-red-500" onclick="removeTag(${index})">x</button>
+          <span>#${tag}</span>
+          <button type="button" class="text-muted-foreground transition-colors hover:text-destructive" onclick="removeTag(${index})" aria-label="Remove ${tag}">&times;</button>
         `;
         tagContainer.appendChild(span);
       }
