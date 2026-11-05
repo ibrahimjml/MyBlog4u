@@ -1,28 +1,52 @@
-<x-layout>
-  <main class="sm:container mx-auto max-w-fit mt-5 mb-20 sm:max-w-lg sm:mt-10">
-    <section class="flex flex-col break-words bg-white sm:border-1 sm:rounded-md sm:shadow-lg">
-      <header class="font-bold text-center bg-gray-200 text-gray-700 py-5 px-6 sm:py-6 sm:px-8 sm:rounded-t-md">
-        Two Factor Recovery Code
+@extends('layouts.guest')
+
+@section('content')
+  @php
+    $labelClass = 'mb-2 block font-mono text-[11px] uppercase tracking-widest text-muted-foreground';
+    $inputClass = 'w-full rounded-xl border border-border bg-background px-4 py-3 font-mono text-sm text-foreground placeholder:text-muted-foreground/60 transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring/30';
+    $errorClass = 'mt-1.5 font-mono text-[11px] text-destructive';
+  @endphp
+
+  <main class="mx-auto w-full max-w-md">
+    <div class="mb-6 flex justify-center">
+      <x-logo class="text-2xl" />
+    </div>
+
+    <section
+      class="overflow-hidden rounded-3xl border border-border bg-card/95 shadow-[0_24px_70px_-35px_oklch(var(--foreground)/0.35)] backdrop-blur">
+      <header class="border-b border-border px-6 py-6 text-center sm:px-8">
+        <p class="font-mono text-[11px] uppercase tracking-[0.25em] text-primary">two-factor recovery</p>
+        <h1 class="mt-2 font-display text-2xl font-bold tracking-tight text-foreground">Recovery code</h1>
+        <p class="mt-2 text-sm text-muted-foreground">
+          Enter one of your saved recovery codes to continue.
+        </p>
       </header>
 
-      <form action="{{ route('2fa.verify.recovery') }}" method="POST" class="border-2 w-full px-6 p-3 space-y-6 sm:px-10 sm:space-y-8">
+      <form class="space-y-5 px-6 py-6 sm:px-8" action="{{ route('2fa.verify.recovery') }}" method="POST">
         @csrf
+
         <div>
-          <label for="recovery_code" class="block text-gray-700 text-sm font-bold mb-2">Recovery Code</label>
-          <input type="text" name="recovery_code" id="recovery_code" class="w-full px-3 py-2 border rounded-md" required>
+          <label for="recovery_code" class="{{ $labelClass }}">Recovery code</label>
+          <input id="recovery_code" type="text" name="recovery_code" required autocomplete="off"
+            class="{{ $inputClass }} @error('recovery_code') border-destructive @enderror"
+            placeholder="xxxx-xxxx-xxxx" autofocus>
           @error('recovery_code')
-            <p class="text-red-500 text-xs italic mt-2">{{ $message }}</p>
+            <p class="{{ $errorClass }}">{{ $message }}</p>
           @enderror
         </div>
 
-        <button type="submit" class="bg-black/60 mt-3 text-white font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md">
-          Verify
+        <button type="submit"
+          class="w-full rounded-full bg-primary px-5 py-3 font-mono text-xs font-semibold text-primary-foreground transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+          Verify code
         </button>
-
-        <p class="text-blueGray-400 text-xs hover:text-gray-400 mt-2">
-          Back to <a href="{{ route('2fa.confirmation') }}" class="hover:underline">Authenticator verification</a>
-        </p>
       </form>
     </section>
+
+    <p class="mt-6 text-center text-sm text-muted-foreground">
+      Back to
+      <a href="{{ route('2fa.confirmation') }}" class="font-semibold text-primary transition-opacity hover:opacity-80">
+        authenticator verification
+      </a>
+    </p>
   </main>
-</x-layout>
+@endsection

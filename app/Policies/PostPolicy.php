@@ -50,7 +50,7 @@ class PostPolicy
         return true;
       }
 
-      return $user->hasPermission('post.create');
+      return $this->bypassModeration($user);
     }
 
     public function bypassModeration(User $user): bool

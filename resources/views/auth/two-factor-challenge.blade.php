@@ -1,83 +1,114 @@
-<x-layout>
-  <main class="sm:container mx-auto  max-w-fit mt-5 mb-20 sm:max-w-lg sm:mt-10">
+@extends('layouts.guest')
 
-    <section class="flex flex-col break-words bg-white sm:border-1 sm:rounded-md  sm:shadow-lg">
+@section('content')
+  @php
+    $errorClass = 'mt-1.5 font-mono text-[11px] text-destructive';
+  @endphp
 
-      <header class=" font-bold text-center bg-gray-200 text-gray-700 py-5 px-6 sm:py-6 sm:px-8 sm:rounded-t-md">
-        Two Factor Authentication Code
+  <main class="mx-auto w-full max-w-md">
+    <div class="mb-6 flex justify-center">
+      <x-logo class="text-2xl" />
+    </div>
+
+    <section
+      class="overflow-hidden rounded-3xl border border-border bg-card/95 shadow-[0_24px_70px_-35px_oklch(var(--foreground)/0.35)] backdrop-blur">
+      <header class="border-b border-border px-6 py-6 text-center sm:px-8">
+        <p class="font-mono text-[11px] uppercase tracking-[0.25em] text-primary">two-factor</p>
+        <h1 class="mt-2 font-display text-2xl font-bold tracking-tight text-foreground">Authentication code</h1>
+        <p class="mt-2 text-sm text-muted-foreground">
+          Enter the 6-digit code from your authenticator app.
+        </p>
       </header>
 
-      <form  action="{{route('2fa.verify')}}" method="POST"
-        class="border-2 w-full px-6 p-3 space-y-6 sm:px-10 sm:space-y-8">
+      <form class="space-y-5 px-6 py-6 sm:px-8" action="{{ route('2fa.verify') }}" method="POST">
         @csrf
-        <div class="flex flex-wrap">
-          <p class='text-slate-900'>
-            Enter the 6-digits code from your authenticator app.
-          </p>
-          <input type="hidden" name="code" id="twofa_code">
-          <div class="flex gap-2 justify-center mt-3">
-            @for ($i = 0; $i < 6; $i++)
-              <input type="text" inputmode="numeric" maxlength="1"
-                class="twofa-input w-12 h-12 text-center text-xl font-bold border rounded-lg focus:ring-2 focus:ring-black/70 outline-none">
-            @endfor
-          </div>
-          @error('code')
-          <p class="text-red-500 text-xs italic mt-4">
-            {{ $message }}
-          </p>
-          @enderror
+
+        <input type="hidden" name="code" id="twofa_code">
+
+        <div class="flex justify-center gap-1.5 sm:gap-2">
+          @for ($i = 0; $i < 6; $i++)
+            <input type="text" inputmode="numeric" maxlength="1" autocomplete="{{ $i === 0 ? 'one-time-code' : 'off' }}"
+              class="twofa-input h-11 w-8 rounded-xl border border-border bg-background text-center font-mono text-base font-bold text-foreground transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring/30 sm:h-12 sm:w-11 sm:text-lg">
+          @endfor
         </div>
-        {{-- trust device --}}
-        <div class="flex items-center gap-2 mt-3">
-              <input id="trust_device" type="checkbox" name="trust_device"
-                     class="h-4 w-4 rounded text-blue-600 border-gray-300 focus:ring-blue-500">
-              <label for="trust_device" class="text-sm text-gray-700">Trust this Device For 30 Days ?</label>
-        </div>
-        <button type="submit" class="bg-black/60 mt-3 text-white  font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150">
+
+        @error('code')
+          <p class="{{ $errorClass }} text-center">{{ $message }}</p>
+        @enderror
+
+        <label for="trust_device"
+          class="flex cursor-pointer items-center gap-2 text-sm text-muted-foreground">
+          <input id="trust_device" type="checkbox" name="trust_device"
+            class="h-4 w-4 rounded border-border bg-background accent-primary focus:ring-ring">
+          Trust this device for 30 days
+        </label>
+
+        <button type="submit"
+          class="w-full rounded-full bg-primary px-5 py-3 font-mono text-xs font-semibold text-primary-foreground transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
           Verify
         </button>
-        <p class="text-blueGray-400 text-xs hover:text-gray-400">
-          having problem ?
-          <a href="{{ route('2fa.recovery') }}" class="text-black/70 hover:underline">verify with recovery codes</a>
-        </p>
       </form>
     </section>
+
+    <p class="mt-6 text-center text-sm text-muted-foreground">
+      Having trouble?
+      <a href="{{ route('2fa.recovery') }}" class="font-semibold text-primary transition-opacity hover:opacity-80">
+        Verify with a recovery code
+      </a>
+    </p>
   </main>
 
   @push('scripts')
     <script>
-    const inputs = document.querySelectorAll('.twofa-input');
-    const hidden = document.getElementById('twofa_code');
+      document.addEventListener('DOMContentLoaded', () => {
+        const inputs = Array.from(document.querySelectorAll('.twofa-input'));
+        const hidden = document.getElementById('twofa_code');
 
-    inputs.forEach((input, index) => {
-      input.addEventListener('input', () => {
-        input.value = input.value.replace(/\D/, '');
-
-        if (input.value && inputs[index + 1]) {
-          inputs[index + 1].focus();
+        if (!inputs.length || !hidden) {
+          return;
         }
 
-        updateCode();
-      });
+        const updateCode = () => {
+          hidden.value = inputs.map((input) => input.value).join('');
+        };
 
-      input.addEventListener('keydown', e => {
-        if (e.key === 'Backspace' && !input.value && inputs[index - 1]) {
-          inputs[index - 1].focus();
-        }
-      });
-    });
+        inputs.forEach((input, index) => {
+          input.addEventListener('input', () => {
+            input.value = input.value.replace(/\D/g, '').slice(0, 1);
 
-    document.getElementById('confirm2faBtn').addEventListener('paste', e => {
-      const paste = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
-      paste.split('').forEach((char, i) => {
-        if (inputs[i]) inputs[i].value = char;
-      });
-      updateCode();
-    });
+            if (input.value && inputs[index + 1]) {
+              inputs[index + 1].focus();
+            }
 
-    function updateCode() {
-      hidden.value = [...inputs].map(i => i.value).join('');
-    }
-  </script>
+            updateCode();
+          });
+
+          input.addEventListener('keydown', (event) => {
+            if (event.key === 'Backspace' && !input.value && inputs[index - 1]) {
+              inputs[index - 1].focus();
+            }
+          });
+
+          input.addEventListener('paste', (event) => {
+            event.preventDefault();
+
+            const pasted = (event.clipboardData?.getData('text') || '').replace(/\D/g, '').slice(0, 6);
+
+            if (!pasted) {
+              return;
+            }
+
+            pasted.split('').forEach((char, charIndex) => {
+              if (inputs[charIndex]) {
+                inputs[charIndex].value = char;
+              }
+            });
+
+            updateCode();
+            inputs[Math.min(pasted.length, inputs.length - 1)]?.focus();
+          });
+        });
+      });
+    </script>
   @endpush
-</x-layout>
+@endsection

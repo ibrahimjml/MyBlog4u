@@ -1,49 +1,52 @@
-<x-layout>
-<main class="sm:container mx-auto  max-w-fit mt-5 mb-20 sm:max-w-lg sm:mt-10">
+@extends('layouts.guest')
 
-  <section class="flex flex-col break-words bg-white sm:border-1 sm:rounded-md  sm:shadow-lg">
+@section('content')
+  @php
+    $labelClass = 'mb-2 block font-mono text-[11px] uppercase tracking-widest text-muted-foreground';
+    $inputClass = 'w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring/30';
+    $errorClass = 'mt-1.5 font-mono text-[11px] text-destructive';
+  @endphp
 
-      <header class=" font-bold text-center bg-gray-200 text-gray-700 py-5 px-6 sm:py-6 sm:px-8 sm:rounded-t-md">
-          Please verify your identity
+  <main class="mx-auto w-full max-w-md">
+    <div class="mb-6 flex justify-center">
+      <x-logo class="text-2xl" />
+    </div>
+
+    <section
+      class="overflow-hidden rounded-3xl border border-border bg-card/95 shadow-[0_24px_70px_-35px_oklch(var(--foreground)/0.35)] backdrop-blur">
+      <header class="border-b border-border px-6 py-6 text-center sm:px-8">
+        <p class="font-mono text-[11px] uppercase tracking-[0.25em] text-primary">identity check</p>
+        <h1 class="mt-2 font-display text-2xl font-bold tracking-tight text-foreground">Verify your identity</h1>
+        <p class="mt-2 text-sm text-muted-foreground">
+          Enter the verification code sent to your registered email address.
+        </p>
       </header>
 
-      <form action="{{route('verify.code')}}" method="POST" class="border-2 w-full px-6 p-3 space-y-6 sm:px-10 sm:space-y-8" >
-       @csrf
-       @method('POST')
-          <div class="flex flex-wrap">
-          <p class='text-slate-900'>
-      An email containing a verification code has been sent to your registered email address. Please enter the code below to verify your identity.
-  </p>
-    <label for="code" class="block text-gray-700 text-sm font-bold mb-2 mt-4 sm:mb-4">
-      code:
-    </label>
-    <input id="code" type="text"
-        class="rounded-sm p-2 border-2 text-black w-full @error('code') border-red-500 @enderror" name="code"/>
-      
-        @error('code')
-        <p class="text-red-500 text-xs italic mt-4">
-            {{ $message }}
-        </p>
-          @enderror
-        <!-- Google reCAPTCHA v2 checkbox -->
-        @recaptcha_enabled
-        <div class="g-recaptcha mt-2" data-sitekey="{{config('services.captcha.sitekey')}}">
-        </div>
-          @error('g-recaptcha-response')
-            <p class="text-red-500 text-xs italic mt-4">
-                {{ $message }}
-            </p>
-            @enderror
-        @endrecaptcha_enabled                 
-          </div>
-          <button 
-          class='px-6 py-2 rounded-lg bg-slate-700 dark:bg-slate-900 text-white '
-            type='submit'>
-             
-            Confirm
-          </button>
-          </form>
-          </section>
-          </main>
+      <form class="space-y-5 px-6 py-6 sm:px-8" action="{{ route('verify.code') }}" method="POST">
+        @csrf
 
-</x-layout>
+        <div>
+          <label for="code" class="{{ $labelClass }}">Verification code</label>
+          <input id="code" type="text" name="code" inputmode="numeric" autocomplete="one-time-code"
+            class="{{ $inputClass }} font-mono tracking-[0.35em] @error('code') border-destructive @enderror"
+            placeholder="000000" autofocus>
+          @error('code')
+            <p class="{{ $errorClass }}">{{ $message }}</p>
+          @enderror
+        </div>
+
+        @recaptcha_enabled
+          <div class="g-recaptcha" data-sitekey="{{ config('services.captcha.sitekey') }}"></div>
+          @error('g-recaptcha-response')
+            <p class="{{ $errorClass }}">{{ $message }}</p>
+          @enderror
+        @endrecaptcha_enabled
+
+        <button type="submit"
+          class="w-full rounded-full bg-primary px-5 py-3 font-mono text-xs font-semibold text-primary-foreground transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+          Verify identity
+        </button>
+      </form>
+    </section>
+  </main>
+@endsection

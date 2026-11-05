@@ -1,27 +1,51 @@
-<x-layout>
-<main class="sm:container mx-auto  max-w-fit mt-5 mb-20 sm:max-w-lg sm:mt-10">
+@extends('layouts.guest')
 
-  <section class="flex flex-col break-words bg-white sm:border-1 sm:rounded-md  sm:shadow-lg">
+@section('content')
+  <main class="mx-auto w-full max-w-md">
+    <div class="mb-6 flex justify-center">
+      <x-logo class="text-2xl" />
+    </div>
 
-      <header class=" font-bold text-center bg-gray-200 text-gray-700 py-5 px-6 sm:py-6 sm:px-8 sm:rounded-t-md">
-          Email verfication
+    <section
+      class="overflow-hidden rounded-3xl border border-border bg-card/95 shadow-[0_24px_70px_-35px_oklch(var(--foreground)/0.35)] backdrop-blur">
+      <header class="border-b border-border px-6 py-6 text-center sm:px-8">
+        <p class="font-mono text-[11px] uppercase tracking-[0.25em] text-primary">email verification</p>
+        <h1 class="mt-2 font-display text-2xl font-bold tracking-tight text-foreground">Verify your email</h1>
+        <p class="mt-2 text-sm text-muted-foreground">
+          We already sent a verification link to
+          @auth
+            <span class="font-mono text-foreground">{{ auth()->user()->email }}</span>.
+          @else
+            your inbox.
+          @endauth
+        </p>
       </header>
-      <h1 class="p-3">Please verify your email within the link that we already sent to you .</h1>
-      <p class='text-sm p-3 text-gray-500'>Didn't verified your email yet,click resend</p>
-      <form action="{{route('verification.send')}}" method="POST" class="p-3">
-        @csrf
-        @method('POST')
-        <button 
-        class='px-6 py-2 rounded-lg bg-slate-700 dark:bg-slate-900 text-white '
-          type='submit'>
-           
-          Resend
-        </button>
-      </form>
 
-      @if(session()->has('message'))
-      <p class='bg-green-400 text-slate-200 text-center px-3 '>{{session('message')}}</p>
-      @endif
-  </section>
-</main>
-</x-layout>
+      <div class="space-y-5 px-6 py-6 sm:px-8">
+        @if(session()->has('message'))
+          <p class="rounded-xl border border-primary/30 bg-accent/60 px-4 py-3 font-mono text-[11px] text-accent-foreground">
+            {{ session('message') }}
+          </p>
+        @endif
+
+        <p class="text-sm leading-relaxed text-muted-foreground">
+          Click the link in that email to activate your account. If it expired or never arrived, send a fresh one below.
+        </p>
+
+        <form action="{{ route('verification.send') }}" method="POST">
+          @csrf
+          <button type="submit"
+            class="w-full rounded-full bg-primary px-5 py-3 font-mono text-xs font-semibold text-primary-foreground transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+            Resend verification email
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <p class="mt-6 text-center text-sm text-muted-foreground">
+      <a href="{{ route('home') }}" class="font-semibold text-primary transition-opacity hover:opacity-80">
+        Back to home
+      </a>
+    </p>
+  </main>
+@endsection

@@ -1,61 +1,59 @@
 @extends('layouts.guest')
+
 @section('content')
-<main class="sm:container mx-auto  max-w-fit mt-5 mb-20 sm:max-w-lg sm:mt-10">
+  @php
+    $labelClass = 'mb-2 block font-mono text-[11px] uppercase tracking-widest text-muted-foreground';
+    $inputClass = 'w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring/30';
+    $errorClass = 'mt-1.5 font-mono text-[11px] text-destructive';
+  @endphp
 
-  <div class="flex">
-    
-      <div class="w-full">
-      <div class="flex">
-         <x-logo class="mx-auto text-2xl my-4 cursor-pointer" />
-      </div>
+  <main class="mx-auto w-full max-w-md">
+    <div class="mb-6 flex justify-center">
+      <x-logo class="text-2xl" />
+    </div>
 
-          <section class="flex flex-col break-words bg-white sm:border-1 sm:rounded-md sm:shadow-sm sm:shadow-lg">
-              <header class="font-semibold bg-gray-200 text-gray-700 py-5 px-6 sm:py-6 sm:px-8 sm:rounded-t-md">
-                  {{ __('Reset Password') }}
-              </header>
+    <section
+      class="overflow-hidden rounded-3xl border border-border bg-card/95 shadow-[0_24px_70px_-35px_oklch(var(--foreground)/0.35)] backdrop-blur">
+      <header class="border-b border-border px-6 py-6 text-center sm:px-8">
+        <p class="font-mono text-[11px] uppercase tracking-[0.25em] text-primary">account recovery</p>
+        <h1 class="mt-2 font-display text-2xl font-bold tracking-tight text-foreground">Reset password</h1>
+        <p class="mt-2 text-sm text-muted-foreground">
+          Enter the email linked to your account and we'll send a reset link.
+        </p>
+      </header>
 
-              <form class="border-2 w-full px-6 space-y-6 sm:px-10 sm:space-y-8" method="POST" action="{{route('forgot.password.post')}}">
-                  @csrf
-                  <div class="flex flex-wrap">
-                    <label for="email" class="block text-gray-700 text-sm font-bold mb-2 sm:mb-4">
-                      E-Mail Address:
-                    </label>
+      <form class="space-y-5 px-6 py-6 sm:px-8" method="POST" action="{{ route('forgot.password.post') }}">
+        @csrf
 
-                    <input id="email" type="email" name="email"
-                        class="w-full rounded-2xl border border-gray-300 bg-gray-50 p-3 text-gray-900 transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none @error('email') border-red-500 @enderror"
-                        value="{{ old('email') }}" required autocomplete="email">
-                    <!-- Google reCAPTCHA v2 checkbox -->
-                    @recaptcha_enabled
-                    <div class="g-recaptcha mt-2" data-sitekey="{{config('services.captcha.sitekey')}}">
-                    </div>
-                      @error('g-recaptcha-response')
-                        <p class="text-red-500 text-xs italic mt-4">
-                            {{ $message }}
-                        </p>
-                        @enderror
-                    @endrecaptcha_enabled    
-                    @error('email')
-                    <p class="text-red-500 text-xs italic mt-4">
-                        {{ $message }}
-                    </p>
-                    @enderror
-                </div>
+        <div>
+          <label for="email" class="{{ $labelClass }}">Email address</label>
+          <input id="email" type="email" name="email" value="{{ old('email') }}" required autocomplete="email"
+            autofocus class="{{ $inputClass }} @error('email') border-destructive @enderror"
+            placeholder="you@example.com">
+          @error('email')
+            <p class="{{ $errorClass }}">{{ $message }}</p>
+          @enderror
+        </div>
 
-                  <div class="flex flex-wrap justify-center items-center space-y-6 pb-6 sm:pb-10 sm:space-y-0 sm:justify-between">
-                      <button type="submit"
-                      class="w-full select-none font-bold whitespace-no-wrap p-3 rounded-lg text-base leading-normal no-underline text-gray-100 bg-gray-700 hover:bg-gray-500 sm:w-auto sm:px-4 sm:order-1">
-                          {{ __('Send Password Reset Link') }}
-                      </button>
+        @recaptcha_enabled
+          <div class="g-recaptcha" data-sitekey="{{ config('services.captcha.sitekey') }}"></div>
+          @error('g-recaptcha-response')
+            <p class="{{ $errorClass }}">{{ $message }}</p>
+          @enderror
+        @endrecaptcha_enabled
 
-                      <p class="mt-4 text-xs text-blue-500 hover:text-blue-700 whitespace-no-wrap no-underline hover:underline sm:text-sm sm:order-0 sm:m-0">
-                          <a class="text-blue-500 hover:text-blue-700 no-underline" href="{{ route('login') }}">
-                              {{ __('Back to login') }}
-                          </a>
-                      </p>
-                  </div>
-              </form>
-          </section>
-      </div>
-  </div>
-</main>
+        <button type="submit"
+          class="w-full rounded-full bg-primary px-5 py-3 font-mono text-xs font-semibold text-primary-foreground transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+          Send reset link
+        </button>
+      </form>
+    </section>
+
+    <p class="mt-6 text-center text-sm text-muted-foreground">
+      Remembered it?
+      <a href="{{ route('login') }}" class="font-semibold text-primary transition-opacity hover:opacity-80">
+        Back to login
+      </a>
+    </p>
+  </main>
 @endsection

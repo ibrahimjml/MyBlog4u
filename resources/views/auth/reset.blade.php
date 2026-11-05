@@ -1,52 +1,55 @@
-<x-layout>
-<main class="sm:container mx-auto  max-w-fit mt-5 mb-20 sm:max-w-lg sm:mt-10">
-  <div class="flex">
-      <div class="w-full">
-          <section class="flex  flex-col break-words bg-white sm:border-1 sm:rounded-md sm:shadow-sm ">
+@extends('layouts.guest')
 
-              <header class="font-bold text-center bg-gray-200 text-gray-700 py-5 px-6 sm:py-6 sm:px-8 sm:rounded-t-md">
-                Reset Password
-              </header>
+@section('content')
+  @php
+    $labelClass = 'mb-2 block font-mono text-[11px] uppercase tracking-widest text-muted-foreground';
+    $inputClass = 'w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring/30';
+    $errorClass = 'mt-1.5 font-mono text-[11px] text-destructive';
+  @endphp
 
-              <form class="w-full px-6 space-y-6 sm:px-10 sm:space-y-4  border-2  h-80" method="POST"
-                  action="{{ route('reset.password.post', $token) }}">
-                  @csrf
-                  @method('POST') 
-                  <div class="flex flex-wrap">
-                      <label for="password" class="block text-gray-700 text-sm font-bold mb-2 sm:mb-4">
-                        Password:
-                      </label>
+  <main class="mx-auto w-full max-w-md">
+    <div class="mb-6 flex justify-center">
+      <x-logo class="text-2xl" />
+    </div>
 
-                      <input id="password" type="password"
-                          class="rounded-sm p-2 border-2 form-input w-full @error('password') border-red-500 @enderror" name="password"
-                          required autocomplete="new-password">
+    <section
+      class="overflow-hidden rounded-3xl border border-border bg-card/95 shadow-[0_24px_70px_-35px_oklch(var(--foreground)/0.35)] backdrop-blur">
+      <header class="border-b border-border px-6 py-6 text-center sm:px-8">
+        <p class="font-mono text-[11px] uppercase tracking-[0.25em] text-primary">password reset</p>
+        <h1 class="mt-2 font-display text-2xl font-bold tracking-tight text-foreground">Choose a new password</h1>
+        <p class="mt-2 text-sm text-muted-foreground">Pick a strong password you haven't used before.</p>
+      </header>
 
-                      @error('password')
-                      <p class="text-red-500 text-xs italic mt-4">
-                          {{ $message }}
-                      </p>
-                      @enderror
-                  </div>
+      <form class="space-y-5 px-6 py-6 sm:px-8" method="POST" action="{{ route('reset.password.post', $token) }}">
+        @csrf
 
-                  <div class="flex flex-wrap">
-                      <label for="password-confirm" class="block text-gray-700 text-sm font-bold mb-2 sm:mb-4">
-                        Confirm Password:
-                      </label>
+        <div>
+          <label for="password" class="{{ $labelClass }}">New password</label>
+          <input id="password" type="password" name="password" required autocomplete="new-password"
+            class="{{ $inputClass }} @error('password') border-destructive @enderror" placeholder="••••••••">
+          @error('password')
+            <p class="{{ $errorClass }}">{{ $message }}</p>
+          @enderror
+        </div>
 
-                      <input id="password-confirm" type="password" class="rounded-sm p-2 border-2 form-input w-full"
-                          name="password_confirmation" required autocomplete="new-password">
-                  </div>
+        <div>
+          <label for="password-confirm" class="{{ $labelClass }}">Confirm new password</label>
+          <input id="password-confirm" type="password" name="password_confirmation" required
+            autocomplete="new-password" class="{{ $inputClass }}" placeholder="••••••••">
+        </div>
 
-                  <div class="flex flex-wrap">
-                      <button type="submit"
-                          class="w-full select-none font-bold whitespace-no-wrap p-3 rounded-lg text-base leading-normal no-underline text-gray-100 bg-gray-700 hover:bg-gray-500 sm:py-4">
-                          Reset
-                      </button>
-                  </div>
-              </form>
+        <button type="submit"
+          class="w-full rounded-full bg-primary px-5 py-3 font-mono text-xs font-semibold text-primary-foreground transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+          Reset password
+        </button>
+      </form>
+    </section>
 
-          </section>
-      </div>
-  </div>
-</main>
-</x-layout>
+    <p class="mt-6 text-center text-sm text-muted-foreground">
+      Back to
+      <a href="{{ route('login') }}" class="font-semibold text-primary transition-opacity hover:opacity-80">
+        login
+      </a>
+    </p>
+  </main>
+@endsection

@@ -1,0 +1,205 @@
+.area {
+    position: relative;
+    isolation: isolate;
+    width: 100%;
+    overflow: hidden;
+    background:
+        radial-gradient(70rem 55rem at 12% -10%, oklch(var(--primary) / 0.10), transparent 62%),
+        radial-gradient(55rem 55rem at 88% 0%, oklch(var(--accent) / 0.55), transparent 65%),
+        radial-gradient(55rem 55rem at 50% 115%, oklch(var(--secondary) / 0.85), transparent 68%),
+        oklch(var(--background));
+}
+
+.area::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(oklch(var(--foreground) / 0.055) 1px, transparent 1px);
+    background-size: 24px 24px;
+    -webkit-mask-image: radial-gradient(ellipse at center, black 20%, transparent 75%);
+    mask-image: radial-gradient(ellipse at center, black 20%, transparent 75%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.circles {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.circles li {
+    position: absolute;
+    bottom: -160px;
+    display: block;
+    list-style: none;
+    width: 24px;
+    height: 24px;
+    border: 1px solid oklch(var(--primary) / 0.14);
+    border-radius: 9999px;
+    background: oklch(var(--primary) / 0.10);
+    animation: floatUp 28s linear infinite;
+    will-change: transform, opacity;
+}
+
+.circles li:nth-child(even) {
+    border-color: oklch(var(--primary) / 0.10);
+    background: oklch(var(--accent) / 0.45);
+}
+
+.circles li:nth-child(3n) {
+    filter: blur(1px);
+}
+
+.circles li:nth-child(1) {
+    left: 6%;
+    width: 96px;
+    height: 96px;
+    animation-delay: 0s;
+    animation-duration: 32s;
+}
+
+.circles li:nth-child(2) {
+    left: 18%;
+    width: 22px;
+    height: 22px;
+    animation-delay: 3s;
+    animation-duration: 22s;
+}
+
+.circles li:nth-child(3) {
+    left: 31%;
+    width: 42px;
+    height: 42px;
+    animation-delay: 7s;
+    animation-duration: 26s;
+}
+
+.circles li:nth-child(4) {
+    left: 44%;
+    width: 140px;
+    height: 140px;
+    animation-delay: 2s;
+    animation-duration: 38s;
+}
+
+.circles li:nth-child(5) {
+    left: 57%;
+    width: 26px;
+    height: 26px;
+    animation-delay: 10s;
+    animation-duration: 24s;
+}
+
+.circles li:nth-child(6) {
+    left: 68%;
+    width: 58px;
+    height: 58px;
+    animation-delay: 5s;
+    animation-duration: 30s;
+}
+
+.circles li:nth-child(7) {
+    left: 79%;
+    width: 18px;
+    height: 18px;
+    animation-delay: 13s;
+    animation-duration: 20s;
+}
+
+.circles li:nth-child(8) {
+    left: 88%;
+    width: 112px;
+    height: 112px;
+    animation-delay: 1s;
+    animation-duration: 36s;
+}
+
+.circles li:nth-child(9) {
+    left: 52%;
+    width: 12px;
+    height: 12px;
+    animation-delay: 16s;
+    animation-duration: 18s;
+}
+
+.circles li:nth-child(10) {
+    left: 94%;
+    width: 34px;
+    height: 34px;
+    animation-delay: 8s;
+    animation-duration: 27s;
+}
+
+.area main {
+    animation: authRise 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes floatUp {
+    0% {
+        transform: translate3d(0, 12vh, 0) scale(0.85) rotate(0deg);
+        opacity: 0;
+    }
+
+    15% {
+        opacity: 0.65;
+    }
+
+    85% {
+        opacity: 0.25;
+    }
+
+    100% {
+        transform: translate3d(0, -120vh, 0) scale(1.08) rotate(18deg);
+        opacity: 0;
+    }
+}
+
+@keyframes authRise {
+    from {
+        opacity: 0;
+        transform: translate3d(0, 14px, 0);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .circles li,
+    .area main {
+        animation: none;
+    }
+}
+
+/* =========================================================
+===   Phone input list
+=========================================================== */
+
+.iti {
+    width: 100%;
+}
+
+.iti__country-list {
+    border: 1px solid oklch(var(--border));
+    border-radius: 0.75rem;
+    background: oklch(var(--card));
+    color: oklch(var(--foreground));
+    box-shadow: 0 18px 40px -24px oklch(var(--foreground) / 0.45);
+}
+
+.iti__country.iti__highlight {
+    background: oklch(var(--secondary));
+}
+
+.iti__selected-flag {
+    border-radius: 0.75rem 0 0 0.75rem;
+}
