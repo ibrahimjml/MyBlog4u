@@ -15,6 +15,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
 use Laravel\Scout\Searchable;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -234,4 +235,25 @@ class User extends Authenticatable implements MustVerifyEmail
         'recovery_codes_downloaded' => 'boolean',
         'age' => 'integer',
     ];
+
+     protected function maskedEmail(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                $email = $this->email;
+                if (!$email || !str_contains($email, '@')) return $email;
+
+                [$username, $domainParts] = explode('@', $email, 2);
+                $domainParts = explode('.', $domainParts, 2);
+                $domainName = $domainParts[0];
+                $tld = $domainParts[1];
+
+                $maskedUser = substr($username, 0, 1) . '***' . substr($username, -1);
+                $maskedDomain = substr($domainName, 0, 1) . '***';
+                $maskTld = substr($tld, 0, 1) . '***';
+                
+                return "{$maskedUser}@{$maskedDomain}.{$maskTld}";
+            }
+        );
+    }
 }

@@ -1,60 +1,78 @@
-<div id="{{ $id }}" class="fixed inset-0 bg-black bg-opacity-60 hidden z-50 flex h-full items-center justify-center">
- <div class="relative bg-white h-2/4 rounded-lg p-6 w-full max-w-2xl ">
-  <p class="font-bold text-lg mb-4">Report this post. What's wrong ?</p>
-<form action="{{ route('comment.report',$comment->id) }}" method="POST" class="report-form">
-  @csrf
-  @method('POST')
-  @foreach (\App\Enums\ReportReason::commentReasons() as $reason)
-    <div class="flex gap-2 items-center">
-      <input type="radio" name="report_reason" value="{{ $reason->value }}" 
-             class="reason cursor-pointer">
-      <span>{{ $reason->label() }}</span>
-    </div>
-  @endforeach
-  <textarea disabled name="other" class="other border-0 w-full mt-2 p-2 rounded-lg bg-gray-100 cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400" rows="4" placeholder="Describe your reason if other"></textarea>
-  @error('other')
-  @enderror
-  <button disabled type="submit" class="submit block p-1 px-2 mt-2 text-white font-bold rounded-full bg-blue-500 disabled:bg-blue-300 cursor-not-allowed">
-    Submit
-  </button>
-</form>
-  <button class="close-reports-modal absolute top-1 right-3 text-lg mt-4 text-black"><i class="fas fa-times"></i></button>
+<div id="{{ $id }}"
+  class="fixed inset-0 z-[80] hidden items-center justify-center bg-foreground/60 p-4 backdrop-blur-sm">
+  <div class="relative w-full max-w-md rounded-2xl border border-border bg-background p-5 shadow-2xl">
+    <p class="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Report</p>
+    <h2 class="mt-1 font-display text-lg font-semibold text-foreground">What is wrong with this comment?</h2>
+
+    <form action="{{ route('comment.report', $comment->id) }}" method="POST" class="report-form mt-4">
+      @csrf
+      @method('POST')
+
+      <div class="space-y-1">
+        @foreach (\App\Enums\ReportReason::commentReasons() as $reason)
+          <label class="flex cursor-pointer items-center gap-3 rounded-lg px-2 py-2 text-sm text-foreground transition-colors hover:bg-secondary">
+            <input type="radio" name="report_reason" value="{{ $reason->value }}" class="reason h-4 w-4 accent-primary">
+            <span>{{ $reason->label() }}</span>
+          </label>
+        @endforeach
+      </div>
+
+      <textarea disabled name="other"
+        class="other mt-3 w-full resize-y rounded-xl border border-border bg-secondary px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:text-muted-foreground"
+        rows="4" placeholder="Describe your reason if other"></textarea>
+
+      <button disabled type="submit"
+        class="submit mt-4 inline-flex items-center justify-center rounded-full bg-primary px-4 py-2 font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-primary-foreground transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50">
+        Submit report
+      </button>
+    </form>
+
+    <button type="button" title="Close"
+      class="close-reports-modal absolute right-3 top-3 inline-flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground">
+      <i class="fas fa-times"></i>
+    </button>
   </div>
 </div>
 
 @push('scripts')
-<script>
-function openReport(id) {
-  const modal = document.getElementById(id);
-  modal.classList.remove('hidden');
+  <script>
+    function openReport(id) {
+      const modal = document.getElementById(id);
+      if (!modal) return;
 
-  const closeBtn = modal.querySelector('.close-reports-modal');
-  const reasons = modal.querySelectorAll('.reason');
-  const other = modal.querySelector('.other');
-  const submitBtn = modal.querySelector('.submit');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
 
-  reasons.forEach(reason => {
-    reason.addEventListener('change', () => {
-      submitBtn.disabled = false;
-      submitBtn.classList.remove('cursor-not-allowed','bg-blue-300');
+      const closeBtn = modal.querySelector('.close-reports-modal');
+      const reasons = Array.from(modal.querySelectorAll('.reason'));
+      const other = modal.querySelector('.other');
+      const submitBtn = modal.querySelector('.submit');
 
-      if (reason.value === 'other') {
-        other.disabled = false;
-        other.classList.remove('cursor-not-allowed','bg-gray-100','text-gray-400');
-      } else {
-        other.disabled = true;
-        other.value = '';
-        other.classList.add('cursor-not-allowed','bg-gray-100','text-gray-400');
-      }
-    });
-  });
+      reasons.forEach(reason => {
+        reason.addEventListener('change', () => {
+          submitBtn.disabled = false;
 
-  const closeHandler = () => {
-    modal.classList.add('hidden');
-    closeBtn.removeEventListener('click', closeHandler);
-  };
-  closeBtn.addEventListener('click', closeHandler);
-}
+          if (reason.value === 'other') {
+            other.disabled = false;
+            other.focus();
+          } else {
+            other.disabled = true;
+            other.value = '';
+          }
+        });
+      });
 
-</script>
+      const closeHandler = () => {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        closeBtn.removeEventListener('click', closeHandler);
+      };
+
+      closeBtn.addEventListener('click', closeHandler);
+
+      modal.addEventListener('click', event => {
+        if (event.target === modal) closeHandler();
+      }, { once: true });
+    }
+  </script>
 @endpush

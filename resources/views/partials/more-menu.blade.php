@@ -1,37 +1,39 @@
 @php
-    $canReport = auth()->user()->can('report', $post);
-    $canFollow = auth()->user()->isNot($post->user);
-       $followStatus = $authFollowings[$post->user_id] ?? null;
-           $status = isset($followStatus)
-                   ? \App\Enums\FollowerStatus::tryFrom((int) $followStatus)
-                   : null;
+  $canReport = auth()->user()->can('report', $post);
+  $canFollow = auth()->user()->isNot($post->user);
+  $followStatus = $authFollowings[$post->user_id] ?? null;
+  $status = isset($followStatus)
+    ? \App\Enums\FollowerStatus::tryFrom((int) $followStatus)
+    : null;
 @endphp
-<div id="moremodel" class="absolute top-[-100px] -right-12 z-10 w-36 h-fit rounded-lg bg-slate-50 px-2 py-4 space-y-2 hidden">
-    @if($canFollow)
-     <button
-        data-id="{{ $post->user->id }}"
-        onclick="follows(this)"
-        class="block text-left text-sm font-semibold capitalize w-full rounded-md pl-3 hover:bg-gray-200 transition-all duration-150
-            {{ is_null($status) ? 'text-blue-500' : ($status === \App\Enums\FollowerStatus::PENDING ? 'text-yellow-500' : 'text-red-500') }}">
-        {{ is_null($status) ? 'Follow' : ($status === \App\Enums\FollowerStatus::PENDING ? 'Requested' : 'Unfollow') }}
+
+<div id="moremodel"
+  class="absolute -top-28 right-0 z-20 hidden h-fit w-40 space-y-0.5 rounded-xl border border-border bg-card p-1.5 shadow-xl">
+  @if($canFollow)
+    <button type="button" data-id="{{ $post->user->id }}" onclick="follows(this)"
+      class="block w-full rounded-lg px-3 py-2 text-left text-sm font-medium transition-colors hover:bg-secondary
+        {{ is_null($status) ? 'text-primary' : ($status === \App\Enums\FollowerStatus::PENDING ? 'text-muted-foreground' : 'text-destructive') }}">
+      {{ is_null($status) ? 'Follow' : ($status === \App\Enums\FollowerStatus::PENDING ? 'Requested' : 'Unfollow') }}
     </button>
-    @endif
-    @if($canReport)
-    <button onclick="openReort()" class="block text-left text-sm font-semibold w-full rounded-md pl-3 hover:bg-gray-200  transition-all duration-150">Report</button>
-    @endif
-  </div>
-  
-  @push('scripts')
-      {{-- open more menu --}}
+  @endif
+
+  @if($canReport)
+    <button type="button" onclick="openReort()"
+      class="block w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-foreground transition-colors hover:bg-secondary">
+      Report
+    </button>
+  @endif
+</div>
+
+@push('scripts')
   <script>
-  const OpenMoreModel = document.getElementById('openmoremodel');
-  const moreModel = document.getElementById('moremodel');
-  OpenMoreModel.addEventListener('click',()=>{
-    if(moreModel.classList.contains('hidden')){
-      moreModel.classList.remove('hidden');
-    }else{
-      moreModel.classList.add('hidden');
+    const OpenMoreModel = document.getElementById('openmoremodel');
+    const moreModel = document.getElementById('moremodel');
+
+    if (OpenMoreModel && moreModel) {
+      OpenMoreModel.addEventListener('click', () => {
+        moreModel.classList.toggle('hidden');
+      });
     }
-  })
-</script>
-  @endpush
+  </script>
+@endpush

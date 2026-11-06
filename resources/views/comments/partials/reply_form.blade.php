@@ -1,12 +1,22 @@
-<form comment-id="{{$comment->id}}" class=" reply-form hidden relative lg:w-fit {{ $comment->parent_id ? 'w-[200px]' : 'w-[270px]' }} mb-4 p-1 rounded-lg px-5" action="/reply/{{ $comment->id }}" method="POST">
+<form comment-id="{{ $comment->id }}" class="reply-form mt-3 hidden rounded-xl border border-border bg-background p-3"
+  action="/reply/{{ $comment->id }}" method="POST">
   @csrf
   @method('POST')
   <input type="hidden" name="parent_id" value="{{ $reply->id ?? $comment->id }}">
-  <textarea class="border-2 bg-gray-100 rounded-l-lg placeholder-gray-400 pl-2 w-full  placeholder-opacity-100 @error('content') border-red-500 @enderror" placeholder="{{ isset($reply->user->username) ? 'Reply To ' . $reply->user->username : 'Reply with Comment' }}" name="content" id="content" cols="40"></textarea>
+
+  <textarea
+    class="min-h-[72px] w-full resize-y rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring/20 @error('content') border-destructive @enderror"
+    placeholder="{{ isset($reply->user->username) ? 'Reply to @' . $reply->user->username : 'Write a reply' }}" name="content" id="content"
+    cols="40"></textarea>
+
   @error('content')
-  <p class="text-red-500 text-xs italic mt-4">
-      {{ $message }}
-  </p>
+    <p class="mt-2 text-xs font-medium text-destructive">{{ $message }}</p>
   @enderror
-  <button type="submit" class="absolute top-1 right-[-28px] h-12 w-12 block text-white rounded-r-lg p-1 text-sm ml-auto bg-blue-500">Reply</button>
+
+  <div class="mt-2 flex justify-end">
+    <button type="submit"
+      class="inline-flex items-center justify-center rounded-full bg-primary px-4 py-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-primary-foreground transition-opacity hover:opacity-90">
+      Reply
+    </button>
+  </div>
 </form>

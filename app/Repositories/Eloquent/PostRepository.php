@@ -73,7 +73,7 @@ class PostRepository implements PostInterface
     {
          return Post::query()
                   ->published()
-                  ->with(['user:id,name,username,avatar'])
+                  ->with(['user:id,name,username,avatar', 'categories:id,name', 'hashtags:id,name'])
                    ->withCount(['comments as total_comments_count' => function($query) {
                          $query->whereNull('parent_id'); 
                       }])
@@ -87,7 +87,7 @@ class PostRepository implements PostInterface
     {
       return Post::published()
                     ->latest()
-                    ->with(['user:id,name,username,avatar'])
+                    ->with(['user:id,name,username,avatar', 'categories:id,name', 'hashtags:id,name'])
                     ->withCount(['comments as total_comments_count' => function($query) {
                        $query->whereNull('parent_id'); 
                     }])

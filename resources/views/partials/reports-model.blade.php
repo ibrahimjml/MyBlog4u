@@ -1,64 +1,91 @@
-<div id="reportsmodel" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
- <div class="relative bg-white h-2/4 rounded-lg p-6 w-full max-w-2xl ">
-  <p class="font-bold text-lg mb-4">Report this post. What's wrong ?</p>
-<form action="{{route('post.report',$post->id)}}" method="POST">
-  @csrf
-  @method('POST')
-    @foreach ($reasons as $reason)
-        <div class="flex gap-2 items-center">
-          <input type="radio" name="report_reason" value="{{$reason['value']}}" class="reason cursor-pointer">
-          <span>{{$reason['value']}}</span>
-        </div>
-    @endforeach
-   <textarea disabled id="other" name="other" class="border-0 w-full mt-2 p-2 rounded-lg bg-gray-100 cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400" rows="4" placeholder="Describe your reason .if other"></textarea>
-  @error('other')
-   <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-  @enderror
-   <button disabled id="submit" type="submit" class="block p-1 px-2 mt-2 text-white font-bold rounded-full bg-blue-500 disabled:bg-blue-300 cursor-not-allowed">
-    Submit
-   </button>
-  </form>
-  <button id="close-reports-modal" class="absolute top-1 right-3 text-lg mt-4 text-black"><i class="fas fa-times"></i></button>
+<div id="reportsmodel"
+  class="fixed inset-0 z-[80] hidden items-center justify-center bg-foreground/60 p-4 backdrop-blur-sm">
+  <div class="relative w-full max-w-md rounded-2xl border border-border bg-background p-5 shadow-2xl">
+    <p class="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Report</p>
+    <h2 class="mt-1 font-display text-lg font-semibold text-foreground">What is wrong with this post?</h2>
+
+    <form action="{{ route('post.report', $post->id) }}" method="POST" class="mt-4">
+      @csrf
+      @method('POST')
+
+      <div class="space-y-1">
+        @foreach ($reasons as $reason)
+          <label class="flex cursor-pointer items-center gap-3 rounded-lg px-2 py-2 text-sm text-foreground transition-colors hover:bg-secondary">
+            <input type="radio" name="report_reason" value="{{ $reason['value'] }}" class="reason h-4 w-4 accent-primary">
+            <span>{{ $reason['value'] }}</span>
+          </label>
+        @endforeach
+      </div>
+
+      <textarea disabled id="other" name="other"
+        class="mt-3 w-full resize-y rounded-xl border border-border bg-secondary px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:text-muted-foreground"
+        rows="4" placeholder="Describe your reason if other"></textarea>
+
+      @error('other')
+        <p class="mt-2 text-xs font-medium text-destructive">{{ $message }}</p>
+      @enderror
+
+      <button disabled id="submit" type="submit"
+        class="mt-4 inline-flex items-center justify-center rounded-full bg-primary px-4 py-2 font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-primary-foreground transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50">
+        Submit report
+      </button>
+    </form>
+
+    <button id="close-reports-modal" type="button" title="Close"
+      class="absolute right-3 top-3 inline-flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground">
+      <i class="fas fa-times"></i>
+    </button>
   </div>
 </div>
-@push('scripts')
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const radiobtns = document.querySelectorAll('.reason');
-    const textarea = document.getElementById('other');
-    const submit = document.getElementById('submit');
 
-    radiobtns.forEach(radio => {
-      radio.addEventListener('change', function () {
-        submit.disabled = false;
-        submit.classList.remove("bg-blue-300", "cursor-not-allowed");
-        if (this.value === "Other") {
-          textarea.disabled = false;
-          textarea.classList.remove("text-gray-400", "cursor-not-allowed");
-          textarea.focus();
-        } else {
-          textarea.disabled = true;
-          textarea.classList.add("text-gray-400", "cursor-not-allowed");
-          textarea.value = ""; 
-        }
+@push('scripts')
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const modal = document.getElementById('reportsmodel');
+      if (!modal) return;
+
+      const radiobtns = modal.querySelectorAll('.reason');
+      const textarea = modal.querySelector('#other');
+      const submit = modal.querySelector('#submit');
+
+      radiobtns.forEach(radio => {
+        radio.addEventListener('change', function() {
+          submit.disabled = false;
+
+          if (this.value === 'Other' || this.value === 'other') {
+            textarea.disabled = false;
+            textarea.focus();
+          } else {
+            textarea.disabled = true;
+            textarea.value = '';
+          }
+        });
       });
     });
-  });
-</script>
-{{-- open report menu --}}
-<script>
-  function openReort(){
-    const more = document.getElementById('moremodel');
-    const reportsmodel = document.getElementById('reportsmodel');
-    const closereportsmodel = document.getElementById('close-reports-modal');
 
-   if(!more.classList.contains('hidden')) more.classList.add('hidden');
-   reportsmodel.classList.remove('hidden');
+    function openReort() {
+      const more = document.getElementById('moremodel');
+      const reportsmodel = document.getElementById('reportsmodel');
+      const closereportsmodel = document.getElementById('close-reports-modal');
 
- closereportsmodel.addEventListener('click',()=>{
-  reportsmodel.classList.add('hidden');
- })
-  }
-</script>
+      if (!reportsmodel) return;
 
+      if (more && !more.classList.contains('hidden')) more.classList.add('hidden');
+
+      reportsmodel.classList.remove('hidden');
+      reportsmodel.classList.add('flex');
+
+      const closeHandler = () => {
+        reportsmodel.classList.add('hidden');
+        reportsmodel.classList.remove('flex');
+        closereportsmodel.removeEventListener('click', closeHandler);
+      };
+
+      closereportsmodel.addEventListener('click', closeHandler);
+
+      reportsmodel.addEventListener('click', event => {
+        if (event.target === reportsmodel) closeHandler();
+      }, { once: true });
+    }
+  </script>
 @endpush

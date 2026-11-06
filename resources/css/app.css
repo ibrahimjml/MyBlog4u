@@ -1,6 +1,8 @@
 @import './custom/tailwind.css';
 @import './custom/prism.css';
 @import './custom/style.css';
+
+/* Code blocks: themed syntax highlighting, toolbar, inline code, and media */
 @import './custom/codeblock-style.css';
 
 @tailwind base;
@@ -73,5 +75,43 @@
     border-radius: 9999px;
     background: oklch(var(--primary));
   }
+  /* Typograpghy styles  */
+  .published-content {
+    @apply prose prose-base max-w-none;
+    @apply prose-headings:font-display prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-foreground;
+    @apply prose-h2:mt-14 prose-h2:mb-4 prose-h2:text-2xl;
+    @apply prose-h3:mt-10 prose-h3:mb-3 prose-h3:text-xl;
+    @apply prose-p:leading-7 prose-p:text-muted-foreground;
+    @apply prose-li:text-muted-foreground prose-li:marker:text-primary;
+    @apply prose-a:font-medium prose-a:text-primary prose-a:underline-offset-4;
+    @apply prose-strong:text-foreground;
+    @apply prose-blockquote:border-l-primary prose-blockquote:text-muted-foreground;
+    @apply prose-img:rounded-xl prose-img:border prose-img:border-border;
+    @apply prose-hr:border-border;
+    @apply prose-table:text-sm prose-th:text-foreground prose-td:text-muted-foreground;
+  }
+  .published-content :where(h2, h3, h4){
+    scroll-margin-top: 6rem;
+  }
+  .published-content :where(h2, h3, h4) a {
+        text-decoration: none;
+        color: inherit;
+      }
+
+  .published-content img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 12px auto;
+  }
+  
+   /* --- About me page --- */
+   #about-me {
+     max-width: 100% !important;
+   }
+   
+   #about-me ul li::marker {
+     color: oklch(var(--foreground));
+   }   
 }
 

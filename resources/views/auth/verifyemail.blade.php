@@ -14,7 +14,7 @@
         <p class="mt-2 text-sm text-muted-foreground">
           We already sent a verification link to
           @auth
-            <span class="font-mono text-foreground">{{ auth()->user()->email }}</span>.
+            <span class="font-mono text-foreground">{{ auth()->user()->masked_email }}</span>.
           @else
             your inbox.
           @endauth

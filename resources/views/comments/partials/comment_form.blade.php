@@ -1,14 +1,33 @@
-<form comment-form="{{$post->id}}" action="/comment/{{$post->id}}" method="POST">
+<form comment-form="{{ $post->id }}" action="/comment/{{ $post->id }}" method="POST" class="space-y-3">
   @csrf
-  <div class="flex gap-3 items-center mb-10">
-    <img src="{{auth()->user()->avatar_url}}" alt="" class="rounded-full w-10 h-10">
-    <p class="font-semibold text-xs text-blueGray-500">{{auth()->user()->name}}</p>
+
+  <div class="flex items-center gap-3">
+    <img src="{{ auth()->user()->avatar_url }}" alt="{{ auth()->user()->name }}"
+      class="h-8 w-8 rounded-full object-cover">
+
+    <div class="min-w-0">
+      <p class="truncate text-sm font-semibold text-foreground">{{ auth()->user()->name }}</p>
+      <p class="font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground">Commenting as {{ '@' . auth()->user()->username }}</p>
+    </div>
   </div>
-  <textarea class="border-0 placeholder-gray-700 pl-2 focus:ring-0 focus:outline-none resize-none placeholder-opacity-100 @error('content') border-red-500 @enderror" placeholder="Write a thoughtful comment" name="content" id="content" rows="4" cols="80" ></textarea>
+
+  <div
+    class="overflow-hidden rounded-xl border bg-background transition-colors focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-ring/20 @error('content') border-destructive @else border-border @enderror">
+    <textarea
+      class="block min-h-[96px] w-full resize-y border-0 bg-transparent px-3 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:ring-0 focus:outline-none"
+      placeholder="Write a thoughtful comment" name="content" id="content" rows="4" cols="80"></textarea>
+
+    <div class="flex items-center justify-between gap-3 border-t border-border px-3 py-2">
+      <span class="font-mono text-[10px] text-muted-foreground">Be kind and constructive</span>
+
+      <button type="submit"
+        class="inline-flex items-center justify-center rounded-full bg-primary px-4 py-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-primary-foreground transition-opacity hover:opacity-90">
+        Comment
+      </button>
+    </div>
+  </div>
+
   @error('content')
-  <p class="text-red-500 text-xs italic mt-4">
-      {{ $message }}
-  </p>
+    <p class="text-xs font-medium text-destructive">{{ $message }}</p>
   @enderror
-  <button type="submit" class="block text-white font-bold rounded-lg p-2 text-sm ml-auto my-3 bg-blue-500">Comment</button>
 </form>

@@ -8,7 +8,7 @@ if (!function_exists('render_mentions')) {
 
     return preg_replace(
       $pattern,
-      '<a href="/@$1" class="font-semibold text-blue-500 hover:underline">@$1</a>',
+      '<a href="/@$1" class="font-semibold text-primary hover:underline">@$1</a>',
       e($content)
     );
   }

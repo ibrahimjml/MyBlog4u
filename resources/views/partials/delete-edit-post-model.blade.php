@@ -1,30 +1,40 @@
-{{-- button onclick open model --}}
-<button id="openmodel" class="absolute top-3 right-3 z-10 w-6 h-6 rounded-[50%] bg-slate-100 hover:bg-opacity-65 transition-bg-opacity duration-100">
-  <i class="fas fa-ellipsis-h"></i>
+<button id="openmodel" type="button" title="Post options"
+  class="absolute right-4 top-4 z-10 inline-flex h-9 w-9 items-center justify-center rounded-full border border-border/60 bg-background/90 text-muted-foreground backdrop-blur-sm transition-colors hover:bg-background hover:text-foreground">
+  <i class="fas fa-ellipsis-h text-sm"></i>
 </button>
-{{-- delete|edit model  --}}
-<div id="model" class="absolute top-10 right-3 z-10 w-36 h-20 rounded-lg bg-slate-50 px-2 py-4 space-y-2 hidden">
-  @can('update',$post)
-   <a href="{{route('edit.post',$post->slug)}}" class="block font-semibold w-full rounded-md pl-3 hover:bg-gray-400 hover:text-white transition-all duration-150">Edit</a>
-   @endcan
-   @can('delete',$post)
-   <form action="{{route('delete.post',$post->slug)}}" method="POST" onsubmit="return confirm('Are you sure you want delete this post ?')">
-    @csrf
-    @method('DELETE')
-   <button  class="text-left font-semibold w-full rounded-md pl-3 hover:bg-gray-400 hover:text-white transition-all duration-150">Delete</button>
-   </form>
-   @endcan
+
+<div id="model"
+  class="absolute right-4 top-16 z-20 hidden w-40 space-y-0.5 rounded-xl border border-border bg-card p-1.5 shadow-xl">
+  @can('update', $post)
+    <a href="{{ route('edit.post', $post->slug) }}"
+      class="block rounded-lg px-3 py-2 text-left text-sm font-medium text-foreground transition-colors hover:bg-secondary">
+      Edit
+    </a>
+  @endcan
+
+  @can('delete', $post)
+    <form action="{{ route('delete.post', $post->slug) }}" method="POST"
+      onsubmit="return confirm('Are you sure you want to delete this post?')">
+      @csrf
+      @method('DELETE')
+
+      <button type="submit"
+        class="block w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-destructive transition-colors hover:bg-destructive/10">
+        Delete
+      </button>
+    </form>
+  @endcan
 </div>
+
 @push('scripts')
-<script>
-  const OpenModel = document.getElementById('openmodel');
-  const Model = document.getElementById('model');
-  OpenModel.addEventListener('click',()=>{
-    if(Model.classList.contains('hidden')){
-      Model.classList.remove('hidden');
-    }else{
-      Model.classList.add('hidden');
+  <script>
+    const OpenModel = document.getElementById('openmodel');
+    const Model = document.getElementById('model');
+
+    if (OpenModel && Model) {
+      OpenModel.addEventListener('click', () => {
+        Model.classList.toggle('hidden');
+      });
     }
-  })
-</script>
+  </script>
 @endpush

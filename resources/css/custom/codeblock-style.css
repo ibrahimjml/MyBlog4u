@@ -1,22 +1,249 @@
-div.published-content img { 
-  display: block;
-  margin: 12px auto;
-  max-width: 100%;
-  height: auto; 
+/* ==========================================================================
+   Code Block Theme
+   Themed with the MyBlog4U design tokens from resources/css/app.css.
+   ========================================================================== */
 
-    }
-div.published-content ul li::marker { 
-color: #1d2021;
-    }
-/* ===============
-  style aboutme page
-=================*/  
-#about-me {
-    max-width: 100% !important;
+:root {
+  --code-background: oklch(var(--foreground));
+  --code-foreground: oklch(var(--background));
+  --code-muted: oklch(var(--background) / 0.52);
+  --code-punctuation: oklch(var(--background) / 0.7);
+  --code-border: oklch(var(--background) / 0.14);
+  --code-keyword: oklch(var(--primary));
+  --code-string: oklch(var(--accent));
+  --code-function: oklch(var(--accent));
+  --code-selection: oklch(var(--primary) / 0.45);
 }
-#about-me ul li::marker {
-    color: #1d2021;
-}  
 
+/* --- Code block shell --- */
+.published-content pre[class*="language-"],
+.prose pre[class*="language-"] {
+  position: relative;
+  margin: 1.75rem 0;
+  padding: 2.75rem 1.25rem 1.25rem;
+  overflow: auto;
+  color: var(--code-foreground);
+  background: var(--code-background);
+  border: 1px solid var(--code-border);
+  border-radius: calc(var(--radius) + 0.25rem);
+  box-shadow: 0 24px 55px -35px oklch(var(--foreground) / 0.7);
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.875rem;
+  line-height: 1.75;
+  text-shadow: none;
+  tab-size: 4;
+}
 
+.published-content pre[class*="language-"]::before,
+.prose pre[class*="language-"]::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, oklch(var(--primary) / 0.6), transparent);
+  pointer-events: none;
+}
 
+.published-content pre[class*="language-"] code[class*="language-"],
+.prose pre[class*="language-"] code[class*="language-"] {
+  display: block;
+  color: var(--code-foreground);
+  background: transparent;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  text-shadow: none;
+}
+
+/* --- Code toolbar & copy button --- */
+.published-content div.code-toolbar,
+.prose div.code-toolbar {
+  position: relative;
+  margin: 1.75rem 0;
+}
+
+.published-content div.code-toolbar > pre[class*="language-"],
+.prose div.code-toolbar > pre[class*="language-"] {
+  margin: 0;
+}
+
+.published-content div.code-toolbar > .toolbar,
+.prose div.code-toolbar > .toolbar {
+  top: 0.75rem;
+  right: 0.75rem;
+  opacity: 1;
+}
+
+.published-content div.code-toolbar > .toolbar > .toolbar-item > button,
+.published-content div.code-toolbar > .toolbar > .toolbar-item > a,
+.published-content div.code-toolbar > .toolbar > .toolbar-item > span,
+.prose div.code-toolbar > .toolbar > .toolbar-item > button,
+.prose div.code-toolbar > .toolbar > .toolbar-item > a,
+.prose div.code-toolbar > .toolbar > .toolbar-item > span {
+  padding: 0.35rem 0.7rem;
+  color: var(--code-foreground);
+  background: oklch(var(--background) / 0.1);
+  border: 1px solid oklch(var(--background) / 0.18);
+  border-radius: 9999px;
+  box-shadow: none;
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 200ms ease, background-color 200ms ease, border-color 200ms ease;
+}
+
+.published-content div.code-toolbar > .toolbar > .toolbar-item > button:hover,
+.published-content div.code-toolbar > .toolbar > .toolbar-item > button:focus-visible,
+.published-content div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+.published-content div.code-toolbar > .toolbar > .toolbar-item > a:focus-visible,
+.published-content div.code-toolbar > .toolbar > .toolbar-item > span:hover,
+.published-content div.code-toolbar > .toolbar > .toolbar-item > span:focus-visible,
+.prose div.code-toolbar > .toolbar > .toolbar-item > button:hover,
+.prose div.code-toolbar > .toolbar > .toolbar-item > button:focus-visible,
+.prose div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+.prose div.code-toolbar > .toolbar > .toolbar-item > a:focus-visible,
+.prose div.code-toolbar > .toolbar > .toolbar-item > span:hover,
+.prose div.code-toolbar > .toolbar > .toolbar-item > span:focus-visible {
+  color: oklch(var(--primary-foreground));
+  background: oklch(var(--primary));
+  border-color: oklch(var(--primary));
+  outline: none;
+}
+
+/* --- Prism syntax colors --- */
+.token.comment,
+.token.prolog,
+.token.cdata {
+  color: var(--code-muted);
+  font-style: italic;
+}
+
+.token.delimiter,
+.token.boolean,
+.token.keyword,
+.token.selector,
+.token.important,
+.token.atrule {
+  color: var(--code-keyword);
+}
+
+.token.operator,
+.token.punctuation,
+.token.attr-name {
+  color: var(--code-punctuation);
+}
+
+.token.tag,
+.token.tag .punctuation,
+.token.doctype,
+.token.builtin {
+  color: var(--code-string);
+}
+
+.token.entity,
+.token.number,
+.token.symbol {
+  color: var(--code-string);
+}
+
+.token.property,
+.token.constant,
+.token.variable {
+  color: var(--code-keyword);
+}
+
+.token.string,
+.token.char {
+  color: var(--code-string);
+}
+
+.token.attr-value,
+.token.attr-value .punctuation {
+  color: var(--code-string);
+}
+
+.token.url {
+  color: var(--code-string);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.token.function,
+.token.class-name {
+  color: var(--code-function);
+  font-weight: 500;
+}
+
+.token.regex {
+  color: var(--code-background);
+  background: var(--code-string);
+}
+
+.token.bold {
+  font-weight: 700;
+}
+
+.token.italic {
+  font-style: italic;
+}
+
+.token.inserted {
+  color: var(--code-foreground);
+  background: oklch(var(--primary) / 0.18);
+}
+
+.token.deleted {
+  color: var(--code-foreground);
+  background: oklch(var(--destructive) / 0.2);
+}
+
+/* --- Inline code --- */
+.published-content :not(pre) > code,
+.prose :not(pre) > code {
+  padding: 0.15em 0.4em;
+  color: oklch(var(--foreground));
+  background: oklch(var(--secondary));
+  border: 1px solid oklch(var(--border));
+  border-radius: 0.45rem;
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.85em;
+  font-weight: 500;
+  white-space: break-spaces;
+}
+
+/* --- Code selection & scrollbars --- */
+.published-content pre[class*="language-"]::selection,
+.published-content pre[class*="language-"] ::selection,
+.published-content code[class*="language-"]::selection,
+.published-content code[class*="language-"] ::selection,
+.prose pre[class*="language-"]::selection,
+.prose pre[class*="language-"] ::selection,
+.prose code[class*="language-"]::selection,
+.prose code[class*="language-"] ::selection {
+  color: oklch(var(--foreground));
+  background: var(--code-selection);
+}
+
+.published-content pre[class*="language-"]::-webkit-scrollbar,
+.prose pre[class*="language-"]::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.published-content pre[class*="language-"]::-webkit-scrollbar-track,
+.prose pre[class*="language-"]::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.published-content pre[class*="language-"]::-webkit-scrollbar-thumb,
+.prose pre[class*="language-"]::-webkit-scrollbar-thumb {
+  background: oklch(var(--background) / 0.2);
+  border-radius: 9999px;
+}
+
+.published-content pre[class*="language-"]::-webkit-scrollbar-thumb:hover,
+.prose pre[class*="language-"]::-webkit-scrollbar-thumb:hover {
+  background: oklch(var(--background) / 0.32);
+}

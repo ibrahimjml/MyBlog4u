@@ -1,274 +1,247 @@
 <x-layout>
   @push('vite')
-    @vite(['resources/js/prism.js','resources/js/medium-zoom.js'])
+    @vite(['resources/js/prism.js', 'resources/js/medium-zoom.js'])
   @endpush
 
-  <!-- begin Sponsor Ad Top article -->
+  <x-status-banner :post="$post"/> <!-- status banner 'pending|draft'-->
+
   <x-ad-placement :ads="$ads" :position="\App\Enums\Adplacements\AdPosition::TOP_ARTICLE" />
-  <!-- end Sponsor Ad Top article -->
-  @if($post->status === \App\Enums\PostStatus::DRAFT)
-    <div class="text-xl text-center  p-4 text-white bg-orange-500 font-bold w-full">
-      Draft <small class="ml-2">- This Secure URL Only Visible To You <a class="text-blue-500 underline"
-          href="{{ route('edit.post', $post->slug) }}" class="underline">edit to publish</a> to let others see ur
-        post.</small>
-      <i class="fas fa-exclamation-triangle"></i>
+
+  <div id="sticky-trigger" class="h-px w-full"></div> <!-- sticky nav observer trigger-->
+
+  <div id="stickyBar" class="sticky-bar">
+    <div class="mx-auto flex max-w-6xl items-center justify-center gap-2 px-4 py-3">
+      <a href="{{ route('blog') }}"
+        class="shrink-0 font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-primary transition-opacity hover:opacity-75">
+        Blog
+      </a>
+      <span class="text-muted-foreground/60" aria-hidden="true">/</span>
+      <a href="{{ route('single.post', $post->slug) }}"
+        class="max-w-[62vw] truncate font-mono text-[11px] uppercase tracking-[0.12em] text-foreground transition-colors hover:text-primary">
+        {{ $post->title }}
+      </a>
     </div>
-  @endif
-  @if($post->status === \App\Enums\PostStatus::PENDING)
-    <div class="text-xl text-center  p-4 text-white bg-orange-500 font-bold w-full">
-      <i class="fas fa-exclamation-triangle"></i>
-      Pending Review <small class="ml-2">- This Secure URL Only Visible To You - when approved will be published <a
-          class="text-blue-500 underline" href="{{ route('dashboard.index') }}" class="underline">return to dashboard</a>
-      </small>
-    </div>
-  @endif
-  {{-- 1- history links --}}
-  <div class="flex  my-4 justify-center gap-3 text-blue-700 font-semibold uppercase ">
-    <a href="{{route('blog')}}" class="hover:underline"><i class="fas fa-home"></i> Home</a>
-    &sol;
-    <a href="{{route('blog')}}" class="hover:underline">Blog</a>
-  </div>
-  {{-- sticky trigger observer --}}
-  <div id="sticky-trigger"></div>
-  {{-- sticky bar nav --}}
-  <div id="stickyBar"
-    class="sticky-bar  flex justify-center p-5 bg-gray-100 gap-3 text-blue-700 font-semibold uppercase">
-    <a href="{{ route('blog') }}" class="hover:underline text-black">Blog</a>
-    <span class="text-black">&sol;</span>
-    <a href="{{ route('single.post', $post->slug) }}" class="hover:underline text-blue-700">{{ $post->slug }}</a>
   </div>
 
-  {{-- 2- Post Title & user information --}}
-  <div class="flex flex-col items-center justify-center pb-2 sm:pb-6 mt-7"><!-- start container -->
-    <span class="block w-full font-bold md:text-4xl text-2xl text-center capitalize">
-      {{$post->title}}
-    </span>
+  <div class="mx-auto max-w-6xl px-4 sm:px-6">
+    <nav aria-label="Breadcrumb"
+      class="flex flex-wrap items-center justify-center gap-2 pt-6 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground sm:text-[11px]">
+      <span class="text-primary/60" aria-hidden="true">~</span>
+      <a href="{{ route('blog') }}" class="transition-colors hover:text-primary">Blog</a>
+      <span class="text-border" aria-hidden="true">/</span>
+      <span class="max-w-[70vw] truncate text-foreground">{{ $post->title }}</span>
+      <span class="text-primary/60" aria-hidden="true">~</span>
+    </nav>
 
-
-    <div class="mt-6 mx-auto max-w-4xl px-4 md:px-0"><!-- start User Info Section -->
-      <div
-        class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4  lg:rounded-none rounded-lg lg:border-0 border border-gray-200 hover:border-gray-300 transition-colors">
-
-
-        <div class="flex items-center gap-3"><!-- start User Profile -->
-          <a href='{{route('profile.home', $post->user->username)}}' class="flex-shrink-0">
-            <img src="{{$post->user->avatar_url}}" alt="{{$post->user->username}}"
-              class="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm hover:shadow-md transition-shadow">
-          </a>
-
-          <div class="flex flex-col">
-            <a href="{{route('profile.home', $post->user->username)}}"
-              class="font-semibold text-gray-900 hover:text-blue-600 transition-colors text-sm md:text-base">
-              {{$post->user->username}}
+    <header class="mx-auto max-w-4xl pb-2 pt-7 text-center sm:pt-10">
+      @if($post->hashtags->isNotEmpty())
+        <div class="flex flex-wrap items-center justify-center gap-2">
+          @foreach($post->hashtags as $tag)
+            <a href="{{ route('viewhashtag', $tag->name) }}"
+              class="rounded-full border border-primary/20 bg-primary/10 px-2.5 py-1 font-mono text-[10px] tracking-[0.14em] text-primary transition-colors hover:bg-primary hover:text-primary-foreground">
+              #{{ $tag->name }}
             </a>
-            @php
-              $followStatus = $authFollowings[$post->user_id] ?? null;
-              $status = isset($followStatus)
-                ? \App\Enums\FollowerStatus::tryFrom((int) $followStatus)
-                : null;
-             @endphp
-            @following($status)
-            <span class="follow-status">
-              <small class="text-gray-500 text-xs">Following</small>
+          @endforeach
+        </div>
+      @elseif($post->categories->isNotEmpty())
+        <div class="flex flex-wrap items-center justify-center gap-2">
+          @foreach($post->categories->take(3) as $category)
+            <span
+              class="rounded-full border border-primary/20 bg-primary/10 px-2.5 py-1 font-mono text-[10px] tracking-[0.14em] text-primary">
+              {{ $category->name }}
             </span>
-            @endfollowing
-          </div>
-        </div><!--  end User Profile -->
-
-        <span class="hidden lg:block text-gray-300">•</span>
-
-
-        <div class="flex flex-wrap items-center gap-2 text-gray-600 text-xs md:text-sm"><!-- user timestamps -->
-          <div class="flex items-center gap-1">
-            <i class="fas fa-calendar-alt text-gray-400"></i>
-            <span title="Published on {{$post->created_at->format('F d, Y h:i A')}}">
-              {{$post->created_at->format('M d, Y')}}
-            </span>
-          </div>
-
-          <span class="text-gray-300">•</span>
-
-          <div class="flex items-center gap-1">
-            <i class="fas fa-sync text-gray-400"></i>
-            <span title="Updated on {{$post->updated_at->format('F d, Y h:i A')}}">
-              {{$post->updated_at->format('M d, Y')}}
-            </span>
-          </div>
-        </div><!-- end user timestamps -->
-      </div>
-    </div><!-- end User Info Section -->
-  </div><!-- end container -->
-  {{-- 3- post Image --}}
-  <div class="relative mx-auto w-full max-w-6xl mt-2 aspect-[12/6]">
-    <img
-        src="{{ $post->image_url }}"
-        alt="{{ $post->title }}"
-        class="absolute inset-0 w-full h-full object-cover"
-    >
-    {{-- delete|edit modal --}}
-    @can('update', $post)
-        @include('partials.delete-edit-post-model')
-    @endcan
-
-    <div class="absolute z-10 bottom-1 left-4 flex flex-wrap gap-2">
-        @foreach($post->hashtags->pluck('name') as $tag)
-            <span class="px-2 py-1 text-white text-xs rounded-md bg-gray-700/70 font-semibold hover:bg-gray-500 transition-all">
-                <a href="{{ route('viewhashtag', $tag) }}"># {{ $tag }}</a>
-            </span>
-        @endforeach
-    </div>
-</div>
-  <hr class="my-4 lg:max-w-4xl max-w-[12rem] mx-auto">
-  <div class="font-bold my-4 max-w-4xl  md:mx-auto mx-4">
-    {{ $post->short_excerpt }}
-  </div>
-  <hr class="my-2 lg:max-w-4xl max-w-[12rem] mx-auto">
-  {{-- 4- post description with ads--}}
-  <div id="description" class="prose prose-lg published-content max-w-4xl md:mx-auto mx-4">
-  @php
-    $paragraphs = preg_split('/<\/p>/', $post->description, -1, PREG_SPLIT_NO_EMPTY);
-  @endphp
-    @foreach ($paragraphs as $index => $part)
-      {!! $part !!}
-
-      @if($index === 6)
-        <x-ad-placement :ads="$ads" :position="\App\Enums\Adplacements\AdPosition::INNER_ARTICLE" />
+          @endforeach
+        </div>
       @endif
-    @endforeach
-  </div>
-  <!-- begin Sponsor Ad Bottom article -->
-  <x-ad-placement :ads="$ads" :position="\App\Enums\Adplacements\AdPosition::BOTTOM_ARTICLE" />
-  <!-- end Sponsor Ad Bottom article -->
-  {{-- 5- Interactions menu--}}
-  @include('partials.interactions-post-menu')
 
-  {{-- open comments model --}}
+      <h1
+        class="mt-5 text-balance font-display text-3xl font-bold leading-[1.08] tracking-[-0.035em] text-foreground sm:text-4xl lg:text-5xl xl:text-[3.5rem]">
+        {{ $post->title }}
+      </h1>
+
+      @if($post->short_excerpt)
+        <p class="mx-auto mt-5 max-w-2xl text-pretty text-base leading-relaxed text-muted-foreground sm:text-lg">
+          {!! $post->short_excerpt !!}
+        </p>
+      @endif
+
+      <div
+        class="mt-7 flex flex-wrap items-center justify-center gap-x-3 gap-y-2 font-mono text-[10px] uppercase tracking-[0.15em] text-muted-foreground sm:text-[11px]">
+        <a href="{{ route('profile.home', $post->user->username) }}"
+          class="flex items-center gap-2 normal-case tracking-normal text-foreground transition-colors hover:text-primary">
+          <img src="{{ $post->user->avatar_url }}" alt="{{ $post->user->name }}"
+            class="h-7 w-7 rounded-full border border-border object-cover" loading="lazy">
+          <span class="text-xs font-semibold">{{ '@' . $post->user->username }}</span>
+        </a>
+        <span class="text-border" aria-hidden="true">/</span>
+        <span title="Published {{ $post->created_at->format('F d, Y h:i A') }}">
+          {{ $post->created_at->format('M d, Y') }}
+        </span>
+        <span class="text-border" aria-hidden="true">/</span>
+        <span>{{ $post->readingMinutes }} min read</span>
+      </div>
+    </header>
+
+    <figure class="relative mx-auto mt-9 overflow-hidden rounded-2xl border border-border bg-secondary">
+      <img src="{{ $post->image_url }}" alt="{{ $post->title }}"
+        class="aspect-[16/9] max-h-[34rem] w-full object-cover object-center sm:aspect-[16/8]">
+       @if($post->is_featured)
+             <span
+               class="absolute left-3 top-3 rounded-full bg-primary px-2.5 py-1 font-mono text-[10px] font-semibold uppercase tracking-widest text-primary-foreground">
+               Featured
+             </span>
+        @endif
+      @can('update', $post)
+        @include('partials.delete-edit-post-model')
+      @endcan
+    </figure>
+  </div>
+
+  <div class="mx-auto my-12 grid max-w-6xl grid-cols-1 gap-10 px-4 sm:px-6 lg:my-14 lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-14">
+      <!-- begin -desktop TOC -->
+    <aside class="hidden lg:block">
+      <div class="max-h-[calc(100vh-4rem)] overflow-y-auto pr-2 lg:sticky lg:top-8">
+        <div id="toc-aside" class="hidden">
+          <p class="font-mono text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+            On this page
+          </p>
+          <nav class="mt-4" aria-label="Table of contents">
+            <ul id="toc-aside-links" class="space-y-0.5"></ul>
+          </nav>
+        </div>
+      </div>
+    </aside>  <!-- end -desktop TOC -->
+
+    <div class="min-w-0">
+      <article id="description" class="published-content">
+        @php
+          $paragraphs = preg_split('/<\/p>/', $post->description, -1, PREG_SPLIT_NO_EMPTY);
+        @endphp
+
+        @foreach ($paragraphs as $index => $part)
+          {!! $part !!}
+
+          @if($index === 6)
+            <x-ad-placement :ads="$ads" :position="\App\Enums\Adplacements\AdPosition::INNER_ARTICLE" />
+          @endif
+        @endforeach
+      </article>
+
+      <div class="mt-10">
+        <x-ad-placement :ads="$ads" :position="\App\Enums\Adplacements\AdPosition::BOTTOM_ARTICLE" />
+      </div>
+
+      @include('partials.interactions-post-menu')
+
+      <section class="mt-12 overflow-hidden rounded-2xl bg-foreground p-5 text-background sm:p-7">
+        <div class="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+          <div class="flex items-start gap-4">
+            <a href="{{ route('profile.home', $post->user->username) }}" class="shrink-0">
+              <img src="{{ $post->user->avatar_url }}" alt="{{ $post->user->name }}"
+                class="h-14 w-14 rounded-full border border-background/20 object-cover" loading="lazy">
+            </a>
+            <div>
+              <p class="font-mono text-[10px] uppercase tracking-[0.22em] text-background/50">Written by</p>
+              <a href="{{ route('profile.home', $post->user->username) }}"
+                class="mt-1 block font-display text-xl font-semibold text-background transition-colors hover:text-primary">
+                {{ $post->user->name }}
+              </a>
+              <p class="mt-1 text-xs text-background/50">
+                {{ '@' . $post->user->username }} &middot; member since {{ $post->user->created_at->format('Y') }}
+              </p>
+            </div>
+          </div>
+
+          <a href="{{ route('profile.home', $post->user->username) }}"
+            class="inline-flex w-fit items-center gap-2 rounded-full border border-background/20 px-4 py-2 font-mono text-[10px] uppercase tracking-[0.16em] text-background/75 transition-colors hover:border-primary hover:text-primary">
+            View profile <i class="fas fa-arrow-right text-[9px]" aria-hidden="true"></i>
+          </a>
+        </div>
+
+        @if($post->user->bio)
+          <p class="mt-5 max-w-2xl text-sm leading-relaxed text-background/70">
+            {{ Str::limit(strip_tags($post->user->bio), 220) }}
+          </p>
+        @endif
+      </section>
+
+      @if($morearticles->isNotEmpty())
+        <section class="mt-14 border-t border-border pt-10">
+          <div class="flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <p class="font-mono text-[10px] font-semibold uppercase tracking-[0.22em] text-primary">From the author</p>
+              <h2 class="mt-2 font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+                More by {{ '@' . $post->user->username }}
+              </h2>
+            </div>
+            <a href="{{ route('profile.home', $post->user->username) }}"
+              class="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground transition-colors hover:text-primary">
+              View profile
+            </a>
+          </div>
+
+          <div class="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            @foreach($morearticles as $article)
+              <x-article-card :post="$article" :show-author="true" />
+            @endforeach
+          </div>
+        </section>
+      @endif
+
+      @if($latestblogs->isNotEmpty())
+        <section class="mt-14 border-t border-border pt-10">
+          <div class="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p class="font-mono text-[10px] font-semibold uppercase tracking-[0.22em] text-primary">Continue exploring</p>
+            <h2 class="mt-2 font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl">Keep Reading</h2>
+          </div>
+          <div>
+             <a href="{{ route('blog') }}"
+              class="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground transition-colors hover:text-primary">
+              View All
+            </a>
+          </div>
+        </div>
+          <div class="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            @foreach($latestblogs->take(3) as $blog)
+              <x-article-card :post="$blog" />
+            @endforeach
+          </div>
+        </section>
+      @endif
+    </div>
+  </div>
+
+  <div id="containerheart"></div>
+
   @auth
     @include('partials.comments-model')
   @endauth
-  {{-- hashtag on post --}}
-  <div class="flex justify-center items-center gap-4 mt-3 mb-10">
-    @foreach($post->hashtags->pluck('name') as $tag)
-      <span
-        class=" p-2 text-gray-800  text-md rounded-md bg-gray-200 bg-opacity-70 font-semibold hover:bg-gray-300 transition-all">
-        <a href="{{route('viewhashtag', $tag)}}">{{ $tag }}</a>
-      </span>
-    @endforeach
-  </div>
 
-  {{-- 6- More Articles --}}
-  <hr class="w-[80%] ml-auto mr-auto my-10 bg-slate-200">
-  <p class="text-gray-500 text-xl text-center font-semibold mt-5 uppercase ">More Articles</p>
-  <div class="flex flex-col md:flex-row  md:justify-center md:items-center md:gap-2 gap-4 mt-4 mb-3">
-    @foreach($morearticles as $article)
-      <div class="p-3 mx-auto md:mx-0 w-[400px] md:w-[500px] h-full flex flex-col">
-        <div class="flex gap-2 items-center mb-2 shrink-0">
-          <a href='{{route('profile.home', $article->user->username)}}'>
-            <img loading="lazy" src="{{$article->user->avatar_url}}" alt="{{ $article->user->name }}"
-              class="w-[40px] h-[40px]  overflow-hidden flex justify-center items-center  shrink-0 grow-0 rounded-full">
-          </a>
-          <a href='{{route('profile.home', $article->user->username)}}' class="hover:underline">
-            {{$article->user->username}}
-          </a>
-        </div>
-        <a href="{{route('single.post', $article->slug)}}" class="flex flex-1 flex-col">
-          <div class="flex h-[270px] min-h-[270px] w-full items-center justify-center overflow-hidden rounded-lg bg-slate-100 shrink-0">
-            <img src="{{$article->image_url}}" alt="{{ $article->title }}" class="h-full w-full object-cover object-center">
-          </div>
-        </a>
-          <div class="flex justify-between text-sm text-gray-400 my-3">
-            <p>{{$article->total_comments_count}} comments</p>
-            <p>{{$article->created_at->format('F d, Y')}}</p>
-          </div>
-          <div class="flex flex-col">
-             <a href="{{route('single.post', $article->slug)}}">
-            <p class="text-xl font-bold mt-1">{{$article->title}}</p>
-          </a>
-          </div>
-          
-      </div>
-    @endforeach
-  </div>
-  {{-- 7- Latest blogs --}}
-  <hr class="w-[80%] ml-auto mr-auto my-10 bg-slate-200">
-  <p class="text-gray-500 text-xl text-center font-semibold mt-5 uppercase ">Latest Blogs</p>
-  {{-- arrows --}}
-  <div class="carousel-wrapper">
-    <div class="arrow-group">
-      <button id="prevBtn" class="scroll-btn" onclick="scrollCarousel(-1)">
-        <i class="fas fa-arrow-left"></i>
-      </button>
-      <button id="nextBtn" class="scroll-btn" onclick="scrollCarousel(1)">
-        <i class="fas fa-arrow-right"></i>
-      </button>
-    </div>
-
-    <div class="carousel" id="carousel">
-      @foreach($latestblogs as $blogs)
-        <div class="carousel-item p-3 flex-shrink-0 w-[320px] sm:w-[360px] flex flex-col">
-          <div class="flex gap-2 items-center mb-2 shrink-0">
-            <a href="{{ route('profile.home', $blogs->user->username) }}">
-              <img loading="lazy" src="{{ $blogs->user->avatar_url }}"
-                alt="{{ $blogs->user->name }}"
-                class="w-[40px] h-[40px] rounded-full object-cover">
-            </a>
-            <a href="{{ route('profile.home', $blogs->user->username) }}" class="hover:underline">
-              {{ $blogs->user->username }}
-            </a>
-          </div>
-          <a href="{{ route('single.post', $blogs->slug) }}" class="flex flex-1 flex-col">
-            <div class="flex h-[270px] min-h-[270px] w-full items-center justify-center overflow-hidden rounded-lg bg-slate-100 shrink-0">
-              <img src="{{ $blogs->image_url }}" alt="{{$blogs->title}}" class="h-full w-full object-cover object-center">
-            </div>
-          </a>
-            <div class="flex justify-between text-sm text-gray-400 my-3">
-              <p>{{$blogs->total_comments_count}} comments</p>
-              <p>{{$blogs->created_at->format('F d, Y')}}</p>
-            </div>
-            <a href="{{ route('single.post', $blogs->slug) }}">
-            <p class="text-xl font-bold mt-1">{{ $blogs->title }}</p>
-            </a>
-        </div>
-      @endforeach
-    </div>
-  </div>
-  <div class="flex justify-center my-10">
-    <a href="{{ route('blog') }}"
-      class="p-3 text-center text border border-black hover:text-white hover:bg-black transition-all duration-150 ease-in">
-      View all blogs <i class="fas fa-arrow-right ml-2"></i>
-    </a>
-  </div>
-  {{-- contianer random hearts--}}
-  <div id="containerheart"></div>
-
-  {{-- open Toc model --}}
   @include('partials.table-of-contents-model')
+
   @auth
-    {{-- open view who liked model --}}
     @include('partials.view-who-liked-model')
-    {{-- open views model --}}
     @include('partials.who-viewedpost-model')
-    {{-- open reports model --}}
     @include('partials.reports-model')
   @endauth
 
   @push('styles')
     <style>
-      /************************
-     Sticky bar nav on scroll
-    *************************/
       .sticky-bar {
         position: fixed;
         top: 0;
         left: 0;
         right: 0;
         z-index: 50;
-        background-color: #f3f4f6;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        background-color: oklch(var(--background) / 0.94);
+        border-bottom: 1px solid oklch(var(--border) / 0.7);
+        box-shadow: 0 1px 0 oklch(var(--foreground) / 0.04);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
         opacity: 0;
         pointer-events: none;
-        transition: opacity 0.4s ease-in-out;
-        z-index: 50;
+        transition: opacity 0.3s ease;
       }
 
       .sticky-bar::after {
@@ -276,11 +249,10 @@
         position: absolute;
         bottom: 0;
         left: 0;
-        height: 4px;
-        width: 0;
-        background-color: #3b82f6;
-        transition: width 0.1s linear;
+        height: 2px;
         width: var(--progress-width, 0%);
+        background-color: oklch(var(--primary));
+        transition: width 0.1s linear;
       }
 
       .sticky-bar.visible {
@@ -288,33 +260,32 @@
         pointer-events: auto;
       }
 
-      /*************************************
-     observe action bar on inseraction menu
-    ***************************************/
+      #action-bar {
+        transition: transform 0.3s ease, opacity 0.3s ease;
+      }
+
       #action-bar.fixed-bottom {
         position: fixed;
-        bottom: 0;
+        bottom: max(1rem, env(safe-area-inset-bottom));
         left: 50%;
         transform: translateX(-50%);
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 18px 50px -12px rgb(0 0 0 / 0.35);
         z-index: 50;
       }
 
       #action-bar.hidden-bottom {
-        transform: translateY(100%);
+        transform: translate(-50%, 120%);
         opacity: 0;
         pointer-events: none;
-        transition: transform 0.3s ease, opacity 0.3s ease;
       }
+
     </style>
   @endpush
 
   @push('scripts')
-    {{-- fetch follow --}}
     <script>
       async function follows(eo) {
         const userId = eo.dataset.id;
-        const followStatus = document.getElementsByClassName('follow-status')[0];
         let options = {
           method: "POST",
           headers: {
@@ -326,73 +297,51 @@
         try {
           const res = await fetch(`/user/${userId}/togglefollow`, options);
           const data = await res.json();
-          eo.classList.remove('text-blue-500', 'text-red-500', 'text-yellow-500');
+
+          eo.classList.remove('text-primary', 'text-muted-foreground', 'text-destructive');
+
           if (data.status === 1) {
             eo.textContent = 'Unfollow';
-            eo.classList.add('text-red-500');
-          }
-          else if (data.status === 0) {
+            eo.classList.add('text-destructive');
+          } else if (data.status === 0) {
             eo.textContent = 'Requested';
-            eo.classList.add('text-yellow-500');
-
-          }
-          else {
+            eo.classList.add('text-muted-foreground');
+          } else {
             eo.textContent = 'Follow';
-            eo.classList.add('text-blue-500');
-
+            eo.classList.add('text-primary');
           }
-
         } catch (error) {
           console.error(error);
         }
       }
     </script>
-    <script>
-      function scrollCarousel(direction) {
-        const carousel = document.getElementById('carousel');
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        const scrollspeed = 490;
 
-        prevBtn.disabled = carousel.scrollLeft <= 0;
-        nextBtn.disabled = carousel.scrollLeft + carousel.clientWidth >= carousel.scrollWidth - 1;
-
-        carousel.scrollBy({
-          left: scrollspeed * direction,
-          behavior: 'smooth'
-        });
-      }
-    </script>
-    {{-- observe sticky bar --}}
     <script>
       const stickyBar = document.getElementById('stickyBar');
       const trigger = document.getElementById('sticky-trigger');
+      const description = document.getElementById('description');
 
-      const observer = new IntersectionObserver(
-        ([entry]) => {
+      if (stickyBar && trigger) {
+        const observer = new IntersectionObserver(
+          ([entry]) => {
+            stickyBar.classList.toggle('visible', !entry.isIntersecting);
+          },
+          { threshold: 0 }
+        );
 
-          if (!entry.isIntersecting) {
-            stickyBar.classList.add('visible');
-          } else {
-            stickyBar.classList.remove('visible');
-          }
-        },
-        { threshold: 0 }
-      );
+        observer.observe(trigger);
+      }
 
-      observer.observe(trigger);
-    </script>
-    {{-- progress bar on sticky --}}
-    <script>
-      const bar = document.getElementById('stickyBar');
-      const desc = document.getElementById('description');
+      if (stickyBar && description) {
+        const updateProgress = () => {
+          const maxScroll = Math.max(description.scrollHeight - window.innerHeight, 1);
+          const progress = Math.min(Math.max((window.scrollY - description.offsetTop) / maxScroll, 0), 1) * 100;
+          stickyBar.style.setProperty('--progress-width', progress + '%');
+        };
 
-      window.addEventListener('scroll', () => {
-        const scrollTop = window.scrollY - desc.offsetTop;
-        const maxScroll = desc.scrollHeight - window.innerHeight;
-        const progress = Math.min(Math.max(scrollTop / maxScroll, 0), 1) * 100;
-        bar.style.setProperty('--progress-width', progress + '%');
-      });
+        window.addEventListener('scroll', updateProgress, { passive: true });
+        updateProgress();
+      }
     </script>
   @endpush
 </x-layout>

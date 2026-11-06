@@ -156,21 +156,21 @@ function showMentionDropdown(users, textarea) {
     dropdown.innerHTML = users
         .map(
             (user) => `
-  <div class="flex items-center gap-3 px-3 py-2 hover:bg-gray-100 cursor-pointer mention-item"
+  <div class="flex cursor-pointer items-center gap-3 px-3 py-2 hover:bg-secondary mention-item"
        data-id="${user.id}"
        data-username="${user.username}">
 
     <img
       src="${user.avatar}"
       alt="${user.username}"
-      class="w-8 h-8 rounded-full object-cover"
+      class="h-8 w-8 rounded-full object-cover"
     />
 
     <div class="flex flex-col leading-tight">
-      <span class="text-sm font-semibold text-gray-800">
+      <span class="text-sm font-semibold text-foreground">
         ${user.name ?? user.username}
       </span>
-      <span class="text-xs text-gray-500">
+      <span class="font-mono text-[10px] text-muted-foreground">
         @${user.username}
       </span>
     </div>

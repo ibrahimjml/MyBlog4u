@@ -1,5 +1,9 @@
-<form delete-comment="{{$comment->id}}"  action="{{route('delete.comment',$comment->id)}}" method="POST">
+<form delete-comment="{{ $comment->id }}" action="{{ route('delete.comment', $comment->id) }}" method="POST">
   @csrf
   @method('delete')
-  <button type="submit" class="text-left font-semibold w-full rounded-md pl-3 hover:bg-gray-400 hover:text-white transition-all duration-150">delete</button>
+
+  <button type="submit"
+    class="block w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-destructive transition-colors hover:bg-destructive/10">
+    Delete
+  </button>
 </form>

@@ -1,41 +1,45 @@
-<div id="wrapper" class="sm:max-w-3xl  max-w-2xl ml-2">
-@foreach($comments as $comment)
-  @if($comment->parent_id == null)
-  <div class="comment relative bg-white shadow-md rounded-lg p-4 mb-4 z w-full overflow-x-auto">
-      {{-- Comment user info --}}
-      @include('comments.partials.comment_info',['comment' => $comment])
-      <div>
-        {{-- comment content & delete|edit comment --}}
-        <p id="comment-{{ $comment->id }}" class="comment-content text-gray-700 p-2">{!! render_mentions($comment->content) !!}</p>
-        <div class="flex flex-row-reverse justify-end items-center gap-5">
-          @if($comment->replies_count > 0)
-          <p class="show-all reply-count text-sm text-gray-600 cursor-pointer w-fit" 
-             data-reply-count="{{ $comment->replies_count }}">view {{ $comment->replies_count }} {{ Str::plural('reply', $comment->replies_count) }}
+<div id="wrapper" class="w-full">
+  @foreach($comments as $comment)
+    @if($comment->parent_id == null)
+      <article class="comment relative rounded-xl border border-border bg-card p-4">
+        @include('comments.partials.comment_info', ['comment' => $comment])
+
+        <div class="mt-1">
+          <p id="comment-{{ $comment->id }}"
+            class="comment-content whitespace-pre-line break-words px-1 text-sm leading-relaxed text-muted-foreground">
+            {!! render_mentions($comment->content) !!}
           </p>
-          @endif
-          {{-- delete | edit model --}}
-          @include('comments.partials.delete-edit-comment-model',['comment'=>$comment])
 
-          <p class="reply-btn text-sm text-blue-600 cursor-pointer w-fit">Reply</p>
+          <div class="mt-3 flex flex-wrap items-center justify-end gap-4 border-t border-border/70 pt-3">
+            @if($comment->replies_count > 0)
+              <button type="button" class="show-all reply-count cursor-pointer font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground transition-colors hover:text-foreground"
+                data-reply-count="{{ $comment->replies_count }}">
+                view {{ $comment->replies_count }} {{ Str::plural('reply', $comment->replies_count) }}
+              </button>
+            @endif
 
+            @include('comments.partials.delete-edit-comment-model', ['comment' => $comment])
+
+            <button type="button" class="reply-btn cursor-pointer font-mono text-[10px] uppercase tracking-[0.12em] text-primary transition-opacity hover:opacity-75">
+              Reply
+            </button>
+          </div>
         </div>
-      </div>
 
-      {{-- Edit form --}}
-      @can('edit',$comment)
-      @include('comments.partials.edit_form',['comment' => $comment])
-      @endcan
-      {{-- Reply form --}}
-      @include('comments.partials.reply_form',['comment' => $comment])
+        @can('edit', $comment)
+          @include('comments.partials.edit_form', ['comment' => $comment])
+        @endcan
 
-      {{-- Display Replies --}}
-      <div class="reply-content ml-5 mt-4   border-l-gray-200 pl-4 hidden " id="wrapper-{{ $comment->id }}">
-      @if($comment->replies->count() > 0)
-          @include('comments.replies', ['comments' => $comment->replies])
+        @include('comments.partials.reply_form', ['comment' => $comment])
+
+        <div class="reply-content ml-4 mt-4 hidden border-l-2 border-border pl-4" id="wrapper-{{ $comment->id }}">
+          @if($comment->replies->count() > 0)
+            @include('comments.replies', ['comments' => $comment->replies])
           @endif
         </div>
-    </div>
-  @endif
-@endforeach
-@include('comments.partials.comment_mentions')
+      </article>
+    @endif
+  @endforeach
+
+  @include('comments.partials.comment_mentions')
 </div>

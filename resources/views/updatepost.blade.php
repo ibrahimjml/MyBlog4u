@@ -261,7 +261,7 @@
             </a>
         <button type="submit" form="postForm"
           class="w-full rounded-full bg-primary px-5 py-3 font-mono text-xs font-semibold text-primary-foreground transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-          Publish article
+          Update
         </button>
         </div>
       </aside>
