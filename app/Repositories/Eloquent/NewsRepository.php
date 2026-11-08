@@ -34,26 +34,29 @@ class NewsRepository implements NewsInterface
       ->withQueryString();
   }
   public function getAllNewsWithSources()
-  {
-    $moreNews = ScrapingSource::query()
-      ->active()
-      ->take(4)
-      ->get()
-      ->flatMap(function (ScrapingSource $source)  {
-        return ScrapedPost::query()
-          ->with('source')
-          ->where('scraping_source_id', $source->id)
-          ->latest()
-          ->take(1)
-          ->get();
-      })
-      ->sortByDesc('created_at')
-      ->values();
+{
+    $sources = ScrapingSource::query()
+        ->active()
+        ->take(4)
+        ->get();
 
-    return [
-      'moreNews' => $moreNews,
-    ];
-  }
+    $sourceIds = $sources->pluck('id');
+
+    $dataBySource = ScrapedPost::query()
+        ->whereIn('scraping_source_id', $sourceIds)
+        ->with('source')
+        ->latest()
+        ->get()
+        ->groupBy('scraping_source_id')
+        ->map(fn ($posts) => $posts->take(2));
+
+    $moreNews = $sources
+        ->flatMap(fn (ScrapingSource $source) => $dataBySource[$source->id] ?? collect())
+        ->sortByDesc('created_at')
+        ->values();
+
+    return ['moreNews' => $moreNews];
+}
 
   public function getLatestSources()
   {

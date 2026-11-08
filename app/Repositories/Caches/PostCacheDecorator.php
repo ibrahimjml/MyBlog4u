@@ -72,6 +72,6 @@ class PostCacheDecorator implements PostInterface
     public function getPaginatedComments(\App\Models\Post $post, int $page, int $perPage): \Illuminate\Contracts\Pagination\LengthAwarePaginator
    {
        $Key = "post:{$post->id}:comments:page:{$page}:perpage:{$perPage}";
-        return  Cache::tags(["post:{$post->id}:comments"])->remember($Key, 1300, fn() => $this->repo->getPaginatedComments($post,$page,$perPage));
+        return  Cache::tags(["post_comments", "post:{$post->id}:comments"])->remember($Key, 1300, fn() => $this->repo->getPaginatedComments($post,$page,$perPage));
    }
 }

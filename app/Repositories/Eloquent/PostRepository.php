@@ -154,7 +154,7 @@ class PostRepository implements PostInterface
     }
      public function getPaginatedComments(Post $post, int $page, int $perPage): LengthAwarePaginator
    {
-         return Comment::withNestedReplies(3)
+         $comments = Comment::withNestedReplies(3)
                         ->addSelect(['post_user_id' => Post::select('user_id')
                         ->whereColumn('id', 'comments.post_id')
                         ->limit(1)
@@ -163,5 +163,53 @@ class PostRepository implements PostInterface
                       ->whereNull('parent_id') 
                       ->latest()
                       ->paginate($perPage, ['*'], 'comments_page', $page);
+
+         $this->hydrateCommentRelations($comments->getCollection());
+
+         return $comments;
    }
-} 
+
+   /**
+    * Load every comment author from loaded tree, prevent nested replies requery again
+    */
+   private function hydrateCommentRelations(Collection $comments): void
+   {
+       $all = collect();
+
+       $flatten = function (Collection $items) use (&$flatten, &$all): void {
+           foreach ($items as $comment) {
+               $all->push($comment);
+
+               if ($comment->relationLoaded('replies')) {
+                   $flatten($comment->replies);
+               }
+           }
+       };
+
+       $flatten($comments);
+
+       $users = User::query()
+           ->whereIn('id', $all->pluck('user_id')->filter()->unique()->all())
+           ->select('id', 'name', 'username', 'avatar')
+           ->get()
+           ->keyBy('id');
+
+       $link = function (Collection $items, ?Comment $parent = null) use (&$link, $users): void {
+           foreach ($items as $comment) {
+               if ($user = $users->get($comment->user_id)) {
+                   $comment->setRelation('user', $user);
+               }
+
+               if ($parent !== null) {
+                   $comment->setRelation('parent', $parent);
+               }
+
+               if ($comment->relationLoaded('replies')) {
+                   $link($comment->replies, $comment);
+               }
+           }
+       };
+
+       $link($comments);
+   }
+}

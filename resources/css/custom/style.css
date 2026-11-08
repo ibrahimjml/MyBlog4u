@@ -6,13 +6,6 @@ html,body{
   box-sizing: border-box;
 }
 
-.hero-bg-image{
- background-attachment: fixed;
- filter: brightness(0.9);
- height: 600px;
-} 
-
-
 @media only screen and (max-width:500px){
 
 }

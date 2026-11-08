@@ -13,14 +13,19 @@ class PostPolicy
 {
   public function before(User $user, string $ability, mixed $model = null): bool|null
     {   
-      if($ability === 'report'){
-        return null;
-      }
+       if (
+            $ability === 'report'
+            && $model instanceof Post
+            && (int) $model->user_id === (int) $user->id
+        ) {
+            return false;
+        }
+
         if ($user->hasRole(\App\Enums\UserRole::ADMIN->value) ) {
             return true; 
         }
       if ($model instanceof Post && $model->user->hasRole(\App\Enums\UserRole::ADMIN->value)) {
-           return in_array($ability, ['update', 'delete', 'feature', 'updateAny', 'deleteAny'], true)
+           return in_array($ability, ['update', 'delete', 'feature','report', 'updateAny', 'deleteAny'], true)
                ? false
                : null;
          }

@@ -32,6 +32,10 @@ class ClearCacheService
     Cache::forget("home_feed_latest");
     
     Cache::tags(["search_posts"])->flush();
+
+    // clear user profile home|activities 
+    Cache::tags(["profile_home:{$post->user_id}"])->flush();
+    Cache::tags(["user_activities:{$post->user_id}"])->flush();
     
   }
   public function clearTagsCaches(Hashtag $hashtag)
@@ -47,9 +51,15 @@ class ClearCacheService
      Cache::tags(['category_posts_paginated','categories_type_results','category_posts_sliders'])->flush();
      Cache::forget('categories');
   }
+  
   public function clearUserCaches()
   {
      Cache::tags(['users_results'])->flush();
+
+     Cache::tags(["post_comments"])->flush();
+     Cache::forget('home_feed_latest');
+     Cache::forget('trendingHashtag');
+
      $this->clearSitemapCaches();
   }
 

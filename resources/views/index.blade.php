@@ -39,10 +39,10 @@
                     </div>
                   </div>
 
-                  <div class="relative min-h-[260px] md:min-h-[440px]">
+                 <div class="relative min-h-[240px] md:min-h-[440px]">
                     <img src="{{ $slide->image }}" alt="{{ $slide->title }}"
-                      class="absolute inset-0 h-full w-full object-cover" loading="eager">
-                    <div class="absolute inset-0 bg-gradient-to-t from-card/70 to-transparent md:bg-gradient-to-r md:from-card md:to-transparent"></div>
+                         class="absolute inset-0 h-full w-full object-center" loading="eager">
+                      <div class="absolute inset-0 h-full bg-gradient-to-t from-card/70 to-transparent md:bg-gradient-to-r md:from-card md:to-transparent"></div>
                   </div>
                 </div>
               </div>
@@ -91,7 +91,7 @@
         <aside class="rounded-2xl bg-foreground p-6 text-background">
           <p class="font-mono text-[11px] uppercase tracking-widest text-primary">&bull; Latest news</p>
 
-          <div class="mt-5 divide-y divide-background/10">
+          <div class="mt-5 divide-y divide-background/10 overflow-y-auto h-[440px] scrollbar-dark">
             @foreach($newsItems as $item)
               <article class="py-4 first:pt-0 last:pb-0">
                 <div class="flex items-center gap-2">
@@ -102,7 +102,10 @@
                   @if($item->category)
                     &middot; #{{ trim(explode(',', $item->category)[0]) }}
                   @endif
+                  &middot;
+                  <small class="text-primary/80">{{$item->created_at->diffForHumans()}}</small>
                 </p>
+              
                 <a href="{{ $item->link }}" target="_blank" rel="nofollow noopener noreferrer"
                   class="mt-1 block font-display text-sm font-semibold leading-snug text-background transition-colors hover:text-primary">
                   {{ $item->title }}
@@ -179,8 +182,8 @@
       </section>
     @endif
 
-    {{-- Stats band --}}
-    <section class="pb-16" aria-label="Blog statistics">
+    {{-- Stats --}}
+    <section class="pb-16" aria-label="Trend statistics">
       <div class="grid grid-cols-2 gap-6 rounded-2xl bg-accent p-8 text-accent-foreground">
         @foreach($stats as $stat)
           <div>
@@ -208,6 +211,7 @@
 
         new Swiper(hero, {
           loop: multipleSlides,
+          autoHeight: true,
           speed: 600,
           autoplay: multipleSlides ? { delay: 5000, disableOnInteraction: false, pauseOnMouseEnter: true } : false,
           pagination: multipleSlides ? { el: '.swiper-pagination', clickable: true } : false,

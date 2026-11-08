@@ -35,22 +35,32 @@ class ViewServiceProvider extends ServiceProvider
   private function setNotificationsMenuData()
   {
     view::composer('partials.notifications-menu', function ($view) {
-      if (!auth()->check()) {
-        return;
+      static $data = null;
+
+      if ($data === null) {
+        if (!auth()->check()) {
+          $data = [
+            'users' => collect(),
+            'notifications' => collect(),
+            'unreadNotificationsCount' => 0,
+          ];
+        } else {
+          $notifications = auth()->user()->notifications()->get();
+          $usernames = $notifications
+            ->pluck('data')
+            ->flatMap(fn($data) => collect($data)->filter(fn($val, $key) => str_contains($key, 'username')))
+            ->unique()
+            ->values();
+
+          $data = [
+            'users' => User::whereIn('username', $usernames)->get()->keyBy('username'),
+            'notifications' => $notifications,
+            'unreadNotificationsCount' => $notifications->whereNull('read_at')->count(),
+          ];
+        }
       }
 
-      $notifications = auth()->user()->notifications()->get();
-      $usernames = $notifications
-        ->pluck('data')
-        ->flatMap(fn($data) => collect($data)->filter(fn($val, $key) => str_contains($key, 'username')))
-        ->unique()
-        ->values();
-
-      $users = User::whereIn('username', $usernames)->get()->keyBy('username');
-      $view->with([
-        'users' => $users,
-        'notifications' => $notifications
-      ]);
+      $view->with($data);
     });
   }
   private function sendFollowingsIdsToView()

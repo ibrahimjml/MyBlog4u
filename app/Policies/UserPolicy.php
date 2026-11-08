@@ -9,6 +9,14 @@ class UserPolicy
 {
    public function before(User $user, string $ability, ?User $model = null): bool|null
     {
+        if (
+            $model instanceof User
+            && in_array($ability, ['delete', 'deleteAny', 'block', 'activate', 'role'], true)
+            && (int) $model->id === (int) $user->id
+        ) {
+            return false;
+        }
+
         if ($user->hasRole(\App\Enums\UserRole::ADMIN->value)) {
             return true;
         }

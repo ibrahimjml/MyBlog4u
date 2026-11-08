@@ -14,7 +14,7 @@
         <i class="fas fa-check"></i>
       </button>
 
-      @if(auth()->user()->unreadNotifications->count() > 0)
+      @if($unreadNotificationsCount > 0)
         <form action="{{ route('notifications.deleteAll') }}" method="POST">
           @csrf
           @method('DELETE')

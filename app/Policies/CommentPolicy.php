@@ -8,14 +8,24 @@ use App\Models\User;
 
 class CommentPolicy
 {
-   public function before(User $user, string $ability,?Comment $model): bool|null
+   public function before(User $user, string $ability, mixed $model = null): bool|null
     {
+        if (
+            $ability === 'report'
+            && $model instanceof Comment
+            && (int) $model->user_id === (int) $user->id
+        ) {
+            return false;
+        }
+
         if ( $user->hasRole(\App\Enums\UserRole::ADMIN->value)) {
             return true; 
         }
 
         if($model instanceof Comment && $model->user->hasRole(\App\Enums\UserRole::ADMIN->value)) {
-           return false;
+            return in_array($ability, ['edit', 'delete','report'], true)
+               ? false
+               : null;
          }
 
         return null; 

@@ -59,7 +59,7 @@
          </div>
       </td>
         <td class="p-2 flex justify-start w-40">
-        @can('user.role')
+        @can('role', $user)
         @include('admin.users.partials.change-role')
        @else
         <p class="cursor-not-allowed bg-gray-600 font-bold text-white border border-gray-300 block  text-sm rounded-lg   w-full p-2.5 ">

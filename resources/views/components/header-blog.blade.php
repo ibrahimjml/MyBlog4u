@@ -1,5 +1,5 @@
 @php
-    $isTransparent = Route::is(['profile.*']);
+    $isTransparent = false;
     $isFixed = Route::is(['blog', 'news', 'viewhashtag', 'viewcategory']);
     $isHome = Route::is('home');
 

@@ -27,7 +27,6 @@ class Comment extends Model
 
     public function replies(){
       return $this->hasMany(Comment::class, 'parent_id')
-                  ->with(['user.roles', 'parent.user'])
                   ->orderBy('created_at','desc');
     }
     public function mentions()
@@ -39,8 +38,6 @@ class Comment extends Model
     if ($depth <= 0) return $query;
 
     return $query->with([
-        'user.roles:id,name',
-        'parent.user:id,name,username,avatar',
         'replies' => function ($query) use ($depth) {
             $query->withNestedReplies($depth - 1);
         }

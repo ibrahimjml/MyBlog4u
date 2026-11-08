@@ -226,24 +226,37 @@
   background: var(--code-selection);
 }
 
+.published-content pre[class*="language-"],
+.prose pre[class*="language-"] {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb-fx) transparent;
+}
+
 .published-content pre[class*="language-"]::-webkit-scrollbar,
 .prose pre[class*="language-"]::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: var(--scrollbar-width);
+  height: var(--scrollbar-width);
 }
 
 .published-content pre[class*="language-"]::-webkit-scrollbar-track,
 .prose pre[class*="language-"]::-webkit-scrollbar-track {
-  background: transparent;
+  background: var(--scrollbar-track);
 }
 
 .published-content pre[class*="language-"]::-webkit-scrollbar-thumb,
 .prose pre[class*="language-"]::-webkit-scrollbar-thumb {
-  background: oklch(var(--background) / 0.2);
+  background-color: var(--scrollbar-thumb);
   border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
 }
 
 .published-content pre[class*="language-"]::-webkit-scrollbar-thumb:hover,
 .prose pre[class*="language-"]::-webkit-scrollbar-thumb:hover {
-  background: oklch(var(--background) / 0.32);
+  background-color: var(--scrollbar-thumb-hover);
+}
+
+.published-content pre[class*="language-"]::-webkit-scrollbar-corner,
+.prose pre[class*="language-"]::-webkit-scrollbar-corner {
+  background: transparent;
 }

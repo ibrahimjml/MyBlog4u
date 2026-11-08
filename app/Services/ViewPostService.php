@@ -15,7 +15,7 @@ class ViewPostService
     public function getPost( Post $post)
   {  
         Gate::authorize('view', $post);
-        $post->load(['user.roles:id,name', 'viewers:id,name,username,avatar', 'categories:id,name', 'hashtags:id,name']);
+        $post->loadMissing(['user.roles:id,name', 'viewers:id,name,username,avatar', 'categories:id,name', 'hashtags:id,name']);
         $page = (int) request('page', 1);
         $perpage = (int) request('perpage', 5);
 
