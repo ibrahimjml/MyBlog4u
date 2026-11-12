@@ -118,13 +118,13 @@ class UserRepository implements UserInterface
         );
     }
 
-    public function getAllPosts(User $user, Fluent $sort): LengthAwarePaginator
+    public function getAllPosts(User $user, Fluent $sort, int $perPage, int $page): LengthAwarePaginator
     {
         return $user->posts()
              ->withCount(['likes', 'comments'])
              ->with(['hashtags','categories'])
              ->DashboardFilter($sort)
-             ->paginate(10)
+             ->paginate($perPage,['*'],'my_posts',$page)
              ->withQueryString();
     }
 }

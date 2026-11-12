@@ -17,5 +17,5 @@ interface UserInterface
 
    public function getUserActivities(User $user, ?UserActivityType $type, int $perPage, int $page): LengthAwarePaginator;
 
-   public function getAllPosts(User $user, Fluent $sort): LengthAwarePaginator;
+   public function getAllPosts(User $user, Fluent $sort, int $perPage, int $page): LengthAwarePaginator;
 }

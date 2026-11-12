@@ -45,11 +45,11 @@ class UserCacheDecorator implements UserInterface
                 $this->repo->getUserActivities($user, $type, $perPage, $page)
             );
     }
-    public function getAllPosts(User $user, Fluent $sort): LengthAwarePaginator
+    public function getAllPosts(User $user, Fluent $sort, int $perPage, int $page): LengthAwarePaginator
     {
-         $key = sprintf('user_dashboard_posts:user:%d:sort:%s', $user->id, md5(json_encode($sort)));
+         $key = sprintf('user_dashboard_posts:user:%d:sort:%s:perpage:%d:page:%d', $user->id, md5(json_encode($sort)), $perPage, $page);
 
          return Cache::tags(['user_dashboard_posts', "user_posts:{$user->id}"])
-            ->remember($key, now()->endOfDay(), fn () => $this->repo->getAllPosts($user, $sort));
+            ->remember($key, now()->endOfDay(), fn () => $this->repo->getAllPosts($user,$sort,$perPage,$page));
     }
 }

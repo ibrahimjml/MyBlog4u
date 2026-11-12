@@ -39,9 +39,11 @@ class DashboardController extends Controller
   public function posts()
   {
     $sort = new Fluent(request()->only('sort'));
+    $perPage = (int) request()->get('perpage', 10);
+    $page = (int) request()->get('my_posts', 1);
     $user = request()->user();
 
-    $posts = $this->repo->getAllPosts($user,$sort);
+    $posts = $this->repo->getAllPosts($user,$sort,$perPage,$page);
 
     return view('dashboard.myposts', $this->sharedData([
       'posts' => $posts,

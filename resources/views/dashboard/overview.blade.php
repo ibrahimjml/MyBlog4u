@@ -1,4 +1,5 @@
 @extends('layouts.dashboard')
+@use(\App\Enums\PostStatus)
 
 @section('content')
 @php
@@ -8,18 +9,30 @@
       'value' => $total_published_posts ?? 0,
       'icon' => 'fas fa-check-circle',
       'tone' => 'bg-emerald-50 text-emerald-600',
+      'route' => [
+          'url' => route('dashboard.posts') . '?sort=' . PostStatus::PUBLISHED->value,
+          'label' => $total_published_posts > 0 ? 'view my published' : ''
+      ],
     ],
     [
       'label' => 'Pending review',
       'value' => $total_pending_posts ?? 0,
       'icon' => 'fas fa-clock',
       'tone' => 'bg-amber-50 text-amber-600',
+      'route' => [
+          'url' => route('dashboard.posts') . '?sort=' . PostStatus::PENDING->value,
+          'label' => $total_pending_posts > 0 ? 'view my pendings' : ''
+      ],
     ],
     [
       'label' => 'Drafts',
       'value' => $total_draft_posts ?? 0,
       'icon' => 'fas fa-file',
       'tone' => 'bg-sky-50 text-sky-600',
+      'route' => [
+          'url' => route('dashboard.posts') . '?sort=' . PostStatus::DRAFT->value,
+          'label' => $total_draft_posts > 0 ? 'view my drafts' : ''
+      ],
     ],
     [
       'label' => 'Total likes',
@@ -44,18 +57,30 @@
       'value' => $user->followers_count ?? 0,
       'icon' => 'fas fa-users',
       'tone' => 'bg-teal-50 text-teal-600',
+      'route' => [
+          'url' => route('dashboard.followers'),
+          'label' => $user->followers_count > 0 ? 'view all followers' : ''
+      ],
     ],
     [
       'label' => 'Pending followers',
       'value' => $user->pending_followers_count ?? 0,
       'icon' => 'fas fa-user-clock',
       'tone' => 'bg-orange-50 text-orange-600',
+      'route' => [
+          'url' => route('dashboard.pending.followers'),
+          'label' => $user->pending_followers_count > 0 ? 'view all pendings followers' : ''
+      ],
     ],
     [
       'label' => 'Following',
       'value' => $user->followings_count ?? 0,
       'icon' => 'fas fa-user-plus',
       'tone' => 'bg-cyan-50 text-cyan-600',
+      'route' => [
+          'url' => route('dashboard.followings'),
+          'label' => $user->followings_count > 0 ? 'view all followings' : ''
+      ],
     ],
   ];
 @endphp
@@ -75,9 +100,17 @@
           <i class="{{ $stat['icon'] }} text-sm" aria-hidden="true"></i>
         </span>
       </div>
-      <p class="mt-4 font-display text-3xl font-bold tracking-tight text-foreground">
+      <div class="flex items-end justify-between gap-4">
+      <p class=" font-display text-3xl font-bold tracking-tight text-foreground">
         {{ number_format((int) $stat['value']) }}
       </p>
+      @if(! empty($stat['route']))
+          <a href="{{ $stat['route']['url'] }}"
+            class="font-mono text-xs text-primary transition-opacity hover:opacity-80">
+            {{ $stat['route']['label'] }}
+          </a>
+      @endif
+    </div>
     </div>
   @endforeach
 </div>
