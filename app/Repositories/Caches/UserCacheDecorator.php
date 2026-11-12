@@ -8,6 +8,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use App\Models\User;
+use Illuminate\Support\Fluent;
 
 class UserCacheDecorator implements UserInterface
 {
@@ -43,5 +44,12 @@ class UserCacheDecorator implements UserInterface
             ->remember($key, now()->endOfDay(), fn () =>
                 $this->repo->getUserActivities($user, $type, $perPage, $page)
             );
+    }
+    public function getAllPosts(User $user, Fluent $sort): LengthAwarePaginator
+    {
+         $key = sprintf('user_dashboard_posts:user:%d:sort:%s', $user->id, md5(json_encode($sort)));
+
+         return Cache::tags(['user_dashboard_posts', "user_posts:{$user->id}"])
+            ->remember($key, now()->endOfDay(), fn () => $this->repo->getAllPosts($user, $sort));
     }
 }

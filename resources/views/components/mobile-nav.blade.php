@@ -40,5 +40,5 @@
 </div>
 
 <div class="md:hidden">
-    @include('partials.burger-menu')
+    @include('partials.burger-menu', [ 'id' => 'mobile-menu'])
 </div>

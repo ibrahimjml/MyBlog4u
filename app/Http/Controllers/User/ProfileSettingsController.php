@@ -32,8 +32,7 @@ class ProfileSettingsController extends Controller
      **/
     public function profile_info()
     {
-        return view('profile-settings.profile',
-            $this->data('profile-info'));
+        return view('profile-settings.profile-info', $this->data());
     }
 
     /**
@@ -103,8 +102,7 @@ class ProfileSettingsController extends Controller
      **/
     public function profile_account()
     {
-        return view('profile-settings.profile',
-            $this->data('profile-account'));
+        return view('profile-settings.account-management', $this->data());
     }
 
     /**
@@ -112,8 +110,7 @@ class ProfileSettingsController extends Controller
      **/
     public function account_privacy()
     {
-        return view('profile-settings.profile',
-            $this->data('profile-privacy'));
+        return view('profile-settings.account-privacy', $this->data());
     }
 
     public function profile_visibility()
@@ -133,8 +130,7 @@ class ProfileSettingsController extends Controller
 
     public function two_factor_view()
     {
-        return view('profile-settings.profile', $this->data('security'));
-
+        return view('profile-settings.security2fa', $this->data());
     }
 
     public function active_sessions()
@@ -154,8 +150,8 @@ class ProfileSettingsController extends Controller
                   : $session->session_id === $currentSessionId;
             });
 
-        return view('profile-settings.profile', [
-            ...$this->data('active-sessions'),
+        return view('profile-settings.active-sessions', [
+            ...$this->data(),
             'sessions' => $sessions,
         ]);
     }
@@ -221,14 +217,13 @@ class ProfileSettingsController extends Controller
         return redirect()->route('login')->withCookie(cookie()->forget('active_session_browser'));
     }
 
-    /**
-     * return  user + section
-     **/
-    private function data(string $section)
+
+    private function data()
     {
+        $user = request()->user();
+
         return [
-            'user' => request()->user(),
-            'section' => $section,
+            'user' => $user
         ];
     }
 }

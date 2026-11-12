@@ -1,4 +1,8 @@
-<ul id="mobile-menu"
+@props([
+   'id' => null
+  ])
+
+<ul id="{{$id}}"
   class="burger-menu hidden w-[250px] rounded-xl border border-border bg-card p-2 text-left font-mono text-xs leading-normal text-card-foreground shadow-xl">
 
   @guest
@@ -69,23 +73,13 @@
     </li>
 
     <li>
-      <a href="/getsavedposts"
+      <a href="{{ route('bookmarks') }}"
         class="flex items-center gap-3 rounded-lg px-2.5 py-2 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground">
         <i class="fas fa-bookmark w-4 text-center text-[11px]"></i>
-        <span>Saved</span>
+        <span>My Bookmarks</span>
       </a>
     </li>
   @endguest
-
-  @unless(request()->routeIs('home'))
-    <li>
-      <a href="/"
-        class="flex items-center gap-3 rounded-lg px-2.5 py-2 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground">
-        <i class="fas fa-home w-4 text-center text-[11px]"></i>
-        <span>Home</span>
-      </a>
-    </li>
-  @endunless
 
   <li class="mt-1 border-t border-border pt-1">
     <form id="logoutFRM" action="{{ route('logout') }}" method="POST">@csrf</form>

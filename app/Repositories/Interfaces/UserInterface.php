@@ -7,6 +7,7 @@ use App\Enums\UserActivityType;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use App\Models\User;
+use Illuminate\Support\Fluent;
 
 interface UserInterface
 {
@@ -15,4 +16,6 @@ interface UserInterface
    public function getPaginatedArticles(User $user, int $perPage, int $page): LengthAwarePaginator;
 
    public function getUserActivities(User $user, ?UserActivityType $type, int $perPage, int $page): LengthAwarePaginator;
+
+   public function getAllPosts(User $user, Fluent $sort): LengthAwarePaginator;
 }

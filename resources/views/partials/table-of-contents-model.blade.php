@@ -149,14 +149,12 @@
       const openModal = () => {
         modal.classList.remove('hidden');
         modal.classList.add('flex');
-        document.body.classList.add('no-scroll');
         updateActive();
       };
 
       const closeModal = () => {
         modal.classList.add('hidden');
         modal.classList.remove('flex');
-        document.body.classList.remove('no-scroll');
       };
 
       if (openBtn) {

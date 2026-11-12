@@ -1,150 +1,169 @@
-<div class="flex lg:flex-row flex-col lg:items-center items-start gap-2 my-5">
-  <button class="block bg-blue-500 text-white w-fit font-semibold p-2 rounded-md"
-    onclick="window.location.href='{{ route('createpage') }}'">
-    <i class="fas fa-plus"></i> write an article
-  </button>
-  <x-forms.filter-form exclude="sort">
-    <div class="relative w-fit">
-      <select id="sort" name="sort"
-        class="pl-3 pr-8 appearance-none font-bold cursor-pointer bg-blueGray-200 text-blueGray-500 border-0 text-sm rounded-lg p-2.5"
-        onchange="this.form.submit()">
-        <option value="">All</option>
-        <option value="latest" {{ request('sort') === 'latest' ? 'selected' : '' }}>Latest</option>
-        <option value="oldest" {{ request('sort') === 'oldest' ? 'selected' : '' }}>Oldest</option>
-        <hr class="my-2">
-        @foreach (\App\Enums\PostStatus::forMyDashboard() as $status)
-          <option value="{{$status->value}}" {{request('sort') === $status->value ? 'selected' : ''}}>
-            {{ $status->label() }}
-          </option>
-        @endforeach
-      </select>
-      <!-- Custom white arrow -->
-      <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path d="M19 9l-7 7-7-7" />
-        </svg>
-      </div>
-    </div>
-  </x-forms.filter-form>
-  <!-- Clear Filters  -->
-  @if(request()->Filled('sort'))
-    <a href="{{ url()->current() }}"
-      class="bg-red-500 hover:bg-red-600 text-white w-fit font-semibold py-2 px-4 rounded-lg text-sm transition duration-200 flex items-center gap-2">
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-      </svg>
-      Clear Filters
+@extends('layouts.dashboard')
+
+@section('content')
+@php
+  $button = 'inline-flex h-9 w-9 items-center justify-center rounded-xl border border-border bg-background text-muted-foreground transition-colors';
+@endphp
+
+<div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+  <div>
+    <h1 class="font-display text-xl font-bold text-foreground">Your articles<span class="text-primary">.</span></h1>
+    <p class="mt-1 font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">Write, review and manage your posts</p>
+  </div>
+
+  <div class="flex flex-wrap items-center gap-2">
+    <a href="{{ route('createpage') }}"
+      class="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-xs font-bold uppercase tracking-wide text-primary-foreground shadow-sm transition-colors hover:opacity-90">
+      <i class="fas fa-plus" aria-hidden="true"></i>
+      Write an article
     </a>
-  @endif
+
+    <x-forms.filter-form exclude="sort" class="flex items-center gap-2">
+      <div class="relative w-fit">
+        <select id="sort" name="sort" aria-label="Sort posts"
+          class="cursor-pointer appearance-none rounded-xl border border-border bg-background py-2.5 pl-3 pr-9 font-mono text-xs font-medium text-foreground outline-none transition-colors hover:border-primary/40 focus:border-primary focus:ring-2 focus:ring-ring/30"
+          onchange="this.form.submit()">
+          <option value="">All posts</option>
+          <option value="latest" {{ request('sort') === 'latest' ? 'selected' : '' }}>Latest</option>
+          <option value="oldest" {{ request('sort') === 'oldest' ? 'selected' : '' }}>Oldest</option>
+          @foreach (\App\Enums\PostStatus::forMyDashboard() as $status)
+            <option value="{{$status->value}}" {{request('sort') === $status->value ? 'selected' : ''}}>
+              {{ $status->label() }}
+            </option>
+          @endforeach
+        </select>
+        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+          <svg class="h-4 w-4 text-muted-foreground" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M19 9l-7 7-7-7" />
+          </svg>
+        </div>
+      </div>
+    </x-forms.filter-form>
+
+    @if(request()->Filled('sort'))
+      <a href="{{ url()->current() }}"
+        class="inline-flex items-center gap-2 rounded-xl border border-destructive/30 bg-destructive/10 px-3 py-2.5 text-xs font-bold uppercase tracking-wide text-destructive transition-colors hover:bg-destructive/15">
+        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+        Clear
+      </a>
+    @endif
+  </div>
 </div>
+
 <div class="space-y-4">
   @forelse($posts as $post)
-    <div
-      class="group-data-[size=sm]/card:px-3 rounded-xl p-4 border border-gray-200 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
-      <div
-        class="w-full sm:w-32 h-40 sm:h-24 rounded-xl border border-border/50 bg-muted overflow-hidden flex items-center justify-center shrink-0 shadow-inner relative">
-        <img src="{{ $post->image_url }}" alt="{{ $post->title }} " class="object-cover w-full h-full">
+@php
+         $published = $post->status === \App\Enums\PostStatus::PUBLISHED;
+         $pending = $post->status === \App\Enums\PostStatus::PENDING;
+         $draft = $post->status === \App\Enums\PostStatus::DRAFT;
+     @endphp
+    <article
+      class="group flex flex-col items-start gap-4 rounded-2xl border border-border bg-card p-4 transition-colors duration-300 hover:border-primary/40 sm:flex-row sm:items-center sm:gap-6 sm:p-5">
+      <div class="relative flex h-40 w-full shrink-0 items-center justify-center overflow-hidden rounded-xl border border-border bg-secondary sm:h-24 sm:w-32">
+        <img src="{{ $post->image_url }}" alt="{{ $post->title }}" class="h-full w-full object-cover">
       </div>
 
-      <div class="flex-1 min-w-0 flex flex-col justify-center h-full space-y-2">
-        <div class="flex items-center gap-2">
+      <div class="flex min-w-0 flex-1 flex-col justify-center gap-2">
+        <div @class([
+            'text-xs font-mono flex items-center gap-2 rounded-lg w-fit px-2 py-[2px]',
+            'text-emerald-500 bg-emerald-500/10' => $published,
+            'text-amber-500 bg-amber-500/10' => $pending,
+            'text-sky-500 bg-sky-500/10' => $draft,
+          ])>
           <span @class([
-            'w-2 h-2 rounded-full shadow-[0_0_8px_rgba(34,197,94,0.6)]',
-            'bg-green-500' => $post->status === \App\Enums\PostStatus::PUBLISHED,
-            'bg-yellow-500' => $post->status === \App\Enums\PostStatus::PENDING,
-            'bg-blue-500' => $post->status === \App\Enums\PostStatus::DRAFT,
+            'h-2 w-2 rounded-full',
+            'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]' => $published,
+            'bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.6)]' => $pending,
+            'bg-sky-500 shadow-[0_0_8px_rgba(14,165,233,0.6)]' => $draft,
           ])></span>
-          @if($post->categories->isNotEmpty())
-            @foreach($post->categories as $category)
-
-              <span data-slot="badge" data-variant="secondary"
-                class="group/badge inline-flex h-5 w-fit shrink-0 items-center justify-center gap-1 overflow-hidden rounded-4xl border border-transparent px-2 py-0.5 whitespace-nowrap transition-all text-[10px] uppercase tracking-widest font-bold bg-primary/5 text-primary border-none">
-                {{ $category->name }}
-              </span>
-            @endforeach
-          @endif
+          <small>{{ Str::lower($post->status->value)}}</small>
         </div>
 
-        <a class="font-extrabold text-lg sm:text-xl leading-tight hover:text-primary transition-colors line-clamp-2"
+        <a class="font-display text-lg font-semibold leading-snug text-foreground transition-colors line-clamp-2 hover:text-primary sm:text-xl"
           href="{{ route('single.post', $post->slug) }}">
           {{ $post->title }}
         </a>
 
-        <div class="flex items-center gap-3 text-xs font-medium text-muted-foreground">
+        <div class="flex flex-wrap items-center gap-3 font-mono text-[11px] text-muted-foreground">
           <span class="flex items-center gap-1.5">
-            <i class="fas fa-clock w-3.5 h-3.5"></i>
+            <i class="fas fa-clock" aria-hidden="true"></i>
             {{ $post->created_at->diffForHumans() }}
           </span>
         </div>
       </div>
 
       <div
-        class="flex flex-row sm:flex-col items-center sm:items-end justify-between w-full sm:w-auto h-full gap-4 pt-4 sm:pt-0 border-t sm:border-none border-border/50">
-
-        <div
-          class="flex items-center gap-4 text-muted-foreground bg-muted/30 px-3 py-1.5 rounded-full border border-border/50">
-
-          <span class="flex items-center gap-1.5 text-xs font-bold" title="Views">
-            <i class="fas fa-eye w-3.5 h-3.5 text-primary"></i>
-            {{ $post->views }}
+        class="flex w-full flex-row items-center justify-between gap-4 border-t border-border pt-4 sm:w-auto sm:flex-col sm:items-end sm:border-none sm:pt-0">
+        <div class="flex items-center gap-4 rounded-full border border-border bg-background px-3 py-1.5 font-mono text-[11px] text-muted-foreground">
+          <span class="flex items-center gap-1.5 font-semibold" title="Views">
+            <i class="fas fa-eye text-primary" aria-hidden="true"></i>
+            {{ number_format($post->views) }}
           </span>
-
-          <span class="flex items-center gap-1.5 text-xs font-bold" title="Likes">
-            <i class="fas fa-heart w-3.5 h-3.5 text-red-500"></i>
-            {{ $post->likes_count }}
+          <span class="flex items-center gap-1.5 font-semibold" title="Likes">
+            <i class="fas fa-heart text-rose-500" aria-hidden="true"></i>
+            {{ number_format($post->likes_count) }}
           </span>
-
-          <span class="flex items-center gap-1.5 text-xs font-bold" title="Comments">
-            <i class="fas fa-comment w-3.5 h-3.5 text-blue-500"></i>
-            {{ $post->comments_count }}
+          <span class="flex items-center gap-1.5 font-semibold" title="Comments">
+            <i class="fas fa-comment text-sky-500" aria-hidden="true"></i>
+            {{ number_format($post->comments_count) }}
           </span>
         </div>
 
         <div class="flex items-center gap-1.5">
-
-          <a data-slot="button" data-variant="ghost" data-size="icon"
-            class="group/button inline-flex shrink-0 items-center justify-center bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none size-8 h-9 w-9 rounded-full bg-background border border-border/50 hover:border-primary hover:text-primary shadow-sm"
-            href={{ route('single.post', $post->slug) }}>
-            <i class="fas fa-eye w-4 h-4"></i>
-          </a>
-
-          <a data-slot="button" data-variant="ghost" data-size="icon"
-            class="group/button inline-flex shrink-0 items-center justify-center bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none size-8 h-9 w-9 rounded-full bg-background border border-border/50 hover:border-blue-500 hover:text-blue-500 shadow-sm"
-            href={{ route('edit.post', $post->slug) }}>
-            <i class="fas fa-pen-square w-4 h-4"></i>
-          </a>
-
+          
           <button id="dropdownMenu-{{ $post->id }}" data-dropdown-toggle="dropdown-{{ $post->id }}" type="button"
-            class="h-9 w-9 flex items-center justify-center rounded-full bg-background border border-border/50 hover:bg-muted shadow-sm outline-none transition-colors">
-            <i class="fas fa-ellipsis-h w-4 h-4 text-muted-foreground"></i>
+            aria-label="More actions"
+            class="{{ $button }} hover:border-primary hover:text-primary">
+            <i class="fas fa-ellipsis-h text-xs" aria-hidden="true"></i>
           </button>
 
           <div id="dropdown-{{ $post->id }}"
-            class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 border-2 border-gray-500 ">
-            <ul class=" text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownMenu-{{ $post->id }}">
-              <li class="hover:bg-red-500 ">
+            class="z-10 hidden w-44 divide-y divide-border rounded-xl border border-border bg-card shadow-lg">
+            <ul class="py-1 text-sm text-card-foreground" aria-labelledby="dropdownMenu-{{ $post->id }}">
+             <li>
+              <a href="{{ route('single.post', $post->slug) }}" aria-label="View {{ $post->title }}"
+                 class="flex w-full items-center gap-3 px-4 py-2 text-left text-xs font-medium text-secondary-foreground transition-colors hover:bg-foreground/10">
+                <i class="fas fa-eye text-xs" aria-hidden="true"></i>
+                View post
+              </a></li>
+             <li>
+             <a href="{{ route('edit.post', $post->slug) }}" aria-label="Edit {{ $post->title }}"
+               class="flex w-full items-center gap-3 px-4 py-2 text-left text-xs font-medium text-blue-400 transition-colors hover:bg-blue-400/10">
+               <i class="fas fa-pen text-xs" aria-hidden="true"></i>
+               Edit post
+             </a></li>
+              <li>
                 <form method="POST" action="{{ route('delete.post', $post->slug) }}"
                   onsubmit="return confirm('Are you sure you want to delete this post?');">
                   @csrf
                   @method('DELETE')
-                  <button type="submit" class="w-full text-left px-4 py-2 text-gray-700"> <i
-                      class="fas fa-trash-alt w-4 h-4 mr-4"></i> Delete Post</button>
+                  <button type="submit"
+                    class="flex w-full items-center gap-3 px-4 py-2 text-left text-xs font-medium text-destructive transition-colors hover:bg-destructive/10">
+                    <i class="fas fa-trash" aria-hidden="true"></i>
+                    Delete post
+                  </button>
                 </form>
               </li>
-              {{-- <li class="hover:bg-yellow-500">
-                <a href="{{route('admin.reports.profiles.index')}}" class="block px-4 py-2  text-gray-700"><i
-                    class="fas fa-thumbtack w-4 h-4 mr-4"></i> Pin Post</a>
-              </li> --}}
             </ul>
           </div>
         </div>
       </div>
-    </div>
+    </article>
   @empty
-    <p class="rounded-lg border border-gray-200 p-6 text-center text-gray-500 sm:col-span-2 xl:col-span-3">No posts yet.
-    </p>
+    <div class="rounded-2xl border border-dashed border-border p-10 text-center">
+      <span class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-secondary text-muted-foreground">
+        <i class="fas fa-image" aria-hidden="true"></i>
+      </span>
+      <p class="mt-3 font-display text-base font-semibold text-foreground">No posts yet</p>
+      <p class="mt-1 text-sm text-muted-foreground">Your articles will appear here once you write one.</p>
+    </div>
   @endforelse
 </div>
+
 <div class="mt-6">
   {{ $posts->links() }}
 </div>
+
+@endsection

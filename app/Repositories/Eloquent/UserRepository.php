@@ -11,6 +11,7 @@ use App\Repositories\Interfaces\UserInterface;
 use Illuminate\Support\Collection;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
+use Illuminate\Support\Fluent;
 
 class UserRepository implements UserInterface
 {
@@ -115,5 +116,15 @@ class UserRepository implements UserInterface
                 'pageName' => 'activity_page',
             ]
         );
+    }
+
+    public function getAllPosts(User $user, Fluent $sort): LengthAwarePaginator
+    {
+        return $user->posts()
+             ->withCount(['likes', 'comments'])
+             ->with(['hashtags','categories'])
+             ->DashboardFilter($sort)
+             ->paginate(10)
+             ->withQueryString();
     }
 }

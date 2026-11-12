@@ -36,6 +36,8 @@ class ClearCacheService
     // clear user profile home|activities 
     Cache::tags(["profile_home:{$post->user_id}"])->flush();
     Cache::tags(["user_activities:{$post->user_id}"])->flush();
+    // clear user dashboard posts
+    Cache::tags(["user_posts:{$post->user_id}"])->flush();
     
   }
   public function clearTagsCaches(Hashtag $hashtag)

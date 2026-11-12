@@ -5,26 +5,29 @@ namespace App\Http\Controllers\User;
 use App\Enums\FollowerStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Middleware\CheckIfBlocked;
-use App\Models\Post;
+use App\Repositories\Interfaces\UserInterface;
+use Illuminate\Http\Request;
 use Illuminate\Support\Fluent;
 
 class DashboardController extends Controller
 {
-  public function __construct()
-  {
+  public function __construct(
+    protected UserInterface $repo
+  ){
     $this->middleware(['auth', 'verified', CheckIfBlocked::class]);
-  }
-  public function overview()
-  {
-    $user = request()->user()->loadCount(['posts', 'followers', 'followings','pendingFollowers','profileViews','likes','comments']);
-    $postsQuery = Post::query()->where('user_id', $user->id);
-    $totallikes = (clone $postsQuery)->sum('likes_count');
-    $totalPostViews = (clone $postsQuery)->sum('views');
-    $totalPendingPosts = (clone $postsQuery)->pending()->count();
-    $totalPublishedPosts = (clone $postsQuery)->published()->count();
-    $totalDraftPosts = (clone $postsQuery)->draft()->count();
+   }
 
-    return view('dashboard.index', $this->sharedData('overview', [
+  public function overview(Request $request)
+  {
+    $posts = $request->user()->posts();
+
+    $totallikes = $posts->sum('likes_count');
+    $totalPostViews = $posts->sum('views');
+    $totalPendingPosts   = $request->user()->posts()->pending()->count();
+    $totalPublishedPosts = $request->user()->posts()->published()->count();
+    $totalDraftPosts     = $request->user()->posts()->draft()->count();
+
+    return view('dashboard.overview', $this->sharedData([
       'total_likes'           => $totallikes,
       'total_post_views'      => $totalPostViews,
       'total_pending_posts'   => $totalPendingPosts,
@@ -36,15 +39,11 @@ class DashboardController extends Controller
   public function posts()
   {
     $sort = new Fluent(request()->only('sort'));
+    $user = request()->user();
 
-    $posts = request()->user()
-      ->posts()
-      ->withCount(['likes', 'comments'])
-      ->with(['hashtags','categories'])
-      ->DashboardFilter($sort)
-       ->paginate(10)->withQueryString();
+    $posts = $this->repo->getAllPosts($user,$sort);
 
-    return view('dashboard.index', $this->sharedData('posts', [
+    return view('dashboard.myposts', $this->sharedData([
       'posts' => $posts,
     ]));
   }
@@ -54,7 +53,7 @@ class DashboardController extends Controller
     $followers = $this->baseQueryFollowers(FollowerStatus::ACCEPTED)
                       ->paginate(12);
 
-    return view('dashboard.index', $this->sharedData('followers', [
+    return view('dashboard.followers', $this->sharedData([
       'people' => $followers,
     ]));
   }
@@ -66,7 +65,7 @@ class DashboardController extends Controller
       ->wherePivot('status', FollowerStatus::PENDING->value)
       ->latest('followers.created_at')
       ->paginate(12);
-    return view('dashboard.index', $this->sharedData('pending_followers', [
+    return view('dashboard.pending-followers', $this->sharedData([
       'people' => $pending_followers,
     ]));
   }
@@ -79,18 +78,18 @@ class DashboardController extends Controller
       ->latest('followers.created_at')
       ->paginate(12);
 
-    return view('dashboard.index', $this->sharedData('followings', [
+    return view('dashboard.followings', $this->sharedData([
       'people' => $followings,
     ]));
   }
 
-  private function sharedData(string $section, array $data = [])
+  private function sharedData(array $data = [])
     {
       $user = request()->user();
+      $user->loadCount(['posts', 'followers', 'followings','pendingFollowers','profileViews','likes','comments']);
       return array_merge([
         'user' => $user,
-        'section' => $section,
-        'total_posts' => $user->posts()->count(),
+        'total_posts' => $user->posts_count,
       ], $data);
     }
 

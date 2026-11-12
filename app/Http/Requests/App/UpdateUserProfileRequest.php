@@ -38,8 +38,8 @@ class UpdateUserProfileRequest extends FormRequest
             'linkedin' => 'sometimes|nullable|url|starts_with:https',
             'twitter'     => 'sometimes|nullable|url|starts_with:https',
             'social_links' => 'sometimes|nullable|array',
-            'social_links.*.platform' => 'string',
-            'social_links.*.url' => 'url|starts_with:https',
+            'social_links.*.platform' => 'required|string',
+            'social_links.*.url' => 'required|url|starts_with:https',
 
         ];
     }
@@ -51,6 +51,9 @@ class UpdateUserProfileRequest extends FormRequest
             'avatar.mimes' => 'The avatar must be a PNG, JPG, JPEG, or WEBP.',
             'cover.image' => 'The cover must be an image file.',
             'cover.mimes' => 'The cover must be a PNG, JPG, JPEG, or WEBP.',
+            'social_links.*.platform.required' => 'the platform is required',
+            'social_links.*.url.required' => 'the url is required',
+            'social_links.*.url.url' => 'the url is not valid',
         ];
     }
 }
