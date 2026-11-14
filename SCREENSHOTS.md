@@ -1,27 +1,50 @@
- ![Homepage](https://i.postimg.cc/52QLnsxf/127-0-0-1-8000-2.png)
-![Blogpage](https://i.postimg.cc/28p16t6V/127-0-0-1-8000-blog-sort-featured-1.png)
-![Recentposts tagpage](https://i.postimg.cc/zGb2jVNn/127-0-0-1-8000-hashtag-laravel.png)
-![Postpage](https://i.postimg.cc/qRP5NrZc/Screenshot-2025-09-18-233005.png)
-![Notification menu](https://i.postimg.cc/kMjCrJdM/Screenshot-2025-09-22-125701.png)
-![Reportpost](https://i.postimg.cc/V6v8qzR3/Screenshot-2025-09-18-235631.png)
-![Comments model](https://i.postimg.cc/ZKtzkLQ3/Screenshot-2025-10-03-135906.png)
-![Profile home](https://i.postimg.cc/KjndgWSX/127-0-0-1-8000-ibrahim123-5.png)
-![Profile activity](https://i.postimg.cc/q7g38kpV/Screenshot-2025-09-20-233621.png)
-![Profile report](https://i.postimg.cc/L6y6rkmK/Screenshot-2025-09-24-185620.png)
-![Qrcode](https://i.postimg.cc/4NZHWvX1/Screenshot-2025-09-20-232729.png)
-![Profileinfo setting](https://i.postimg.cc/LXGFkwFJ/Screenshot-2025-06-27-223320.png)
-![Profileinfo setting](https://i.postimg.cc/qMwSk0kk/Screenshot-2025-09-21-110503.png)
-![{rofileaccount setting](https://i.postimg.cc/RV5zNkT8/Screenshot-2025-06-27-223348.png)
-![Create page](https://i.postimg.cc/J4t6yk1w/127-0-0-1-8000-create-5.png)
-![Admin home](https://i.postimg.cc/j2ZNBwpR/Screenshot-2025-09-25-210913.png)
-![Admin users](https://i.postimg.cc/VsKqqwvj/Screenshot-2025-10-02-170219.png)
-![Admin posts](https://i.postimg.cc/7YLNd6d9/Screenshot-2025-10-02-165700.png)
-![Admin tags](https://i.postimg.cc/WbFHNTB5/Screenshot-2025-09-27-023607.png)
-![Admin categories](https://i.postimg.cc/66Smm8h9/Screenshot-2025-09-25-204413.png)
-![Admin slides](https://i.postimg.cc/g0Z0C75Z/Screenshot-2025-10-01-215235.png)
-![Admin roles](https://i.postimg.cc/cLbkXYJB/Screenshot-2025-10-02-164920.png)
-![Admin permissions](https://i.postimg.cc/L6yx8fjH/Screenshot-2025-10-02-165838.png)
-![Admin reports](https://i.postimg.cc/gkFf0wLg/Screenshot-2025-09-25-204732.png)
-![Admin notifications](https://i.postimg.cc/gJcCrwX8/Screenshot-2025-06-03-132110.png)
-![Admin notifications setting](https://i.postimg.cc/9fYTWT0W/Screenshot-2026-01-20-121152.png)
-![custom smtp](https://i.postimg.cc/0Q9Ymn33/Screenshot-2026-01-20-121119.png)
+
+###  Authentication
+
+|                                   login page                                   |                                  register page                                  |
+| :----------------------------------------------------------------------------: | :-----------------------------------------------------------------------------: |
+| [![login](https://i.postimg.cc/0NvwLQjR/login.png)](https://postimg.cc/qNmqKp2j) | [![create-account](https://i.postimg.cc/d33d4x1y/create-account.png)](https://postimg.cc/xNrcdgLf) |
+|                                   forgotpass page                              |                                  two factor page                                |
+| [![forgotpass](https://i.postimg.cc/g28hSRYS/forgotpass.png)](https://postimg.cc/dhQDDhZr) | [![twofactor](https://i.postimg.cc/DzcXFT4f/twofactor.png)](https://postimg.cc/xkcCyBPB) |
+
+### Feed
+
+| home feed | blog feed |
+| :---: | :---: |
+| [![home-feed](https://i.postimg.cc/ht70rLqh/home-feed.png)](https://postimg.cc/Hrd5W7nC) | [![blog-feed](https://i.postimg.cc/QxCmBL4J/blog-feed.png)](https://postimg.cc/tY0WfcHs) |
+|                                   tag feed                             |                                  category feed                                |
+| [![tag-feed](https://i.postimg.cc/bJqHp4S1/tag-feed.png)](https://postimg.cc/rdYt9nJp) | [![category-feed](https://i.postimg.cc/VsD4LsRF/category-feed.png)](https://postimg.cc/6T4CMXF7) |
+|                                   news feed                             |
+| [![latest-news](https://i.postimg.cc/bvx9XqrD/latest-news.png)](https://postimg.cc/Lqs1LKz2) |
+
+### Article
+
+| Article view 1 | Article view 2 |
+| :---: | :---: |
+| [![post-view-1](https://i.postimg.cc/zfZFPyJ7/post-view-1.png)](https://postimg.cc/K1fT1v33) | [![post-view-2](https://i.postimg.cc/Bn1CgTGz/post-view-2.png)](https://postimg.cc/ZW43YynP) |
+|                                   Create article                              |                                  Update article                               |
+| [![create-article](https://i.postimg.cc/Y2b8q23S/create-article.png)](https://postimg.cc/RqJwgB2r) | [![update-article](https://i.postimg.cc/hjM8jMVN/update-article.png)](https://postimg.cc/PppvVW3M) |
+| Article comments |
+| [![comments](https://i.postimg.cc/VLvgSyG3/comments.png)](https://postimg.cc/XpMdhP08) |
+
+### User Profile
+
+| home page | activity page |
+| :---: | :---: |
+| [![profile-home](https://i.postimg.cc/cHT7HTQZ/profile-home.png)](https://postimg.cc/YGGLD6ny) | [![profile-activity](https://i.postimg.cc/k5Qvr7Gm/profile-activity.png)](https://postimg.cc/yJNZc40Q) |
+|                                   aboutme page                              |
+| [![profile-aboutme](https://i.postimg.cc/0NR0Hz8t/profile-aboutme.png)](https://postimg.cc/DS6GSy4s) |
+
+### User Dashboard
+
+| My dashboard page |
+| :---: |
+| [![My-Dashboard](https://i.postimg.cc/Pr74Y60J/My-Dashboard.png)](https://postimg.cc/ppDztBWM) |
+
+### User Settings
+
+| user-info settings | two factor settings |
+| :---: | :---: |
+| [![settings-info](https://i.postimg.cc/sXKPXKpR/settings-info.png)](https://postimg.cc/BLLP7TYh) | [![twofactor-settings](https://i.postimg.cc/gJGqm1Lt/twofactor-settings.png)](https://postimg.cc/Y4ymxn3Q) |
+|                                   active session settings                              |
+| [![activesessions-settings](https://i.postimg.cc/2y8wFgzk/activesessions-settings.png)](https://postimg.cc/9RKZc8RK) |

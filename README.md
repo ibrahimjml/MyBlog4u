@@ -70,6 +70,11 @@ MyBlog4u is a scalable, production-ready social networking platform comes with a
   -  **Identity Check:** Creators by changing their passwords will redirect to identity check page with Otp verification.
   -  **Email and In-app Notifications:** Creators will recieve mutiple notifications type Views,Mentions,Posted,Following,Requested Following,Reports with real-time and by emails.
 
+### 🔐 Trusted Devices & Active Sessions
+
+  -  **Trusted Devices:** Creators can bypass twofactor by checking on trust this device for 30 days, with secure token rotation every 24hr.
+  -  **Active Sessions Management:** Creators can track their active sessions, log out certian device or all devices.
+
 ### 🧱 Architecture & Performance
 
   - **Clean architecture using:** Service Layer,Observers,Builders,Repositories and Decorators Caches, DTOs.
