@@ -53,6 +53,7 @@ class PostRepository implements PostInterface
     public function getWhoToFollow(int $userId): Collection
     {
        return User::activated()
+                   ->where('is_blocked', false)
                    ->where('id', '!=', $userId)
                    ->whereNotIn('id', auth()->user()->followings()->pluck('user_id'))
                    ->inRandomOrder()
@@ -125,6 +126,7 @@ class PostRepository implements PostInterface
     public function getTrendingTagPosts()
     {
         $trendingHashtags = Hashtag::active()
+               ->has('posts')
                ->withCount('posts')
                ->orderByDesc('posts_count')
                ->take(5) 

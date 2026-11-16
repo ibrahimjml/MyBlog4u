@@ -30,6 +30,12 @@ if(! function_exists('abort_if_user_not_activated')){
         }
    }
 }
+if(! function_exists('abort_if_user_blocked')){
+   function abort_if_user_blocked($user)
+   {
+     abort_if($user->is_blocked, 404);
+   }
+}
 if(! function_exists('media_driver')){
    function media_driver(){
       return config('filesystems.default');
@@ -75,18 +81,5 @@ if(! function_exists('resolve_login_type')){
             : 'username';
   }
 }
-if (! function_exists('ensure_pending_two_factor_challenge')) {
-    function ensure_pending_two_factor_challenge(): ?\Illuminate\Http\RedirectResponse
-    {
-        if (session()->has('2fa:user:id')) {
-            return null;
-        }
 
-        if (auth()->check()) {
-            return back();
-        }
-
-        return redirect()->route('login');
-    }
-}
 }

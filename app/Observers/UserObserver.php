@@ -33,6 +33,10 @@ class UserObserver
     {
       // clear cache 
       app(ClearCacheService::class)->clearUserCaches();
+
+      if ($user->wasChanged('is_blocked')) {
+        app(ClearCacheService::class)->clearPublicContentCaches();
+      }
     }
     public function deleting(User $user): void
     {

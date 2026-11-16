@@ -20,6 +20,7 @@ class ClearCacheService
     Cache::forget('categories');
     
     Cache::tags(["Not-following"])->flush();
+    Cache::tags(['who_to_follow'])->flush();
     
     Cache::tags(["blog_posts_paginated"])->flush();
 
@@ -59,6 +60,29 @@ class ClearCacheService
      Cache::tags(['users_results'])->flush();
 
      Cache::tags(["post_comments"])->flush();
+     Cache::forget('home_feed_latest');
+     Cache::forget('trendingHashtag');
+
+     $this->clearSitemapCaches();
+  }
+
+  public function clearPublicContentCaches()
+  {
+     Cache::tags([
+       'blog_posts_paginated',
+       'search_posts',
+       'tag_posts_paginated',
+       'tag_posts_sliders',
+       'category_posts_paginated',
+       'category_posts_sliders',
+       'latest_blogs',
+       'more_articles',
+       'who_to_follow',
+     ])->flush();
+
+     Cache::forget('active_hashtags');
+     Cache::forget('categories');
+     Cache::forget('featuredPosts');
      Cache::forget('home_feed_latest');
      Cache::forget('trendingHashtag');
 

@@ -23,6 +23,7 @@ class ProfileController extends Controller
   public function Home(Request $request, User $user)
 {
     abort_if_user_not_activated($user);
+    abort_if_user_blocked($user);
 
     if (auth()->check()) {
         $viewer = auth()->user();
@@ -80,6 +81,7 @@ class ProfileController extends Controller
   {
 
    abort_if_user_not_activated($user);
+    abort_if_user_blocked($user);
 
     $perPage = (int) $request->get('perpage', 5);
     $page    = (int) $request->get('activity_page', 1);
@@ -102,6 +104,7 @@ class ProfileController extends Controller
 }
 public function aboutme(User $user){
   abort_if_user_not_activated($user);
+  abort_if_user_blocked($user);
   return view('profile.profile', $this->ProfileData($user, 'about'));
 }
 private function ProfileData(User $user, string $section)

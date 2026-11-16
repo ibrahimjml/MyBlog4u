@@ -6,7 +6,6 @@ use App\Enums\PostStatus;
 use App\Models\Post;
 use App\Models\PostModeration;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 
 class PostPolicy
@@ -31,22 +30,29 @@ class PostPolicy
          }
         return null; 
     }
+
     public function viewAny(User $user, Post $post): bool
     {
       return $user->hasPermission('post.viewAny');
     }
+
     public function view(?User $user, Post $post): bool
     {
-    if ($post->status === PostStatus::PUBLISHED) {
-        return true;
+       if ($post->user?->is_blocked) {
+           return false;
+       }
+   
+       if ($post->status === PostStatus::PUBLISHED) {
+           return true;
+       }
+   
+       if (!$user) {
+           return false;
+       }
+   
+       return $user->id === $post->user_id || $user->hasPermission('post.viewAny');
     }
 
-    if (!$user) {
-        return false;
-    }
-
-    return $user->id === $post->user_id || $user->hasPermission('post.viewAny');
-    }
     public function create(User $user, ?Post $post = null): bool
     {
       $rules = PostModeration::rules();
@@ -67,22 +73,27 @@ class PostPolicy
     {
       return  $user->hasPermission('post.update');
     }
+
     public function update(User $user, Post $post): bool
     {
       return $user->hasPermission('post.update') || $user->id === $post->user_id;
     }
-  public function feature(User $user, Post $post): bool
+
+    public function feature(User $user, Post $post): bool
+      {
+        return  $user->hasPermission('post.feature');
+      }
+
+    public function report(User $user, Post $post): bool
     {
-      return  $user->hasPermission('post.feature');
+      return $user->id !== $post->user_id;
     }
-  public function report(User $user, Post $post): bool
-  {
-    return $user->id !== $post->user_id;
-  }
+
     public function deleteAny(User $user, Post $post): bool
     {
       return  $user->hasPermission('post.delete');
     }
+
     public function delete(User $user, Post $post): bool
     {
       return $user->hasPermission('post.delete') || $user->id === $post->user_id;

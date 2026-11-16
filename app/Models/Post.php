@@ -109,7 +109,8 @@ class Post extends Model
   }
   public function scopePublished($query)
   {
-    return  $query->where('status', PostStatus::PUBLISHED->value);
+    return  $query->where('status', PostStatus::PUBLISHED->value)
+                  ->whereHas('user', fn ($q) => $q->where('is_blocked', false));
   }
   public function scopeDraft($query)
   {

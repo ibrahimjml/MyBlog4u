@@ -34,7 +34,7 @@ class PostCacheDecorator implements PostInterface
    public function getWhoToFollow(int $userId): Collection
    {
        $key = "who_to_follow:{$userId}";
-        return Cache::tags(["Not-following:{$userId}"])->remember($key, 1800, fn() => $this->repo->getWhoToFollow($userId));
+        return Cache::tags(['who_to_follow', "Not-following:{$userId}"])->remember($key, 1800, fn() => $this->repo->getWhoToFollow($userId));
    }
 
    public function getSavedPosts(array $ids, int $perPage = 5): \Illuminate\Contracts\Pagination\LengthAwarePaginator
@@ -45,12 +45,12 @@ class PostCacheDecorator implements PostInterface
    public function getRelatedArticles(\App\Models\Post $post)
    {
        $Key = "post:{$post->id}:more_articles";
-       return Cache::remember($Key, 1800, fn() => $this->repo->getRelatedArticles($post));
+       return Cache::tags(['more_articles'])->remember($Key, 1800, fn() => $this->repo->getRelatedArticles($post));
    }
    public function getLatestBlogs(\App\Models\Post $post)
    {
       $Key = "latest_blogs:except:{$post->id}";
-      return Cache::remember($Key, 900, fn() => $this->repo->getLatestBlogs($post));
+      return Cache::tags(['latest_blogs'])->remember($Key, 900, fn() => $this->repo->getLatestBlogs($post));
    }
    public function getLatestForHomeFeed()
    {
