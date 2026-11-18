@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\MetaHelpers;
 use App\Http\Middleware\CheckIfBlocked;
 use App\Models\Hashtag;
 use App\Repositories\Interfaces\TagInterface;
@@ -30,6 +29,7 @@ class HashtagController extends Controller
 
     $hashtag->loadCount('posts');
     $posts = $repo->getPostsByTag($hashtag,$sorts,$perPage,$page);
+    attach_author_cards($posts);
     $sliders = $repo->getSliderImages($hashtag);
     
     if ($request->ajax()) {

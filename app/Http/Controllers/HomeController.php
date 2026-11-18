@@ -30,6 +30,7 @@ class HomeController extends Controller
        'featuredPosts'   => $featuredPosts,
        'latestTrend'     => $result['latestTrend'],
        'trendingHashtag' => $result['trendingHashtag'],
+       'avatars'         => $result['avatars'],
        'moreNews'        => $news['moreNews'],
        ]);
 

@@ -1,6 +1,7 @@
 <?php
 namespace App\Repositories\Eloquent;
 
+use App\Http\Resources\UserCardResource;
 use App\Models\Category;
 use App\Models\Comment;
 use App\Models\Hashtag;
@@ -15,8 +16,16 @@ class PostRepository implements PostInterface
 {
     public function getPaginatedPosts(int $perPage, string $sort, int $page): LengthAwarePaginator
     {
-       return Post::published()
-                  ->with(['user:id,username,avatar', 'hashtags:id,name,is_featured', 'categories:id,name,is_featured'])
+       return Post::query()
+                  ->published()
+                  ->with([
+                      'user' => function ($query) {
+                          $query->select('id', 'name', 'username', 'avatar', 'bio')
+                              ->withCardCounts();
+                      },
+                      'hashtags:id,name,is_featured', 
+                      'categories:id,name,is_featured'
+                  ])
                   ->withCount('likes', 'totalcomments')
                   ->blogSort($sort)
                   ->paginate($perPage, ['*'], 'blog_page', $page)
@@ -24,7 +33,8 @@ class PostRepository implements PostInterface
     }
     public function getBySearch($dto, int $limit): Collection
     {
-        return Post::published()
+        return Post::query()
+                    ->published()
                     ->search($dto->search)
                     ->withCount(['likes', 'comments'])
                     ->with(['user:id,name,username,avatar','hashtags'])
@@ -33,7 +43,8 @@ class PostRepository implements PostInterface
     }
     public function getPopularTags(): Collection
     {
-        return  Hashtag::active()
+        return  Hashtag::query()
+                     ->active()
                      ->has('posts')
                      ->withCount('posts')
                      ->orderByDesc('is_featured')
@@ -43,7 +54,8 @@ class PostRepository implements PostInterface
 
     public function getCategories(): Collection
     {
-      return  Category::has('posts')
+      return  Category::query()
+                    ->has('posts')
                     ->withCount('posts')
                     ->orderBy('is_featured','desc')
                     ->orderByDesc('posts_count')
@@ -52,10 +64,13 @@ class PostRepository implements PostInterface
 
     public function getWhoToFollow(int $userId): Collection
     {
-       return User::activated()
+       return User::query()
+                   ->activated()
+                   ->select('id','name','username','avatar','bio')
                    ->where('is_blocked', false)
                    ->where('id', '!=', $userId)
                    ->whereNotIn('id', auth()->user()->followings()->pluck('user_id'))
+                   ->withCardCounts()
                    ->inRandomOrder()
                    ->take(5)
                    ->get();
@@ -63,10 +78,14 @@ class PostRepository implements PostInterface
 
     public function getSavedPosts(array $ids, int $perPage = 5): LengthAwarePaginator
     {
-      return Post::published()
+      return Post::query()
+                ->published()
                 ->whereIn('id', $ids)
                 ->withCount(['likes', 'comments'])
-                ->with(['user', 'hashtags'])
+                ->with([
+                    'user' => fn ($query) => $query->withCardCounts(),
+                    'hashtags',
+                ])
                 ->paginate($perPage);
     }
 
@@ -86,7 +105,8 @@ class PostRepository implements PostInterface
     }
     public function getLatestBlogs(Post $post)
     {
-      return Post::published()
+      return Post::query()
+                    ->published()
                     ->latest()
                     ->with(['user:id,name,username,avatar', 'categories:id,name', 'hashtags:id,name'])
                     ->withCount(['comments as total_comments_count' => function($query) {
@@ -98,7 +118,8 @@ class PostRepository implements PostInterface
     }
     public function getLatestForHomeFeed()
     {
-      return Post::published()
+      return Post::query()
+                    ->published()
                     ->latest()
                     ->with(['user:id,name,username,avatar', 'hashtags:id,name'])
                    ->take(3)
@@ -115,7 +136,8 @@ class PostRepository implements PostInterface
     }
     public function getFeaturedPosts()
     {
-        return Post::published()
+        return Post::query()
+                ->published()
                 ->featured()
                 ->with('hashtags:id,name')
                 ->withCount( 'totalcomments')
@@ -125,7 +147,8 @@ class PostRepository implements PostInterface
     }
     public function getTrendingTagPosts()
     {
-        $trendingHashtags = Hashtag::active()
+        $trendingHashtags = Hashtag::query()
+               ->active()
                ->has('posts')
                ->withCount('posts')
                ->orderByDesc('posts_count')
@@ -137,26 +160,38 @@ class PostRepository implements PostInterface
          $latesttrend = collect();
 
        if (!empty($trendingHashtagIds)) {
-           $latesttrend = Post::published()
-               ->with(['user', 'hashtags', 'comments'])
-               ->withCount('totalcomments')
-               ->whereHas('hashtags', function ($query) use ($trendingHashtagIds) {
-                   $query->whereIn('hashtags.id', $trendingHashtagIds);
-               })
-               // Order posts by the priority
-               ->orderByRaw('FIELD((SELECT hashtag_id FROM post_hashtag WHERE post_id = posts.id AND hashtag_id IN (' . implode(',', $trendingHashtagIds) . ') LIMIT 1), ' . implode(',', $trendingHashtagIds) . ')')
-               ->take(3)
-               ->get();
-       }
-       
+           $latesttrend = Post::query()
+                         ->published()
+                         ->with([
+                             'user' => function ($query) {
+                                 $query->select('id', 'name', 'username', 'avatar', 'bio')
+                                     ->withCardCounts();
+                             },
+                             'hashtags',
+                             'comments'
+                         ])
+                        ->withCount('totalcomments')
+                        ->whereHas('hashtags', function ($query) use ($trendingHashtagIds) {
+                            $query->whereIn('hashtags.id', $trendingHashtagIds);
+                        })
+                        // Order posts by the priority
+                        ->orderByRaw('FIELD(
+                            (SELECT hashtag_id FROM post_hashtag WHERE post_id = posts.id 
+                            AND hashtag_id IN (' . implode(',', $trendingHashtagIds) . ') LIMIT 1), ' . implode(',', $trendingHashtagIds) . ')')
+                        ->take(3)
+                        ->get();
+
+                    }
        return [
            'trendingHashtag' => $trendingHashtags->first(),
            'latestTrend' => $latesttrend,
+           'avatars' =>  UserCardResource::collection($latesttrend->pluck('user')->filter()->unique('id')->take(3)->values())->resolve()
        ];
     }
      public function getPaginatedComments(Post $post, int $page, int $perPage): LengthAwarePaginator
    {
-         $comments = Comment::withNestedReplies(3)
+         $comments = Comment::query()
+                        ->withNestedReplies(3)
                         ->addSelect(['post_user_id' => Post::select('user_id')
                         ->whereColumn('id', 'comments.post_id')
                         ->limit(1)
@@ -192,7 +227,8 @@ class PostRepository implements PostInterface
 
        $users = User::query()
            ->whereIn('id', $all->pluck('user_id')->filter()->unique()->all())
-           ->select('id', 'name', 'username', 'avatar')
+           ->select('id', 'name', 'username', 'avatar', 'bio')
+           ->withCardCounts()
            ->get()
            ->keyBy('id');
 

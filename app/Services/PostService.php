@@ -11,6 +11,7 @@ use App\DTOs\UpdatePostDTO;
 use App\Enums\PostStatus;
 use App\Events\PostCreatedEvent;
 use App\Helpers\DeleteFile;
+use App\Http\Resources\UserCardResource;
 use App\Jobs\SendPostModerationWhatsappJob;
 use App\Models\AdPlacement;
 use App\Models\Post;
@@ -43,11 +44,15 @@ class PostService
     guest_not_allowed_filter_following($sort);
 
     $postList = $this->repo->getPaginatedPosts($perPage, $sort, $page);
+    attach_author_cards($postList);
+    
     $tags = $this->repo->getPopularTags();
     $cats = $this->repo->getCategories();
     $whoToFollow = auth()->check() ? $this->repo->getWhoToFollow(auth()->id()) : collect();
+    $userCards = UserCardResource::collection($whoToFollow->keyBy('username'))->resolve();
     $latestNews = $this->news->getLatestSources();
     $inner_ads = AdPlacement::active()->where('ad_position', \App\Enums\Adplacements\AdPosition::INNER_FEED)->get();
+    
 
     if ($request->ajax()) {
       $html = view('blog.partials.posts-ajax', [
@@ -64,6 +69,7 @@ class PostService
       'tags' => $tags,
       'categories' => $cats,
       'users' => $whoToFollow,
+      'userCards' => $userCards,
       'posts' => $postList,
       'news' => $latestNews,
       'sorts' => $sort,
@@ -77,6 +83,7 @@ class PostService
     $getposts = session('saved-to', []);
     $perpage = 5;
     $posts = $this->repo->getSavedPosts($getposts, $perpage);
+    attach_author_cards($posts);
 
     return view('getsavedposts', [
       'posts' => $posts,

@@ -9,6 +9,7 @@ export default defineConfig({
               'resources/js/prism.js',
               'resources/js/tinymce.js',
               'resources/js/medium-zoom.js',
+              'resources/js/profile-card.js',
               'resources/css/custom/auth-animate.css'
               ],
       refresh: true,

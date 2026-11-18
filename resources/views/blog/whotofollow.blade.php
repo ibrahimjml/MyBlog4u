@@ -1,3 +1,7 @@
+@php
+  $userCardsByUsername = collect($userCards);
+@endphp
+
 <section class="rounded-2xl border border-border bg-card p-6">
   <h3 class="font-display text-lg font-semibold text-foreground">Who to Follow</h3>
   <div class="mt-2 h-0.5 w-10 bg-primary"></div>
@@ -5,8 +9,10 @@
   @auth
     <div class="mt-4 flex flex-col gap-1">
       @foreach($users as $user)
+        @php $card = $userCardsByUsername->get($user->username); @endphp
         <div class="flex items-center gap-3 rounded-lg px-2 py-2 transition-colors hover:bg-secondary">
-          <a href="{{ route('profile.home', $user->username) }}" class="flex min-w-0 flex-1 items-center gap-3">
+          <a href="{{ route('profile.home', $user->username) }}" class="flex min-w-0 flex-1 items-center gap-3"
+            @if($card) data-slot="hover-card-trigger" data-avatar="{{ json_encode($card) }}" @endif>
             <img src="{{ $user->avatar_url }}" alt="{{ $user->name }} profile"
               class="h-8 w-8 shrink-0 rounded-full object-cover">
             <div class="flex min-w-0 flex-col">

@@ -23,6 +23,7 @@ class ViewPostService
         $post->latestblogs = $this->repo->getLatestBlogs($post);
         $post->viewwholiked = $this->repo->getPostLikes($post);
         $post->comments = $this->repo->getPaginatedComments($post,$page,$perpage);
+        attach_author_cards($post->comments);
         $post->reasons = $this->getReportReasons();
         
 

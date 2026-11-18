@@ -2,7 +2,9 @@
 
 namespace App\Repositories\Caches;
 
+use App\Models\Post;
 use App\Repositories\Interfaces\PostInterface;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 
@@ -10,7 +12,7 @@ class PostCacheDecorator implements PostInterface
 {
    public function __construct(private PostInterface $repo){}
 
-   public function getPaginatedPosts(int $perPage, string $sort, int $page): \Illuminate\Contracts\Pagination\LengthAwarePaginator
+   public function getPaginatedPosts(int $perPage, string $sort, int $page): LengthAwarePaginator
    {
       $key = "blog_posts:page:{$page}:perpage:{$perPage}:sort:{$sort}";
         return Cache::tags(["blog_posts_paginated"])->remember($key, 1800, fn() => $this->repo->getPaginatedPosts($perPage, $sort, $page));
@@ -37,17 +39,17 @@ class PostCacheDecorator implements PostInterface
         return Cache::tags(['who_to_follow', "Not-following:{$userId}"])->remember($key, 1800, fn() => $this->repo->getWhoToFollow($userId));
    }
 
-   public function getSavedPosts(array $ids, int $perPage = 5): \Illuminate\Contracts\Pagination\LengthAwarePaginator
+   public function getSavedPosts(array $ids, int $perPage = 5): LengthAwarePaginator
    {
     return $this->repo->getSavedPosts($ids, $perPage);
    }
   
-   public function getRelatedArticles(\App\Models\Post $post)
+   public function getRelatedArticles(Post $post)
    {
        $Key = "post:{$post->id}:more_articles";
        return Cache::tags(['more_articles'])->remember($Key, 1800, fn() => $this->repo->getRelatedArticles($post));
    }
-   public function getLatestBlogs(\App\Models\Post $post)
+   public function getLatestBlogs(Post $post)
    {
       $Key = "latest_blogs:except:{$post->id}";
       return Cache::tags(['latest_blogs'])->remember($Key, 900, fn() => $this->repo->getLatestBlogs($post));
@@ -57,7 +59,7 @@ class PostCacheDecorator implements PostInterface
       $Key = "home_feed_latest";
       return Cache::remember($Key, 1600, fn() => $this->repo->getLatestForHomeFeed());
    }
-   public function getPostLikes(\App\Models\Post $post)
+   public function getPostLikes(Post $post)
    {
      return $this->repo->getPostLikes($post);
    }
@@ -69,7 +71,7 @@ class PostCacheDecorator implements PostInterface
    {
      return Cache::remember('trendingHashtag', now()->endOfDay(), fn() => $this->repo->getTrendingTagPosts());
    }
-    public function getPaginatedComments(\App\Models\Post $post, int $page, int $perPage): \Illuminate\Contracts\Pagination\LengthAwarePaginator
+    public function getPaginatedComments(Post $post, int $page, int $perPage): LengthAwarePaginator
    {
        $Key = "post:{$post->id}:comments:page:{$page}:perpage:{$perPage}";
         return  Cache::tags(["post_comments", "post:{$post->id}:comments"])->remember($Key, 1300, fn() => $this->repo->getPaginatedComments($post,$page,$perPage));

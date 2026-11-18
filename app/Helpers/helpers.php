@@ -63,6 +63,30 @@ if(! function_exists('guest_not_allowed_filter_following')){
    }
 }
 
+if(! function_exists('attach_author_cards')){
+  function attach_author_cards(mixed $items): void
+  {
+    $items = $items instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator
+      ? $items->getCollection()
+      : collect($items);
+
+    $attach = function ($items) use (&$attach): void {
+      foreach ($items as $item) {
+        if (! isset($item->author_card)) {
+            $item->setAttribute('author_card', $item->user
+              ? \App\Http\Resources\UserCardResource::make($item->user)->resolve()
+              : null);
+         }
+        if ($item->relationLoaded('replies') && $item->replies->isNotEmpty()) {
+          $attach($item->replies);
+        }
+      }
+    };
+
+    $attach($items);
+  }
+}
+
 if(! function_exists('infinite_scroll_response')){
   function infinite_scroll_response(string $html, \Illuminate\Contracts\Pagination\LengthAwarePaginator $posts, ?array $extra = []): \Illuminate\Http\JsonResponse
 {

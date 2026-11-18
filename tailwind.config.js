@@ -51,6 +51,15 @@ export default {
       boxShadow: {
         glow: '0 10px 30px -10px oklch(var(--primary) / 0.55)',
       },
+      keyframes: {
+          pop: {
+                '0%':   { opacity: '0', transform: 'scale(0.92) translateY(4px)' },
+                '100%': { opacity: '1', transform: 'scale(1) translateY(0)' },
+            },
+          },
+         animation: {
+             pop: 'pop 150ms ease-out',
+         },
     },
   },
   plugins: [

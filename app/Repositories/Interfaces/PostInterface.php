@@ -8,7 +8,7 @@ use App\Models\Post;
 
 interface PostInterface
 {
-    public function getPaginatedPosts(int $perPage, string $sort, int $page): LengthAwarePaginator;
+    public function getPaginatedPosts(int $perPage, string $sort, int $page):  LengthAwarePaginator;
     
     public function getBySearch(PostFilterDTO $dto, int $limit): Collection;
     public function getPopularTags() : Collection;

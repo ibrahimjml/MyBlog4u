@@ -7,6 +7,7 @@ use App\Enums\FollowerStatus;
 use App\Notifications\VerifyEmailQueued;
 use App\Traits\HasPermissionsTrait;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -85,6 +86,19 @@ class User extends Authenticatable implements MustVerifyEmail
         return $query->whereHas('posts', function ($query): void {
             $query->published();
         });
+    }
+
+    public function scopeWithCardCounts(Builder $query): Builder
+    {
+        return $query->withCount([
+                   'followers',
+                   'followings',
+                   'posts as published_posts_count' => fn ($q) => $q->published(),
+                  ])
+             ->withSum([
+                   'posts as posts_likes_count' => fn ($q) => $q->published()],
+                   'likes_count'
+               );
     }
 
     public function twoFactorTrustedDevices(): HasMany

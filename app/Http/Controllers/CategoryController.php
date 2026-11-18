@@ -24,6 +24,7 @@ class CategoryController extends Controller
 
     $category->loadCount('posts');
     $posts = $this->repo->getPostsByCategory($category, $sorts, $perPage, $page);
+    attach_author_cards($posts);
     $sliders = $this->repo->getSliderImages($category);
 
     if ($request->ajax()) {

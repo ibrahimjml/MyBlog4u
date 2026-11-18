@@ -20,7 +20,12 @@ class CategoryRepository implements CategoryInterface
     public function getPostsByCategory(Category $category, $sorts, $perpage, $page): LengthAwarePaginator
     {
       return $category->posts()
-                      ->with(['user:id,username,avatar','categories:id,name'])
+                      ->with([
+                          'user' => fn ($query) => $query
+                              ->select('id', 'name', 'username', 'avatar', 'bio')
+                              ->withCardCounts(),
+                          'categories:id,name',
+                      ])
                       ->withCount(['totalcomments','likes'])
                       ->blogSort($sorts)
                       ->orderBy('created_at','desc')

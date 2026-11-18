@@ -20,7 +20,13 @@ class TagRepository implements TagInterface
     public function getPostsByTag(Hashtag $hashtag, $sorts, $perpage, $page): LengthAwarePaginator
     {
       return $hashtag->posts()
-                     ->with(['user:id,username,avatar','hashtags:id,name,is_featured','categories:id,name,is_featured'])
+                     ->with([
+                         'user' => fn ($query) => $query
+                             ->select('id', 'name', 'username', 'avatar', 'bio')
+                             ->withCardCounts(),
+                         'hashtags:id,name,is_featured',
+                         'categories:id,name,is_featured',
+                     ])
                      ->withCount(['totalcomments','likes'])
                      ->blogSort($sorts)
                      ->orderBy('created_at','desc')

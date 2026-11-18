@@ -25,6 +25,7 @@ class CommentController extends Controller
     $page = request()->get('comments_page', 1);
     $perpage = request()->get('perpage', 5);
     $comments = $repo->getPaginatedComments($post, $page, $perpage);
+    attach_author_cards($comments);
     
     if (request()->ajax()) {
         $html = view('comments.comments', ['comments' => $comments])->render();

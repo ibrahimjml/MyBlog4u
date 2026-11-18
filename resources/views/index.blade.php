@@ -5,8 +5,15 @@
     $newsItems = $moreNews->isNotEmpty() ? $moreNews : [];
     $featuredTag = $featured_one?->hashtags->first();
     $stats = [
-        ['value' => '# ' . $trendingHashtag->name, 'label' => 'Trending'],
-        ['value' => $trendingHashtag->posts_count, 'label' => 'Articles']
+        [
+          'value' => '# ' . $trendingHashtag->name, 
+          'label' => 'Trending'
+        ],
+        [
+          'value' => '',
+          'avatars' => $avatars,
+          'label' => $trendingHashtag->posts_count . ' ' . Str::plural('Article', $trendingHashtag->posts_count)
+         ]
     ];
 @endphp
 
@@ -188,6 +195,15 @@
         @foreach($stats as $stat)
           <div>
             <p class="font-display text-3xl font-bold">{{ $stat['value'] }}</p>
+             @if(!empty($stat['avatars']))
+               <span class="flex -space-x-1.5 mb-2">
+                 @foreach($stat['avatars'] as $avatar)
+                    <a href="{{$avatar['url']}}" data-slot="hover-card-trigger"  data-avatar="{{ json_encode($avatar) }}">
+                      <img src="{{$avatar['avatar_url']}}" class="h-8 w-8 rounded-full object-cover ring-2 ring-background">
+                    </a>                  
+                  @endforeach
+               </span>
+             @endif
             <p class="mt-1 font-mono text-[11px] text-accent-foreground/70">{{ $stat['label'] }}</p>
           </div>
         @endforeach
@@ -195,6 +211,9 @@
     </section>
 
   </div>
+  @push('vite')
+    @vite('resources/js/profile-card.js')
+  @endpush
 
   @push('scripts')
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />

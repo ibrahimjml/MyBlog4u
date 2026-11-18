@@ -1,6 +1,6 @@
 <x-layout>
   @push('vite')
-    @vite(['resources/js/prism.js', 'resources/js/medium-zoom.js'])
+    @vite(['resources/js/prism.js', 'resources/js/medium-zoom.js', 'resources/js/profile-card.js'])
   @endpush
 
   <x-status-banner :post="$post"/> <!-- status banner 'pending|draft'-->

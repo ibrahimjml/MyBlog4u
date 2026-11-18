@@ -31,6 +31,7 @@ class ClearCacheService
     Cache::forget("latest_blogs:except:{$post->id}");
 
     Cache::forget("home_feed_latest");
+    Cache::forget('trendingHashtag');
     
     Cache::tags(["search_posts"])->flush();
 

@@ -1,9 +1,10 @@
 @php
   $isAuthor = $reply->user_id === $reply->post_user_id;
+  $authorCard = $reply->author_card ?? null;
 @endphp
 
 <div class="flex items-start gap-3 pr-9">
-  <a href="{{ route('profile.home', $reply->user->username) }}" class="shrink-0">
+  <a href="{{ route('profile.home', $reply->user->username) }}" class="shrink-0" data-slot="hover-card-trigger" data-avatar="{{ json_encode($authorCard) }}">
     <img src="{{ $reply->user->avatar_url }}" alt="{{ $reply->user->name }}"
       class="h-7 w-7 rounded-full object-cover" loading="lazy">
   </a>

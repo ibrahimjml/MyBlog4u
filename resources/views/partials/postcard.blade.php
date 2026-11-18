@@ -1,5 +1,6 @@
 @php
   $isSaved = in_array($post->id, session('saved-to', []));
+  $authorCard = $post->author_card ?? null;
 @endphp
 
 <article
@@ -28,7 +29,8 @@
     {{-- Author + follow + save --}}
     <div class="flex items-start justify-between gap-3">
       <div class="flex min-w-0 items-center gap-3">
-        <a href="{{ route('profile.home', $post->user->username) }}" class="shrink-0">
+        <a href="{{ route('profile.home', $post->user->username) }}" class="shrink-0"
+          @if($authorCard) data-slot="hover-card-trigger" data-avatar="{{ json_encode($authorCard) }}" @endif>
           <img src="{{ $post->user->avatar_url }}" alt="{{ $post->user->name }}"
             class="h-8 w-8 rounded-full border border-border object-cover">
         </a>
@@ -141,6 +143,10 @@
 </article>
 
 @once
+  @push('vite')
+    @vite('resources/js/profile-card.js')
+  @endpush
+
   @push('scripts')
     <script src="{{ asset('js/savepost.js') }}"></script>
   @endpush

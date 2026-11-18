@@ -1,9 +1,11 @@
 @php
   $isAuthor = $comment->user_id === $comment->post_user_id;
+  $authorCard = $comment->author_card ?? null;
 @endphp
 
 <div class="flex items-start gap-3 pr-9">
-  <a href="{{ route('profile.home', $comment->user->username) }}" class="shrink-0">
+  <a href="{{ route('profile.home', $comment->user->username) }}" class="shrink-0"
+    @if($authorCard) data-slot="hover-card-trigger" data-avatar="{{ json_encode($authorCard) }}" @endif>
     <img src="{{ $comment->user->avatar_url }}" alt="{{ $comment->user->name }}"
       class="h-8 w-8 rounded-full object-cover" loading="lazy">
   </a>
