@@ -1,6 +1,7 @@
 <?php
 namespace App\Repositories\Eloquent;
 
+use App\DTOs\BlogFilterDTO;
 use App\Http\Resources\UserCardResource;
 use App\Models\Category;
 use App\Models\Comment;
@@ -8,13 +9,14 @@ use App\Models\Hashtag;
 use App\Models\Post;
 use App\Models\User;
 use App\Repositories\Interfaces\PostInterface;
+use DateTimeInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 
 
 class PostRepository implements PostInterface
 {
-    public function getPaginatedPosts(int $perPage, string $sort, int $page): LengthAwarePaginator
+    public function getPaginatedPosts(int $perPage, BlogFilterDTO $filter, int $page): LengthAwarePaginator
     {
        return Post::query()
                   ->published()
@@ -27,9 +29,9 @@ class PostRepository implements PostInterface
                       'categories:id,name,is_featured'
                   ])
                   ->withCount('likes', 'totalcomments')
-                  ->blogSort($sort)
+                  ->blogFilter($filter)
                   ->paginate($perPage, ['*'], 'blog_page', $page)
-                  ->withQueryString();
+                  ->appends($filter->query());
     }
     public function getBySearch($dto, int $limit): Collection
     {
@@ -145,48 +147,96 @@ class PostRepository implements PostInterface
                 ->take(7)
                 ->get();
     }
-    public function getTrendingTagPosts()
+    public function getMostTrendingTagFor(?DateTimeInterface $from = null): ?Hashtag
     {
-        $trendingHashtags = Hashtag::query()
-               ->active()
-               ->has('posts')
-               ->withCount('posts')
-               ->orderByDesc('posts_count')
-               ->take(5) 
-               ->get();
+        return Hashtag::query()
+            ->trending($from)
+            ->first();
+    }
 
-         $trendingHashtagIds = $trendingHashtags->pluck('id')->toArray();
+    public function getMostTrendingTag(?int $postsLimit = 3): array
+    {
+        $trendingTag = $this->getMostTrendingTagFor();
 
-         $latesttrend = collect();
+        if (! $trendingTag) {
+            return ['tag' => null, 'posts' => collect(), 'avatars' => []];
+        }
 
-       if (!empty($trendingHashtagIds)) {
-           $latesttrend = Post::query()
-                         ->published()
-                         ->with([
-                             'user' => function ($query) {
-                                 $query->select('id', 'name', 'username', 'avatar', 'bio')
-                                     ->withCardCounts();
-                             },
-                             'hashtags',
-                             'comments'
-                         ])
-                        ->withCount('totalcomments')
-                        ->whereHas('hashtags', function ($query) use ($trendingHashtagIds) {
-                            $query->whereIn('hashtags.id', $trendingHashtagIds);
-                        })
-                        // Order posts by the priority
-                        ->orderByRaw('FIELD(
-                            (SELECT hashtag_id FROM post_hashtag WHERE post_id = posts.id 
-                            AND hashtag_id IN (' . implode(',', $trendingHashtagIds) . ') LIMIT 1), ' . implode(',', $trendingHashtagIds) . ')')
-                        ->take(3)
-                        ->get();
+        $posts = Post::query()
+            ->published()
+            ->trendingHashtag($trendingTag->id)
+            ->with([
+                'user' => function ($query) {
+                    $query->select('id', 'name', 'username', 'avatar', 'bio')
+                        ->withCardCounts();
+                },
+                'hashtags',
+            ])
+            ->withCount('totalcomments')
+            ->latest()
+            ->when($postsLimit !== null, fn ($query) => $query->limit($postsLimit))
+            ->get()
+            ->each(function ($post) use ($trendingTag) {
+                $post->setRelation('hashtags', $post->hashtags
+                    ->sortByDesc(fn ($hashtag) => $hashtag->id === $trendingTag->id)
+                    ->values());
+            });
 
-                    }
-       return [
-           'trendingHashtag' => $trendingHashtags->first(),
-           'latestTrend' => $latesttrend,
-           'avatars' =>  UserCardResource::collection($latesttrend->pluck('user')->filter()->unique('id')->take(3)->values())->resolve()
-       ];
+        return [
+            'tag' => $trendingTag,
+            'posts' => $posts,
+            'avatars' => UserCardResource::collection(
+                $posts->pluck('user')->filter()->unique('id')->take(3)->values()
+            )->resolve(),
+        ];
+    }
+
+    public function getTrendingTagsAllTime(?array $excludeTagIds, int $limit): Collection
+    {
+        $excludeTagIds = array_values(array_filter($excludeTagIds ?? []));
+
+        $tags = Hashtag::query()
+            ->trending()
+            ->when($excludeTagIds, fn ($query, $ids) => $query->whereNotIn('hashtags.id', $ids))
+            ->take($limit)
+            ->get();
+
+        if ($tags->isEmpty()) {
+            return $tags;
+        }
+
+        $tagIds = $tags->pluck('id');
+
+        $posts = Post::query()
+            ->published()
+            ->whereHas('hashtags', fn ($query) => $query->whereIn('hashtags.id', $tagIds))
+            ->when($excludeTagIds, fn ($query, $ids) => $query->whereDoesntHave(
+                'hashtags',
+                fn ($query) => $query->whereIn('hashtags.id', $ids)
+            ))
+            ->with([
+                'user' => fn ($query) => $query
+                    ->select('id', 'name', 'username', 'avatar', 'bio')
+                    ->withCardCounts(),
+                'hashtags:id,name',
+            ])
+            ->latest()
+            ->get()
+            ->filter(fn ($post) => $post->user !== null);
+
+        $cardsByTag = $posts
+            ->flatMap(fn ($post) => $post->hashtags
+                ->filter(fn ($hashtag) => $tagIds->contains($hashtag->id))
+                ->map(fn ($hashtag) => [
+                    $hashtag->id,
+                    UserCardResource::make($post->user)->resolve(),
+                ]))
+            ->groupBy(fn ($pair) => $pair[0])
+            ->map(fn ($pairs) => $pairs->pluck(1)->unique('username')->take(3)->values());
+
+        $tags->each(fn ($tag) => $tag->setRelation('authorCards', $cardsByTag->get($tag->id, collect())));
+
+        return $tags;
     }
      public function getPaginatedComments(Post $post, int $page, int $perPage): LengthAwarePaginator
    {

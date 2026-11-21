@@ -16,6 +16,10 @@
       @include('blog.popular-tags')
       @include('blog.categories')
       @include('blog.latest-news')
+      @include('blog.trending-tags-this-week',[
+         'isSidebar' => true,
+         'headingLabel' => 'Trending Tags All Time'
+        ])
       @include('blog.whotofollow')
     </div>
   </div>

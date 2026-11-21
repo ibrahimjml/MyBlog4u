@@ -10,6 +10,7 @@ export default defineConfig({
               'resources/js/tinymce.js',
               'resources/js/medium-zoom.js',
               'resources/js/profile-card.js',
+              'resources/js/blog-filter.js',
               'resources/css/custom/auth-animate.css'
               ],
       refresh: true,

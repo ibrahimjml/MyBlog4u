@@ -3,14 +3,6 @@ window.addEventListener('DOMContentLoaded', () => {
     let activeTrigger = null;
     let hideTimer = null;
 
-    // const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({
-    //     '&': '&amp;',
-    //     '<': '&lt;',
-    //     '>': '&gt;',
-    //     '"': '&quot;',
-    //     "'": '&#039;',
-    // }[char]));
-
     const formatCount = (value) => Number(value ?? 0).toLocaleString();
 
     const removeCard = () => {

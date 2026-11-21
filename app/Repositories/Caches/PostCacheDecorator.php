@@ -2,8 +2,12 @@
 
 namespace App\Repositories\Caches;
 
+use App\DTOs\BlogFilterDTO;
+use App\Enums\Blog\BlogTab;
+use App\Models\Hashtag;
 use App\Models\Post;
 use App\Repositories\Interfaces\PostInterface;
+use DateTimeInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
@@ -12,10 +16,13 @@ class PostCacheDecorator implements PostInterface
 {
    public function __construct(private PostInterface $repo){}
 
-   public function getPaginatedPosts(int $perPage, string $sort, int $page): LengthAwarePaginator
+   public function getPaginatedPosts(int $perPage, BlogFilterDTO $filter, int $page): LengthAwarePaginator
    {
-      $key = "blog_posts:page:{$page}:perpage:{$perPage}:sort:{$sort}";
-        return Cache::tags(["blog_posts_paginated"])->remember($key, 1800, fn() => $this->repo->getPaginatedPosts($perPage, $sort, $page));
+      $viewer = $filter->tab === BlogTab::FOLLOWING
+         ? 'user:' . (auth()->id() ?? 'guest')
+         : 'public';
+      $key = "blog_posts:page:{$page}:perpage:{$perPage}:viewer:{$viewer}:{$filter->cacheKey()}";
+        return Cache::tags(["blog_posts_paginated"])->remember($key, 1800, fn() => $this->repo->getPaginatedPosts($perPage, $filter, $page));
    }
    
    public function getBySearch($dto, int $limit): Collection
@@ -67,10 +74,27 @@ class PostCacheDecorator implements PostInterface
    {
        return Cache::remember('featuredPosts', now()->addDay(),fn() => $this->repo->getFeaturedPosts());
    }
-   public function getTrendingTagPosts()
+   public function getMostTrendingTag(?int $postsLimit = 3): array
    {
-     return Cache::remember('trendingHashtag', now()->endOfDay(), fn() => $this->repo->getTrendingTagPosts());
+      $key = 'trending_tag:limit:' . ($postsLimit ?? 'all');
+      return Cache::tags(['trending_tags'])->remember($key, now()->endOfDay(), fn() => $this->repo->getMostTrendingTag($postsLimit));
    }
+
+   public function getMostTrendingTagFor(?DateTimeInterface $from = null): ?Hashtag
+   {
+      $key = 'trending_tag:most:' . ($from?->format('Y-m-d H:i:s') ?? 'all-time');
+      return Cache::tags(['trending_tags'])->remember($key, now()->endOfDay(), fn() => $this->repo->getMostTrendingTagFor($from));
+   }
+
+   public function getTrendingTagsAllTime(?array $excludeTagIds, int $limit): Collection
+   {
+      $excludeTagIds = array_values(array_filter($excludeTagIds ?? []));
+      sort($excludeTagIds);
+
+      $key = sprintf('trending_tags_all_time:%d:%s', $limit, md5(implode(',', $excludeTagIds)));
+      return Cache::tags(['trending_tags'])->remember($key, now()->endOfDay(), fn() => $this->repo->getTrendingTagsAllTime($excludeTagIds ?: null, $limit));
+   }
+
     public function getPaginatedComments(Post $post, int $page, int $perPage): LengthAwarePaginator
    {
        $Key = "post:{$post->id}:comments:page:{$page}:perpage:{$perPage}";

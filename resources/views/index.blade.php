@@ -4,17 +4,6 @@
 
     $newsItems = $moreNews->isNotEmpty() ? $moreNews : [];
     $featuredTag = $featured_one?->hashtags->first();
-    $stats = [
-        [
-          'value' => '# ' . $trendingHashtag->name, 
-          'label' => 'Trending'
-        ],
-        [
-          'value' => '',
-          'avatars' => $avatars,
-          'label' => $trendingHashtag->posts_count . ' ' . Str::plural('Article', $trendingHashtag->posts_count)
-         ]
-    ];
 @endphp
 
 <x-layout>
@@ -169,48 +158,51 @@
       @endif
     </section>
     {{-- Trending hashtag --}}
-    @if($trendingHashtag && $latestTrend->isNotEmpty())
+    @if($trendingTag && $trendingPosts->isNotEmpty())
       <section class="pb-12 md:pb-16" aria-labelledby="trending-title">
-        <div class="flex items-end justify-between border-b border-border pb-3">
-          <h2 id="trending-title" class="font-display text-2xl font-semibold">
-            Trending <span class="text-primary">#{{ $trendingHashtag->name }}</span>
-          </h2>
-          <a href="{{ route('viewhashtag', $trendingHashtag->name) }}"
-            class="font-mono text-xs text-primary transition-opacity hover:opacity-80">
+        <div class="flex items-end justify-between gap-4 border-b border-border pb-3">
+          <div class="flex min-w-0 items-center gap-3">
+            <h2 id="trending-title" class="truncate font-display text-2xl font-semibold">
+              Trending Tag <span class="text-primary">#{{ $trendingTag->name }}</span>
+            </h2>
+
+            @if(!empty($trendingAvatars))
+              <span class="hidden shrink-0 -space-x-1.5 sm:flex">
+                @foreach($trendingAvatars as $avatar)
+                  <a href="{{ $avatar['url'] }}" data-slot="hover-card-trigger" data-avatar="{{ json_encode($avatar) }}">
+                    <img src="{{ $avatar['avatar_url'] }}" alt="{{ $avatar['name'] }}"
+                      class="h-7 w-7 rounded-full object-cover ring-2 ring-background">
+                  </a>
+                @endforeach
+              </span>
+            @endif
+          </div>
+
+          <a href="{{ route('viewhashtag', $trendingTag->name) }}"
+            class="shrink-0 font-mono text-xs text-primary transition-opacity hover:opacity-80">
             view all &rarr;
           </a>
         </div>
 
         <div class="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          @foreach($latestTrend as $post)
+          @foreach($trendingPosts as $post)
             <x-article-card :post="$post" :show-author="true" />
           @endforeach
         </div>
       </section>
     @endif
 
-    {{-- Stats --}}
-    <section class="pb-16" aria-label="Trend statistics">
-      <div class="grid grid-cols-2 gap-6 rounded-2xl bg-accent p-8 text-accent-foreground">
-        @foreach($stats as $stat)
-          <div>
-            <p class="font-display text-3xl font-bold">{{ $stat['value'] }}</p>
-             @if(!empty($stat['avatars']))
-               <span class="flex -space-x-1.5 mb-2">
-                 @foreach($stat['avatars'] as $avatar)
-                    <a href="{{$avatar['url']}}" data-slot="hover-card-trigger"  data-avatar="{{ json_encode($avatar) }}">
-                      <img src="{{$avatar['avatar_url']}}" class="h-8 w-8 rounded-full object-cover ring-2 ring-background">
-                    </a>                  
-                  @endforeach
-               </span>
-             @endif
-            <p class="mt-1 font-mono text-[11px] text-accent-foreground/70">{{ $stat['label'] }}</p>
-          </div>
-        @endforeach
-      </div>
-    </section>
+    {{-- Trending tags all time --}}
+    <div class="pb-16">
+      @include('blog.trending-tags-this-week', [
+          'trendingTags' => $relatedTrendTags,
+          'isHomeFeed' => true,
+          'headingLabel' => 'More Trending Tags'
+        ])
+    </div>
 
   </div>
+
   @push('vite')
     @vite('resources/js/profile-card.js')
   @endpush

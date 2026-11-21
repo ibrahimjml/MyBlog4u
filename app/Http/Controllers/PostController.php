@@ -6,7 +6,7 @@ namespace App\Http\Controllers;
 use App\Actions\CreatePostViewAction;
 use App\DTOs\{CreatePostDTO, UpdatePostDTO};
 use App\Http\Middleware\CheckIfBlocked;
-use App\Http\Requests\App\{CreatePostRequest, UpdatePostRequest};
+use App\Http\Requests\App\{CreatePostRequest, FilterRequest, UpdatePostRequest};
 use App\Models\{AdPlacement, Category, Hashtag, Post};
 use App\Services\{ImageGenerator\ImageGenerator, PostService, SearchService, ViewPostService};
 use Illuminate\Http\Request;
@@ -27,7 +27,7 @@ class PostController extends Controller
     $this->middleware('password.confirm')->only(['editpost', 'delete','update']);
   }
 
-  public function blogpost(Request $request)
+  public function blogpost(FilterRequest $request)
   {
      return $this->service->handleBlogPage($request);
   }

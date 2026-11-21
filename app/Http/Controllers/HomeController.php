@@ -15,23 +15,27 @@ class HomeController extends Controller
   {
     $featuredPosts = $repo->getFeaturedPosts();
     $news = $news->getAllNewsWithSources();
-    $result = $repo->getTrendingTagPosts();
+    $trending = $repo->getMostTrendingTag(3);
+    $relatedTrendTags = $repo->getTrendingTagsAllTime(
+        array_filter([$trending['tag']?->id]), 4
+    );
     $latestPosts = $repo->getLatestForHomeFeed();
-    
-
-  return view('index', [
-      'slides' => Cache::rememberForever('slides_home_page', function () {
+    $slides = Cache::rememberForever('slides_home_page', function () {
                     return Slide::published()
                              ->latest()
                              ->get()
                              ->take(4);
-                    }),
-       'latest_posts'    => $latestPosts,
-       'featuredPosts'   => $featuredPosts,
-       'latestTrend'     => $result['latestTrend'],
-       'trendingHashtag' => $result['trendingHashtag'],
-       'avatars'         => $result['avatars'],
-       'moreNews'        => $news['moreNews'],
+                    });
+
+  return view('index', [
+       'slides'            => $slides,
+       'latest_posts'      => $latestPosts,
+       'featuredPosts'     => $featuredPosts,
+       'trendingTag'       => $trending['tag'],
+       'trendingPosts'     => $trending['posts'],
+       'trendingAvatars'   => $trending['avatars'],
+       'relatedTrendTags'  => $relatedTrendTags,
+       'moreNews'          => $news['moreNews'],
        ]);
 
   }

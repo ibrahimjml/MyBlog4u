@@ -32,14 +32,17 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!container || !action) return;
 
     const route = @js($route);
+    const pageName = @js($pageName);
 
     let currentPage = @js($currentPage);
     let hasMore = @js($hasMore);
     let isLoading = false;
+    let isPaused = false;
+    let requestController = null;
 
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
-            if (entry.isIntersecting && !isLoading && hasMore) {
+            if (entry.isIntersecting && !isLoading && !isPaused && hasMore) {
                 loadMorePosts();
             }
         });
@@ -50,11 +53,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     observer.observe(action);
 
+    const applyState = (page, more) => {
+        currentPage = page;
+        hasMore = more;
+
+        if (hasMore) {
+            reachEnd.classList.add('hidden');
+            observer.observe(action);
+        } else {
+            observer.disconnect();
+            reachEnd.classList.remove('hidden');
+        }
+    };
+
     async function loadMorePosts() {
 
-        if (isLoading || !hasMore) return;
+        if (isLoading || isPaused || !hasMore) return;
 
         isLoading = true;
+        requestController = new AbortController();
 
         loadingSpinner.classList.remove('hidden');
         reachEnd.classList.add('hidden');
@@ -62,9 +79,10 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
 
             const params = new URLSearchParams(window.location.search);
-            params.set(@js($pageName), currentPage + 1);
+            params.set(pageName, currentPage + 1);
 
             const response = await fetch(`${route}?${params.toString()}`, {
+                signal: requestController.signal,
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest',
                     'Accept': 'application/json',
@@ -79,21 +97,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
             container.insertAdjacentHTML('beforeend', data.html);
 
-            currentPage = data.currentPage;
-            hasMore = data.hasMore;
-
-            if (!hasMore) {
-                observer.disconnect();
-                reachEnd.classList.remove('hidden');
-            }
+            applyState(data.currentPage, data.hasMore);
 
         } catch (error) {
-            console.error(error);
+            if (error.name !== 'AbortError') {
+                console.error(error);
+            }
         } finally {
             isLoading = false;
             loadingSpinner.classList.add('hidden');
         }
     }
+
+    document.addEventListener('infinite-scroll:pause', () => {
+        isPaused = true;
+        requestController?.abort();
+        loadingSpinner.classList.add('hidden');
+    });
+
+    document.addEventListener('infinite-scroll:reset', (event) => {
+        isPaused = false;
+        isLoading = false;
+        loadingSpinner.classList.add('hidden');
+        applyState(event.detail?.currentPage ?? 1, event.detail?.hasMore ?? false);
+    });
 
 });
 </script>

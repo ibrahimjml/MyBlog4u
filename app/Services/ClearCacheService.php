@@ -31,7 +31,7 @@ class ClearCacheService
     Cache::forget("latest_blogs:except:{$post->id}");
 
     Cache::forget("home_feed_latest");
-    Cache::forget('trendingHashtag');
+    Cache::tags(['trending_tags'])->flush();
     
     Cache::tags(["search_posts"])->flush();
 
@@ -46,6 +46,7 @@ class ClearCacheService
   {
     $this->clearSitemapCaches();
     Cache::tags(["tag_posts_paginated",'tags_results',"tag_posts_sliders"])->flush();
+    Cache::tags(['trending_tags'])->flush();
     Cache::forget('active_hashtags');
   }
 
@@ -62,7 +63,7 @@ class ClearCacheService
 
      Cache::tags(["post_comments"])->flush();
      Cache::forget('home_feed_latest');
-     Cache::forget('trendingHashtag');
+     Cache::tags(['trending_tags'])->flush();
 
      $this->clearSitemapCaches();
   }
@@ -79,13 +80,13 @@ class ClearCacheService
        'latest_blogs',
        'more_articles',
        'who_to_follow',
+       'trending_tags',
      ])->flush();
 
      Cache::forget('active_hashtags');
      Cache::forget('categories');
      Cache::forget('featuredPosts');
      Cache::forget('home_feed_latest');
-     Cache::forget('trendingHashtag');
 
      $this->clearSitemapCaches();
   }

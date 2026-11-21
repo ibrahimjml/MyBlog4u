@@ -2,8 +2,13 @@
 
 namespace App\Builders;
 
+use App\DTOs\BlogFilterDTO;
+use App\Enums\Blog\BlogSort;
+use App\Enums\Blog\BlogTab;
 use App\Enums\PostStatus;
 use App\Models\Hashtag;
+use Carbon\CarbonInterface;
+use DateTimeInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Fluent;
 
@@ -25,42 +30,90 @@ class PostBuilder extends Builder
                   });
         });
     }
-    // blog sort
+    // hashtags | categories sort
     public function blogSort(string $sort): self
     {
        match ($sort) {
-            'latest' => $this->latest(),
-            'oldest' => $this->oldest(),
-            'mostliked' => $this->orderByDesc('likes_count'),
+            'recent' => $this->latest(),
+            'popular' => $this->orderByDesc('likes_count')->orderByDesc('totalcomments_count'),
             'mostviewed' => $this->orderByDesc('views'),
             'followings' => $this->filterByFollowings(),
             'featured' => $this->where('is_featured', true),
-            'hashtagtrend' => $this->filterByTrendingHashtag(),
             default => $this->latest(),
+        };
+        return $this;
+    }
+    // blog feed filter
+    public function blogFilter(BlogFilterDTO $filter): self
+    {
+        $sort = $filter->resolvedSort();
+
+        return $this->filterByTab($filter->tab, $sort)
+                    ->applyBlogSort($sort)
+                    ->filterByDateRange($filter->fromDate(), $filter->toDate());
+    }
+
+    protected function filterByTab(BlogTab $tab, BlogSort $sort): self
+    {
+        return match ($tab) {
+            BlogTab::FOR_YOU => $this,
+            BlogTab::FOLLOWING => $this->filterByFollowings(),
+            BlogTab::TRENDING_TAG => $this->filterByTrendingHashtag($sort->periodStart()),
+        };
+    }
+
+    protected function applyBlogSort(BlogSort $sort): self
+    {
+        match ($sort) {
+            BlogSort::RECENT,
+            BlogSort::ALL_TIME,
+            BlogSort::THIS_WEEK,
+            BlogSort::THIS_MONTH => $this->latest(),
+            BlogSort::POPULAR => $this->orderByDesc('likes_count')->orderByDesc('totalcomments_count'),
+            BlogSort::MOST_LIKED => $this->orderByDesc('likes_count'),
+            BlogSort::MOST_VIEWED => $this->orderByDesc('views'),
+            BlogSort::COMMENTED => $this->orderByDesc('totalcomments_count'),
         };
 
         return $this;
     }
+
+    protected function filterByDateRange(?CarbonInterface $from, ?CarbonInterface $to): self
+    {
+        return $this
+            ->when($from, fn ($query) => $query->where('posts.created_at', '>=', $from))
+            ->when($to, fn ($query) => $query->where('posts.created_at', '<=', $to));
+    }
+
     protected function filterByFollowings(): self
     {
+        if (! auth()->check()) {
+            return $this->whereRaw('0 = 1');
+        }
+
         $followings = auth()->user()->followings->pluck('id');
         return $this->whereIn('user_id', $followings);
     }
 
-    protected function filterByTrendingHashtag(): self
+    protected function filterByTrendingHashtag(?DateTimeInterface $from = null): self
     {
-        $trending = Hashtag::withCount('posts')
-            ->having('posts_count', '>', 0)
-            ->orderByDesc('posts_count')
-            ->first();
+        return $this->trendingHashtag(null, $from)
+            ->when($from, fn ($query) => $query->where('posts.created_at', '>=', $from));
+    }
 
-        if ($trending) {
-            return $this->whereHas('hashtags', fn ($query) =>
-                $query->where('hashtags.id', $trending->id)
-            );
+    public function trendingHashtag(?int $hashtagId = null, ?DateTimeInterface $from = null): self
+    {
+        $hashtagId ??= Hashtag::query()
+            ->trending($from)
+            ->first()?->id;
+
+        if (! $hashtagId) {
+            return $this->whereRaw('0 = 1');
         }
 
-        return $this->whereRaw('0 = 1');
+        return $this->whereHas('hashtags', fn ($query) =>
+            $query->where('hashtags.id', $hashtagId)
+        );
     }
     // admin sort
      public function adminSort(string $sort): self

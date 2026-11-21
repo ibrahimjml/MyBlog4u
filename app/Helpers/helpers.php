@@ -1,5 +1,9 @@
 <?php
 
+use App\DTOs\BlogFilterDTO;
+use App\Enums\Blog\BlogTab;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 if (!function_exists('render_mentions')) {
   function  render_mentions(string $content): string
@@ -56,17 +60,31 @@ if(! function_exists('n8n_webhook_enabled')){
 }
 
 if(! function_exists('guest_not_allowed_filter_following')){
-   function guest_not_allowed_filter_following($sort){
-    if (in_array($sort, ['followings']) && !auth()->check()) {
-      throw new \Illuminate\Auth\AuthenticationException();
+   function guest_not_allowed_filter_following(BlogFilterDTO|string|null $filter){
+        $tab = $filter instanceof BlogFilterDTO ? $filter->tab : $filter;
+
+        $isFollowing = $tab instanceof BlogTab
+            ? $tab === BlogTab::FOLLOWING
+            : in_array($tab, ['followings']);    
+      if ($isFollowing && ! auth()->check()) {
+            $loginUrl = route('login');
+
+           $response = request()->expectsJson()
+               ? response()->json([
+                       'message' => 'Unauthenticated.',
+                       'redirect' => $loginUrl
+                        ], 401)
+               : redirect()->guest($loginUrl);
+       
+           throw new HttpResponseException($response);
+      }
     }
-   }
 }
 
 if(! function_exists('attach_author_cards')){
   function attach_author_cards(mixed $items): void
   {
-    $items = $items instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator
+    $items = $items instanceof LengthAwarePaginator
       ? $items->getCollection()
       : collect($items);
 
@@ -88,13 +106,13 @@ if(! function_exists('attach_author_cards')){
 }
 
 if(! function_exists('infinite_scroll_response')){
-  function infinite_scroll_response(string $html, \Illuminate\Contracts\Pagination\LengthAwarePaginator $posts, ?array $extra = []): \Illuminate\Http\JsonResponse
+  function infinite_scroll_response(string $html, LengthAwarePaginator $items, ?array $extra = []): \Illuminate\Http\JsonResponse
 {
     return response()->json(array_merge([
         'html' => $html,
-        'currentPage' => $posts->currentPage(),
-        'hasMore' => $posts->hasMorePages(),
-        'nextPage' => $posts->hasMorePages() ? $posts->currentPage() + 1 : null
+        'currentPage' => $items->currentPage(),
+        'hasMore' => $items->hasMorePages(),
+        'nextPage' => $items->hasMorePages() ? $items->currentPage() + 1 : null
     ], $extra));
 }
 

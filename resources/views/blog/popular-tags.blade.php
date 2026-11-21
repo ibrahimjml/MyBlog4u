@@ -10,7 +10,7 @@
             'bg-accent text-accent-foreground hover:opacity-80' => $tag->is_featured,
             'border border-border bg-secondary text-foreground hover:bg-accent hover:text-accent-foreground' => ! $tag->is_featured,
         ])>
-        #{{ $tag->name }}
+        #{{ $tag->name }} @if($tag->is_featured) <i class="fas fa-fire text-primary/60"></i> @endif
       </a>
     @endforeach
   </div>
