@@ -11,6 +11,7 @@ export default defineConfig({
               'resources/js/medium-zoom.js',
               'resources/js/profile-card.js',
               'resources/js/blog-filter.js',
+              'resources/js/twofactor/twofactor.js',
               'resources/css/custom/auth-animate.css'
               ],
       refresh: true,

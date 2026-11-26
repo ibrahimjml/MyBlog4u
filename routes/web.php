@@ -111,7 +111,6 @@ Route::prefix('settings')
   Route::delete('delete/custom-link/{id}',  'destroy_link')->name('destroy.customlink');
   // two factor management
   Route::controller(TwoFactorController::class)
-        ->withoutMiddleware('2fa.login')
         ->group(function(){
     Route::post('/enable-2fa','enable2fa')->name('enable.2fa');
     Route::post('/confirm-2fa','confirmTwofactor')->name('confirm.2fa');

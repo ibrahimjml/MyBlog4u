@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Contracts\Services\ActiveSessionService as ActiveSessionContract;
+use App\Contracts\Services\TrustedDeviceService as TrustedDeviceContract;
+use App\Contracts\Services\TwoFactorService as TwoFactorContract;
 use App\Models\{Category, Like, Post, PostReport, Setting, SmtpSetting, User};
 use App\Observers\{ LikeObserver, PostObserver, PostReportObserver, CategoryObserver, UserObserver};
 use App\Repositories\Caches\CategoryCacheDecorator;
@@ -21,6 +24,9 @@ use App\Repositories\Interfaces\TagInterface;
 use App\Repositories\Interfaces\UserInterface;
 use App\Services\MediaDriverResolver;
 use App\Services\Sitemap\Sitemap;
+use App\Services\TwoFactorService;
+use App\Services\User\ActiveSessionService;
+use App\Services\User\TrustedDeviceService;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Schema;
@@ -35,6 +41,10 @@ class AppServiceProvider extends ServiceProvider
   {
     $this->app->singleton(Sitemap::class);
     $this->app->alias(Sitemap::class, 'sitemap');
+
+    $this->app->singleton(TwoFactorContract::class, TwoFactorService::class);
+    $this->app->singleton(TrustedDeviceContract::class, TrustedDeviceService::class);
+    $this->app->singleton(ActiveSessionContract::class, ActiveSessionService::class);
 
     $this->app->bind(PostInterface::class, function ($app) {
       if (config('cache.enabled')) {

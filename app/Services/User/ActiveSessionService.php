@@ -2,14 +2,14 @@
 
 namespace App\Services\User;
 
+use App\Contracts\Services\ActiveSessionService as ActiveSessionContract;
 use App\Models\ActiveSession;
 use App\Models\RevokedBrowserSession;
 use App\Models\User;
 use App\Support\UserAgentSupport;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 
-class ActiveSessionService
+class ActiveSessionService implements ActiveSessionContract
 {
     public function record(User $user, Request $request, string $browserToken): void
     {
@@ -21,30 +21,21 @@ class ActiveSessionService
 
         [$browser, $platform] = UserAgentSupport::parse($request->userAgent());
 
-        $attributes = [
-            'user_id' => $user->id,
-            'session_id' => $sessionId,
-            'browser_token' => hash('sha256', $browserToken),
-            'ip_address' => $request->ip(),
-            'user_agent' => $request->userAgent(),
-            'browser' => $browser,
-            'platform' => $platform,
-            'last_active_at' => now(),
-            'logged_out_at' => null,
-        ];
-
-        $activeSession = ActiveSession::query()
-            ->where('user_id', $user->id)
-            ->where('browser_token', $attributes['browser_token'])
-            ->first();
-
-        if ($activeSession) {
-            $activeSession->update($attributes);
-
-            return;
-        }
-
-        ActiveSession::updateOrCreate([ 'session_id' => $sessionId ], $attributes);
+        ActiveSession::updateOrCreate(
+            [
+                'user_id' => $user->id,
+                'browser_token' => hash('sha256', $browserToken),
+            ],
+            [
+                'session_id' => $sessionId,
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+                'browser' => $browser,
+                'platform' => $platform,
+                'last_active_at' => now(),
+                'logged_out_at' => null,
+            ]
+        );
     }
 
     public function isBrowserRevoked(string $browserToken): bool
@@ -70,11 +61,10 @@ class ActiveSessionService
         if ($session->browser_token) {
             RevokedBrowserSession::updateOrCreate(
                 ['browser_token' => $session->browser_token],
-                ['user_id' => $session->user_id, 'revoked_at' => Carbon::now()],
+                ['user_id' => $session->user_id, 'revoked_at' => now()],
             );
         }
 
-        $session->delete();
+        $session->update(['logged_out_at' => now()]);
     }
-
 }

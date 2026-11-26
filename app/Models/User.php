@@ -49,6 +49,24 @@ class User extends Authenticatable implements MustVerifyEmail
         'username_changed_at',
     ];
 
+    protected $hidden = [
+        'password',
+        'remember_token',
+        'two_factor_secret',
+        'two_factor_recovery_codes',
+    ];
+
+    protected $casts = [
+        'email_verified_at'     => 'datetime',
+        'username_changed_at'    => 'datetime',
+        'has_two_factor_enabled' => 'boolean',
+        'two_factor_secret'       => 'encrypted',
+        'two_factor_recovery_codes'  => 'encrypted:array',
+        'is_blocked'     => 'boolean',
+        'recovery_codes_downloaded' => 'boolean',
+        'age'   => 'integer',
+    ];
+
     public function newEloquentBuilder($query): UserBuilder
     {
         return new UserBuilder($query);
@@ -101,9 +119,9 @@ class User extends Authenticatable implements MustVerifyEmail
                );
     }
 
-    public function twoFactorTrustedDevices(): HasMany
+    public function TwoFactorTrustedDevice(): HasMany
   {
-    return $this->hasMany(TwoFactorTrustedDevices::class);
+    return $this->hasMany(TwoFactorTrustedDevice::class);
   }
 
   public function identityVerification()
@@ -233,22 +251,6 @@ class User extends Authenticatable implements MustVerifyEmail
             'username' => $this->username,
         ];
     }
-
-    protected $hidden = [
-        'password',
-        'remember_token',
-        'two_factor_secret',
-        'two_factor_recovery_codes',
-    ];
-
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-        'username_changed_at' => 'datetime',
-        'has_two_factor_enabled' => 'boolean',
-        'is_blocked' => 'boolean',
-        'recovery_codes_downloaded' => 'boolean',
-        'age' => 'integer',
-    ];
 
      protected function maskedEmail(): Attribute
     {

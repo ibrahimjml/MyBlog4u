@@ -2,7 +2,8 @@
 
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Auth\{ ConfirmPassController,ForgotPassController, IdentityVerificationController, LoginController, RegisterController, TwoFactorController, EmailVerificationController };
+use App\Http\Controllers\Auth\{ ConfirmPassController,ForgotPassController, IdentityVerificationController, LoginController, RegisterController, EmailVerificationController };
+use App\Http\Controllers\TwoFactorSessionController;
 
 Route::prefix('auth')
   ->group(function () {
@@ -48,12 +49,11 @@ Route::prefix('auth')
   });
     // two factor challenge
     Route::prefix('two-factor')
-          ->middleware('2fa.login')
-          ->controller(TwoFactorController::class)
+          ->controller(TwoFactorSessionController::class)
           ->name('2fa.')
           ->group(function () {
-      Route::view('challenge', 'auth.two-factor-challenge')->name('confirmation');
+      Route::get('challenge', 'showChallenge')->name('confirmation');
       Route::post('challenge', 'verifyChallenge')->name('verify');
-      Route::view('recovery', 'auth.recovery-two-factor')->name('recovery');
+      Route::get('recovery', 'showRecovery')->name('recovery');
       Route::post('recovery', 'verifyRecovery')->name('verify.recovery');
     });

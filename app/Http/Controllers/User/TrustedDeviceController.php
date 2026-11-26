@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Contracts\Services\TrustedDeviceService as TrustedDeviceContract;
 use App\Http\Controllers\Controller;
-use App\Services\User\TrustedDeviceService;
 use Illuminate\Http\Request;
 
 class TrustedDeviceController extends Controller
 {
-  public function __construct(protected TrustedDeviceService $trustedDevices)
+  public function __construct(protected TrustedDeviceContract $trustedDevices)
     {
         $this->middleware('auth');
     }

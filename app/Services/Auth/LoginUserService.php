@@ -2,19 +2,18 @@
 
 namespace App\Services\Auth;
 
+use App\Actions\TwoFactor\EnsureGlobalTwoFactorEnabled;
+use App\Actions\TwoFactor\PrepareTwoFactorChallenge;
+use App\Actions\TwoFactor\SkipChallengeForTrustedDevice;
+use App\DTOs\Auth\LoginContext;
 use App\DTOs\Auth\LoginUserDTO;
 use App\Enums\Auth\LoginResults;
 use App\Exceptions\Auth\LoginException;
 use App\Models\User;
-use App\Services\User\TrustedDeviceService;
+use Illuminate\Pipeline\Pipeline;
 
 class LoginUserService
 {
-     public function __construct(
-        protected TrustedDeviceService $trustedDevices,
-        protected TwoFactorChallengeService $twoFactorService,
-    ) {}
-
     public function handleLogin(LoginUserDTO $dto): LoginResults
     {
         if (! auth()->validate($dto->credentials())) {
@@ -25,30 +24,16 @@ class LoginUserService
 
         $this->validateUser($user);
 
-        if ($user->has_two_factor_enabled) {
-           
-            if ($this->trustedDevices->isTrusted(request(), $user)) {
+        $context = app(Pipeline::class)
+            ->send(new LoginContext($dto, $user))
+            ->through([
+                EnsureGlobalTwoFactorEnabled::class,
+                SkipChallengeForTrustedDevice::class,
+                PrepareTwoFactorChallenge::class,
+            ])
+            ->thenReturn();
 
-                auth()->login($user, $dto->remember);
-                request()->session()->regenerate();
-
-                request()->session()->put([
-                  '2fa:passed' => true,
-                  '2fa:passed_at' => now()->timestamp
-                  ]);
-                
-                return LoginResults::SUCCESS;
-            }
-
-            $this->twoFactorService->prepareLoginChallenge($user, $dto->remember);
-
-            return LoginResults::TWO_FACTOR_REQUIRED;
-        }
-
-        auth()->login($user, $dto->remember);
-        session()->regenerate();
-
-        return LoginResults::SUCCESS;
+        return $context->result ?? LoginResults::SUCCESS;
     }
 
     private function findUser(LoginUserDTO $dto): User
@@ -69,4 +54,3 @@ class LoginUserService
         }
     }
 }
-

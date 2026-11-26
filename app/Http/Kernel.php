@@ -31,18 +31,20 @@ class Kernel extends HttpKernel
      */
     protected $middlewareGroups = [
         'web' => [
+            // ── infra ─────────────────────────────────────
             \App\Http\Middleware\EncryptCookies::class,
             \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
             \Illuminate\Session\Middleware\StartSession::class,
-            \App\Http\Middleware\TrackActiveSession::class,
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
+            // ── custom middleware ─────
+            \App\Http\Middleware\TrackActiveSession::class,                 // browser + session revocation
+            \App\Http\Middleware\CheckIfBlocked::class,                     // banned users
+            \App\Http\Middleware\EnsureIdentityVerified::class,             // KYC / identity gate
+            \App\Http\Middleware\CheckPermission::class,                    // authorization
+            \App\Http\Middleware\DynamicRateLimitMiddleware::class,        // rate limiting
+            // ── route model binding  ──────────────────
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
-            \App\Http\Middleware\CheckIfBlocked::class,
-            \App\Http\Middleware\EnsureIdentityVerified::class,
-            \App\Http\Middleware\EnsureTwoFactorHasTrustedDevice::class,
-            \App\Http\Middleware\DynamicRateLimitMiddleware::class,
-            \App\Http\Middleware\CheckPermission::class
 
         ],
 
@@ -65,7 +67,6 @@ class Kernel extends HttpKernel
         'auth' => \App\Http\Middleware\Authenticate::class,
         'check' => \App\Http\Middleware\CheckIfBlocked::class,
         'role' => \App\Http\Middleware\CheckRole::class,
-        '2fa.login' => \App\Http\Middleware\EnsureLoginTwoFactor::class,
         'permission' => \App\Http\Middleware\CheckPermission::class,
         'demo' => \App\Http\Middleware\DemoModeMiddleware::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,

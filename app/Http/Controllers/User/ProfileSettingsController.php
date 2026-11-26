@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Contracts\Services\ActiveSessionService as ActiveSessionContract;
 use App\DTOs\User\UpdateAccountDTO;
 use App\DTOs\User\UpdateUserProfileDTO;
 use App\Http\Controllers\Controller;
@@ -9,9 +10,9 @@ use App\Http\Middleware\CheckIfBlocked;
 use App\Http\Requests\App\UpdateAccountRequest;
 use App\Http\Requests\App\UpdateUserProfileRequest as UserInfoRequest;
 use App\Models\ActiveSession;
+use App\Models\Setting;
 use App\Models\SocialLink;
 use App\Rules\DeletionSentenceRule;
-use App\Services\User\ActiveSessionService;
 use App\Services\User\UpdateAccountService;
 use App\Services\User\UpdateProfileInfoService;
 use Illuminate\Http\Request;
@@ -130,7 +131,10 @@ class ProfileSettingsController extends Controller
 
     public function two_factor_view()
     {
-        return view('profile-settings.security2fa', $this->data());
+        return view('profile-settings.security2fa', [
+            ...$this->data(),
+            'twoFactorGloballyEnabled' => (bool) Setting::get('two_factor_enabled', true),
+        ]);
     }
 
     public function active_sessions()
@@ -141,7 +145,6 @@ class ProfileSettingsController extends Controller
         $currentBrowserToken = is_string($browserToken) ? hash('sha256', $browserToken) : null;
         $sessions = $user->activeSessions()
             ->active()
-            ->where('last_active_at', '>=', now()->subMinutes(config('session.lifetime')))
             ->orderByDesc('last_active_at')
             ->get()
             ->each(function (ActiveSession $session) use ($currentSessionId, $currentBrowserToken): void {
@@ -156,7 +159,7 @@ class ProfileSettingsController extends Controller
         ]);
     }
     // delete other active sessions + current session if exist
-    public function logout_session(ActiveSession $activeSession, Request $request, ActiveSessionService $sessions)
+    public function logout_session(ActiveSession $activeSession, Request $request, ActiveSessionContract $sessions)
     {
         abort_unless($activeSession->user_id === $request->user()->id && is_null($activeSession->logged_out_at), 404);
 

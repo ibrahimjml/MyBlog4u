@@ -2,212 +2,72 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Actions\TwoFactor\CreateTwoFactorAction;
+use App\Actions\TwoFactor\DisableTwoFactorAction;
+use App\Actions\TwoFactor\EnableTwoFactorAction;
+use App\Actions\TwoFactor\GenerateQrCodeAction;
+use App\Actions\TwoFactor\RecoveryCodeAction;
 use App\Http\Controllers\Controller;
-use App\Models\User;
-use App\Services\Auth\TwoFactorChallengeService;
-use App\Services\User\TrustedDeviceService;
-use SimpleSoftwareIO\QrCode\Generator;
+use App\Http\Requests\App\Auth\DisableTwoFactorRequest;
+use App\Http\Requests\App\Auth\TwoFactorCodeRequest;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use PragmaRX\Google2FA\Google2FA;
-use Illuminate\Support\Facades\Crypt;
+use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class TwoFactorController extends Controller
 {
-  public function __construct(
-    protected TrustedDeviceService $trustedDevices,
-    protected TwoFactorChallengeService $challengeService,
-  ) {
-    $this->middleware(['auth','verified'])->only(['enable2fa','confirmTwofactor','downloadRecoveryCodes','regenerate','disable2fa']);
-  }
-
-  public function verifyRecovery(Request $request)
-  {
-    $request->validate([
-      'recovery_code' => 'required|string',
-    ]);
-    $user = auth()->check()
-      ? auth()->user()
-      : User::findOrFail(session('2fa:user:id'));
-
-    $codes = json_decode(decrypt($user->two_factor_recovery_codes), true);
-    $inputHash = hash('sha256', strtoupper($request->recovery_code));
-
-    if (!in_array($inputHash, $codes)) {
-      return back()->withErrors(['recovery_code' => 'Invalid recovery code']);
+    public function __construct(
+        protected CreateTwoFactorAction $create,
+        protected GenerateQrCodeAction $generateQrCode,
+        protected EnableTwoFactorAction $enable,
+        protected DisableTwoFactorAction $disable,
+        protected RecoveryCodeAction $recoveryCodes,
+    ) {
+        $this->middleware(['auth', 'verified']);
     }
 
-    $codes = array_diff($codes, [$inputHash]);
-    $user->two_factor_recovery_codes = encrypt(json_encode(array_values($codes)));
-    $user->save();
+    public function enable2fa(Request $request): View
+    {
+        $secret = $this->create->handle($request->user());
+        $qr = $this->generateQrCode->handle($request->user(), $secret);
 
-    return  $this->challengeService->finishChallenge($user, $request);
-  }
-  public function verifyChallenge(Request $request, Google2FA $google2fa)
-  {
-    $request->validate([
-      'code' => 'required|digits:6',
-    ]);
-
-    $user = User::findOrFail(session('2fa:user:id'));
-
-    try {
-      $secret = Crypt::decryptString($user->two_factor_secret);
-    } catch (\Exception $e) {
-      return back()->withErrors([
-        'code' => 'Invalid secret payload',
-      ]);
+        return view('profile-settings.partials.enable-two-factor', [
+            'qr' => $qr,
+            'secret' => $secret,
+        ]);
     }
 
-    if (!$google2fa->verifyKey($secret, $request->code)) {
-      return back()->withErrors(['code' => 'Invalid authentication or recovery code.',]);
+    public function confirmTwofactor(TwoFactorCodeRequest $request): JsonResponse
+    {
+        $this->enable->handle($request->user(), $request->validated('code'));
+
+        return response()->json(['success' => true]);
     }
 
-    return $this->challengeService->finishChallenge($user, $request);
-  }
-
-  public function enable2fa(Google2FA $google2fa, Request $request)
-  {
-    $secret = $google2fa->generateSecretKey();
-
-    $request->user()->update([
-      'two_factor_secret' => Crypt::encryptString($secret),
-    ]);
-
-    $issuer = config('app.name');
-    $email = $request->user()->email;
-
-    $otpauth = $google2fa->getQRCodeUrl(
-      $issuer,
-      $email,
-      $secret
-    );
-    $qrCodeGenerator = app(Generator::class);
-
-    $qr = $qrCodeGenerator->format('png')
-      ->size(220)
-      ->merge(public_path('img/icon.png'), 0.25, true)
-      ->backgroundColor(250, 128, 114)
-      ->color(0, 0, 0)
-      ->generate($otpauth);
-
-    return view('profile-settings.partials.enable-two-factor', ['qr' => $qr, 'secret' => $secret]);
-  }
-  public function confirmTwofactor(Request $request, Google2FA $google2fa)
-  {
-    $request->validate([
-      'code' => 'required|digits:6',
-    ]);
-
-    $user = $request->user();
-
-    if (!$user->two_factor_secret) {
-      return response()->json([
-        'errors' => ['code' => 'Two factor secret not found']
-      ], 422);
+    public function downloadRecoveryCodes(Request $request): StreamedResponse
+    {
+        return $this->recoveryCodes->download($request->user());
     }
 
-    try {
-      $secret = Crypt::decryptString($user->two_factor_secret);
-    } catch (\Exception $e) {
-      return response()->json([
-        'errors' => ['code' => 'Invalid secret payload']
-      ], 422);
+    public function regenerate(Request $request): JsonResponse
+    {
+        $this->recoveryCodes->regenerate($request->user());
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Recovery codes regenerated',
+        ]);
     }
 
-    if (!$google2fa->verifyKey($secret, $request->code)) {
-      return response()->json([
-        'errors' => ['code' => 'Invalid authentication code']
-      ], 422);
+    public function disable2fa(DisableTwoFactorRequest $request): JsonResponse
+    {
+        $this->disable->handle($request->user(), $request->validated('code'), $request);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Two factor authentication disabled',
+        ]);
     }
-
-    $recoveryCodes = collect(range(1, 8))->map(fn() => [
-      'code' => bcrypt(strtoupper(str()->random(10))),
-      'plain' => strtoupper(str()->random(10)),
-    ]);
-
-    $user->update([
-      'has_two_factor_enabled' => true,
-      'two_factor_recovery_codes' => encrypt(
-        $recoveryCodes->pluck('code')->toJson()
-      ),
-    ]);
-
-    $request->session()->put([
-      '2fa:passed' => true,
-      '2fa:passed_at' => now()->timestamp,
-      ]);
-
-    return response()->json(['success' => true]);
-  }
-  public function downloadRecoveryCodes()
-  {
-    $user = auth()->user();
-
-    abort_unless($user->has_two_factor_enabled, 403);
-
-    $codes = collect(range(1, 8))->map(fn() => strtoupper(str()->random(10)));
-
-    $user->update([
-      'two_factor_recovery_codes' => encrypt(
-        $codes->map(fn($c) => hash('sha256', $c))->toJson()
-      ),
-      'recovery_codes_downloaded' => true,
-    ]);
-
-    $content = $codes->implode(PHP_EOL);
-
-    return response()->streamDownload(
-      function () use ($content) {
-        echo $content;
-      },
-      'recovery-codes.txt'
-    );
-  }
-  public function regenerate(Request $request)
-  {
-    $user = $request->user();
-
-    abort_unless($user->has_two_factor_enabled, 403);
-
-    $codes = collect(range(1, 8))->map(fn() => hash('sha256', strtoupper(str()->random(10))), );
-
-    $user->update([
-      'two_factor_recovery_codes' => encrypt($codes->toJson()),
-      'recovery_codes_downloaded' => false,
-    ]);
-
-    return response()->json([
-      'success' => true,
-      'message' => 'Recovery codes regenerated',
-    ]);
-  }
-  public function disable2fa(Request $request)
-  {
-    $user = $request->user();
-
-    abort_unless($user->has_two_factor_enabled, 403);
-
-    $user->update([
-      'has_two_factor_enabled' => false,
-      'two_factor_secret' => null,
-      'two_factor_recovery_codes' => null,
-      'recovery_codes_downloaded' => false,
-    ]);
-
-    if($this->trustedDevices->isTrusted($request, $user)){
-      $this->trustedDevices->forget($user);
-    }
-    
-    $request->session()->forget([
-      '2fa:passed',
-      '2fa:passed_at',
-      '2fa:remember',
-    ]);
-
-    return response()->json([
-      'success' => true,
-      'message' => 'Two factor authentication disabled',
-    ]);
-  }
 
 }

@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Services\User\ActiveSessionService;
+use App\Contracts\Services\ActiveSessionService as ActiveSessionContract;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,7 +13,7 @@ class TrackActiveSession
 {
     private const BROWSER_TOKEN_COOKIE = 'active_session_browser';
 
-    public function __construct(private readonly ActiveSessionService $sessions)
+    public function __construct(private readonly ActiveSessionContract $sessions)
     {}
 
     public function handle(Request $request, Closure $next): Response

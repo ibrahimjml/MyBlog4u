@@ -19,21 +19,21 @@
       <p class="mt-1 text-sm text-muted-foreground">Enter the 6-digit code from your authenticator app.</p>
       <form id="confirm2faBtn">
         @csrf
-        <input type="hidden" name="code" id="twofa_code">
+        <input type="hidden" name="code">
         <div class="mt-5 flex justify-center gap-2">
           @for ($i = 0; $i < 6; $i++)
-            <input type="text" inputmode="numeric" maxlength="1"
+            <input type="text" inputmode="numeric" maxlength="1" autocomplete="off"
               class="twofa-input h-12 w-12 rounded-xl border border-border bg-background text-center font-mono text-xl font-bold text-foreground outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-ring/30">
           @endfor
         </div>
       </form>
       <div class="mt-5 flex flex-wrap gap-3">
         <button form="confirm2faBtn" type="submit"
-          class="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-xs font-bold uppercase tracking-wide text-primary-foreground shadow-sm transition-opacity hover:opacity-90">
+          class="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-xs font-bold uppercase tracking-wide text-primary-foreground shadow-sm transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60">
           <i class="fas fa-check"></i>
           Confirm
         </button>
-        <button id="cancel" type="button" onclick="cancelTwoFactor()"
+        <button id="cancel" type="button"
           class="inline-flex items-center gap-2 rounded-xl border border-destructive/30 bg-destructive/10 px-4 py-2.5 text-xs font-bold uppercase tracking-wide text-destructive transition-colors hover:bg-destructive/15">
           <i class="fas fa-times"></i>
           Cancel
@@ -42,91 +42,3 @@
     </div>
   </div>
 </div>
-@push('scripts')
-  <script>
-    const inputs = document.querySelectorAll('.twofa-input');
-    const hidden = document.getElementById('twofa_code');
-
-    inputs.forEach((input, index) => {
-      input.addEventListener('input', () => {
-        input.value = input.value.replace(/\D/, '');
-
-        if (input.value && inputs[index + 1]) {
-          inputs[index + 1].focus();
-        }
-
-        updateCode();
-      });
-
-      input.addEventListener('keydown', e => {
-        if (e.key === 'Backspace' && !input.value && inputs[index - 1]) {
-          inputs[index - 1].focus();
-        }
-      });
-    });
-
-    document.getElementById('confirm2faBtn').addEventListener('paste', e => {
-      const paste = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
-      paste.split('').forEach((char, i) => {
-        if (inputs[i]) inputs[i].value = char;
-      });
-      updateCode();
-    });
-
-    function updateCode() {
-      hidden.value = [...inputs].map(i => i.value).join('');
-    }
-  </script>
-
-  <script>
-    document.querySelector('#confirm2faBtn')?.addEventListener('submit', async (eo) => {
-      eo.preventDefault();
-      const code = document.querySelector('#confirmationModel input[name="code"]').value;
-      const inputs = document.querySelectorAll('.twofa-input');
-      
-      const res = await fetch('{{ route('confirm.2fa') }}', {
-        method: 'POST',
-        headers: {
-          'X-CSRF-TOKEN': '{{ csrf_token() }}',
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        body: JSON.stringify({ code })
-      });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        toastr.success('Two factor enabled successfully!');
-        inputs.forEach((input, index) => {
-          input.value = ''
-        });
-        document.getElementById('confirmationModel').classList.add('hidden');
-        setTimeout(() => window.location.reload(), 1200);
-
-      } else {
-        inputs.forEach((input, index) => {
-          input.value = ''
-        });
-        toastr.error(data.errors?.code || data.message || 'Invalid code');
-      }
-    });
-  </script>
-  <script>
-    function cancelTwoFactor() {
-
-      const confirmModal = document.getElementById('confirmationModel');
-      const open2faBtn = document.getElementById('open2fa');
-
-      if (confirmModal) confirmModal.classList.add('hidden');
-      if (open2faBtn) {
-        open2faBtn.disabled = false;
-        open2faBtn.innerHTML =  `
-               <i class="fas fa-user-shield text-xs"></i>
-               <small>Enable Two Factor</small>`;
-      }
-
-
-    }
-  </script>
-@endpush

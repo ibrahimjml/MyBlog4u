@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin\Settings;
 
 use App\Http\Controllers\Controller;
+use App\Models\AuthSecurityRule;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 
 class AuthSecurityController extends Controller
@@ -15,11 +17,14 @@ class AuthSecurityController extends Controller
 
   public function auth_settings()
   {
-    $settings = \App\Models\AuthSecurityRule::first();
+    $settings = AuthSecurityRule::first();
+
     return view('admin.settings.auth-security-rules', [
-      'settings' => $settings
+      'settings' => $settings,
+      'twoFactorEnabled' => (bool) Setting::get('two_factor_enabled', true),
     ]);
   }
+
   public function update_auth_settings(Request $request)
   {
     $fields = $request->validate([
@@ -27,10 +32,11 @@ class AuthSecurityController extends Controller
       'recaptcha_site_key' => ['nullable', 'string'],
       'recaptcha_secret_key' => ['nullable', 'string'],
       'enable_registration' => ['required', 'boolean'],
-      'allowed_email_domains' => ['nullable', 'string']
+      'allowed_email_domains' => ['nullable', 'string'],
+      'two_factor_enabled' => ['required', 'boolean'],
     ]);
 
-    $settings = \App\Models\AuthSecurityRule::firstOrNew();
+    $settings = AuthSecurityRule::firstOrNew();
     $settings->require_captcha = $fields['require_captcha'];
     $settings->recaptcha_sitekey = $fields['recaptcha_site_key'] ?? null;
     $settings->recaptcha_secretkey = $fields['recaptcha_secret_key'] ?? null;
@@ -40,6 +46,11 @@ class AuthSecurityController extends Controller
       ->filter()
       ->implode(', ');
     $settings->save();
+
+    Setting::updateOrCreate(
+      ['key' => 'two_factor_enabled'],
+      ['value' => $fields['two_factor_enabled'] ? '1' : '0']
+    );
 
     toastr()->success('Authentication settings updated', ['timeOut' => 1000]);
     return redirect()->back();

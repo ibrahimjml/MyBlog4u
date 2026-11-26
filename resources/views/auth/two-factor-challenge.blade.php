@@ -20,7 +20,7 @@
         </p>
       </header>
 
-      <form class="space-y-5 px-6 py-6 sm:px-8" action="{{ route('2fa.verify') }}" method="POST">
+      <form class="space-y-5 px-6 py-6 sm:px-8" action="{{ route('2fa.verify') }}" method="POST" data-twofactor-challenge>
         @csrf
 
         <input type="hidden" name="code" id="twofa_code">
@@ -38,7 +38,7 @@
 
         <label for="trust_device"
           class="flex cursor-pointer items-center gap-2 text-sm text-muted-foreground">
-          <input id="trust_device" type="checkbox" name="trust_device"
+          <input id="trust_device" type="checkbox" name="trust_device" value="1"
             class="h-4 w-4 rounded border-border bg-background accent-primary focus:ring-ring">
           Trust this device for 30 days
         </label>
@@ -59,56 +59,6 @@
   </main>
 
   @push('scripts')
-    <script>
-      document.addEventListener('DOMContentLoaded', () => {
-        const inputs = Array.from(document.querySelectorAll('.twofa-input'));
-        const hidden = document.getElementById('twofa_code');
-
-        if (!inputs.length || !hidden) {
-          return;
-        }
-
-        const updateCode = () => {
-          hidden.value = inputs.map((input) => input.value).join('');
-        };
-
-        inputs.forEach((input, index) => {
-          input.addEventListener('input', () => {
-            input.value = input.value.replace(/\D/g, '').slice(0, 1);
-
-            if (input.value && inputs[index + 1]) {
-              inputs[index + 1].focus();
-            }
-
-            updateCode();
-          });
-
-          input.addEventListener('keydown', (event) => {
-            if (event.key === 'Backspace' && !input.value && inputs[index - 1]) {
-              inputs[index - 1].focus();
-            }
-          });
-
-          input.addEventListener('paste', (event) => {
-            event.preventDefault();
-
-            const pasted = (event.clipboardData?.getData('text') || '').replace(/\D/g, '').slice(0, 6);
-
-            if (!pasted) {
-              return;
-            }
-
-            pasted.split('').forEach((char, charIndex) => {
-              if (inputs[charIndex]) {
-                inputs[charIndex].value = char;
-              }
-            });
-
-            updateCode();
-            inputs[Math.min(pasted.length, inputs.length - 1)]?.focus();
-          });
-        });
-      });
-    </script>
+    @vite('resources/js/twofactor/twofactor.js')
   @endpush
 @endsection

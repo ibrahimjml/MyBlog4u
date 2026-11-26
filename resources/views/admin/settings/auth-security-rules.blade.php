@@ -84,6 +84,24 @@
                 placeholder="enter recaptcha secret key"
                 class="block mt-2 border border-gray-300 rounded-lg px-3 py-2 w-full max-w-xs">
             </div>
+            <hr class="my-4">
+            <h6 class="text-blueGray-400 text-sm mt-3 mb-2 font-bold uppercase">
+              Two-Factor Authentication
+            </h6>
+            <p class="text-sm text-blueGray-400">Control two-factor authentication availability across the platform.</p>
+
+            <div class="rounded-lg p-5 w-full mt-3 flex justify-between items-center border-2 border-gray-300">
+              <div class="">
+                <p class="text-lg font-bold">Enable Two-Factor Authentication</p>
+                <p class="text-xs text-blueGray-400 mt-1">When disabled, users cannot set up two-factor authentication and
+                  will not be challenged for a code.</p>
+              </div>
+              <div class="">
+                <input type="hidden" name="two_factor_enabled" value="0">
+                <x-toggle name="two_factor_enabled" value="1" :checked="$twoFactorEnabled ?? true" />
+              </div>
+            </div>
+
             @can('authsecurity.update')
             <button
               class="block bg-green-500 ml-auto mt-2 w-fit text-white active:bg-gray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
