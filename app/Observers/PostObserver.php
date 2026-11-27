@@ -6,6 +6,7 @@ namespace App\Observers;
 use App\Actions\DeleteEmbeddedPostAction;
 use App\Actions\DeletePostImageAction;
 use App\Actions\DeletePostNotificationsAction;
+use App\Events\ActiveSessionActivityEvent;
 use App\Models\Post;
 use App\Services\ClearCacheService;
 use Illuminate\Support\Str;
@@ -22,6 +23,8 @@ class PostObserver
     public function created(Post $post)
     {
        app(ClearCacheService::class)->clearPostCaches($post);
+
+       ActiveSessionActivityEvent::dispatchForCurrentUser();
     }
     public function updating(Post $post)
     {
@@ -33,6 +36,8 @@ class PostObserver
     public function updated(Post $post)
     {
        app(ClearCacheService::class)->clearPostCaches($post);
+       
+       ActiveSessionActivityEvent::dispatchForCurrentUser();
     }
     public function deleting(Post $post)
     {
@@ -46,6 +51,8 @@ class PostObserver
    public function deleted(Post $post)
    { 
        app(ClearCacheService::class)->clearPostCaches($post);
+
+       ActiveSessionActivityEvent::dispatchForCurrentUser();
    }
     
 }

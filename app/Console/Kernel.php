@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Models\RevokedBrowserSession;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -14,6 +15,7 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('backup:dbbackup')->daily();
         $schedule->command('backup:cleanup --days=7')->weekly();
+        $schedule->command('model:prune', ['--model' => [RevokedBrowserSession::class]])->monthlyOn(1, '12:00');
     }
 
     /**

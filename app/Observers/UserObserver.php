@@ -2,6 +2,7 @@
 
 namespace App\Observers;
 
+use App\Events\ActiveSessionActivityEvent;
 use App\Models\User;
 use App\Services\ClearCacheService;
 use Illuminate\Support\Facades\DB;
@@ -37,6 +38,8 @@ class UserObserver
       if ($user->wasChanged('is_blocked')) {
         app(ClearCacheService::class)->clearPublicContentCaches();
       }
+
+      ActiveSessionActivityEvent::dispatchForCurrentUser();
     }
     public function deleting(User $user): void
     {

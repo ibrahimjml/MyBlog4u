@@ -5,7 +5,6 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Http\Middleware\CheckIfBlocked;
 use App\Models\Post;
-use Illuminate\Http\Request;
 
 class PinController extends Controller
 {

@@ -38,7 +38,7 @@ class Kernel extends HttpKernel
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
             // ── custom middleware ─────
-            \App\Http\Middleware\TrackActiveSession::class,                 // browser + session revocation
+            \App\Http\Middleware\RejectRevokedBrowser::class,               // revoked browser sessions
             \App\Http\Middleware\CheckIfBlocked::class,                     // banned users
             \App\Http\Middleware\EnsureIdentityVerified::class,             // KYC / identity gate
             \App\Http\Middleware\CheckPermission::class,                    // authorization

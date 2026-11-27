@@ -1,7 +1,7 @@
 <?php
+
 use App\Http\Controllers\Admin\CustomPageController;
 use App\Http\Controllers\Admin\Scraping\ScrapSettingController;
-use App\Http\Controllers\Auth\TwoFactorController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\HashtagController;
@@ -15,12 +15,16 @@ use App\Http\Controllers\ReportPostController;
 use App\Http\Controllers\ReportProfileController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\TinyMCEController;
+use App\Http\Controllers\User\AccountSettingController;
 use App\Http\Controllers\User\DashboardController;
+use App\Http\Controllers\User\InfoSettingController;
 use App\Http\Controllers\User\PinController;
+use App\Http\Controllers\User\PrivacySettingController;
 use App\Http\Controllers\User\ProfileController;
-use App\Http\Controllers\User\ProfileSettingsController;
 use App\Http\Controllers\User\QrcodeController;
+use App\Http\Controllers\User\SessionsSettingController;
 use App\Http\Controllers\User\TrustedDeviceController;
+use App\Http\Controllers\User\TwoFactorSettingController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -92,40 +96,55 @@ Route::controller(ProfileController::class)
     });
 // settings
 Route::prefix('settings')
-     ->controller(ProfileSettingsController::class)
-     ->middleware('password.confirm')
-     ->group(function(){
+    ->middleware('password.confirm')
+    ->group(function () {
 
-  Route::get('info','profile_info')->name('info');
-  Route::get('account','profile_account')->name('account');
-  Route::get('privacy','account_privacy')->name('account.privacy');
-  Route::get('security','two_factor_view')->name('two.factor.view');
-  Route::get('sessions', 'active_sessions')->name('active.sessions');
-  Route::delete('sessions/{activeSession}', 'logout_session')->name('active.sessions.destroy');
-  Route::post('privacy','profile_visibility')->name('profile.visibility');
-  Route::put('info','update_info')->name('update.info');
-  Route::put('account','update_account')->name('update.account');
-  Route::delete('account-delete','deleteaccount')->name('account.delete');
-  Route::delete('delete/avatar','delete_avatar')->name('avatar.destroy');
-  Route::delete('delete/cover','delete_cover')->name('cover.destroy');
-  Route::delete('delete/custom-link/{id}',  'destroy_link')->name('destroy.customlink');
-  // two factor management
-  Route::controller(TwoFactorController::class)
-        ->group(function(){
-    Route::post('/enable-2fa','enable2fa')->name('enable.2fa');
-    Route::post('/confirm-2fa','confirmTwofactor')->name('confirm.2fa');
-    Route::put('/disable-2fa', 'disable2fa')->name('disable.2fa');
-    Route::get('/download-recovery-codes',  'downloadRecoveryCodes')->name('download.recovery.codes');
-    Route::put('/regenerate-recovery-codes',  'regenerate')->name('regenerate.recovery.codes');
-  });
-  // two factor trusted devices
-  Route::controller(TrustedDeviceController::class)
-        ->group(function () {
-    Route::get('trusted-devices','index')->name('trusted-devices.index');
-    Route::delete('trusted-devices/{device}', 'destroy')->name('trusted-devices.destroy');
-    Route::delete('trusted-devices', 'destroyAll')->name('trusted-devices.destroy-all');
-  });
-});
+        Route::controller(InfoSettingController::class)
+            ->group(function () {
+                Route::get('info', 'profile_info')->name('info');
+                Route::put('info', 'update_info')->name('update.info');
+                Route::delete('delete/avatar', 'delete_avatar')->name('avatar.destroy');
+                Route::delete('delete/cover', 'delete_cover')->name('cover.destroy');
+                Route::delete('delete/custom-link/{id}', 'destroy_link')->name('destroy.customlink');
+            });
+
+        Route::controller(AccountSettingController::class)
+            ->group(function () {
+                Route::get('account', 'profile_account')->name('account');
+                Route::put('account', 'update_account')->name('update.account');
+                Route::delete('account-delete', 'deleteaccount')->name('account.delete');
+            });
+
+        Route::controller(PrivacySettingController::class)
+            ->group(function () {
+                Route::get('privacy', 'account_privacy')->name('account.privacy');
+                Route::post('privacy', 'profile_visibility')->name('profile.visibility');
+            });
+
+        Route::controller(SessionsSettingController::class)
+            ->group(function () {
+                Route::get('sessions', 'active_sessions')->name('active.sessions');
+                Route::delete('sessions/{activeSession}', 'logout_session')->name('active.sessions.destroy');
+            });
+
+        // two factor management
+        Route::controller(TwoFactorSettingController::class)
+            ->group(function () {
+                Route::get('security', 'two_factor_view')->name('two.factor.view');
+                Route::post('/enable-2fa', 'enable2fa')->name('enable.2fa');
+                Route::post('/confirm-2fa', 'confirmTwofactor')->name('confirm.2fa');
+                Route::put('/disable-2fa', 'disable2fa')->name('disable.2fa');
+                Route::get('/download-recovery-codes', 'downloadRecoveryCodes')->name('download.recovery.codes');
+                Route::put('/regenerate-recovery-codes', 'regenerate')->name('regenerate.recovery.codes');
+            });
+        // two factor trusted devices
+        Route::controller(TrustedDeviceController::class)
+            ->group(function () {
+                Route::get('trusted-devices', 'index')->name('trusted-devices.index');
+                Route::delete('trusted-devices/{device}', 'destroy')->name('trusted-devices.destroy');
+                Route::delete('trusted-devices', 'destroyAll')->name('trusted-devices.destroy-all');
+            });
+    });
 // qrcode generator
 Route::get('/qr-code', QrcodeController::class)->name('qr-code.image');
 // toggle pin/unpin

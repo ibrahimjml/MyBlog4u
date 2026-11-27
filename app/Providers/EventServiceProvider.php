@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Events\ActiveSessionActivityEvent;
 use App\Events\CommentCreatedEvent;
 use App\Events\FollowUserEvent;
 use App\Events\MentionedUserEvent;
@@ -12,8 +13,10 @@ use App\Events\PostReportEvent;
 use App\Events\ProfileViewedEvent;
 use App\Events\ReplyCommentEvent;
 use App\Events\ReportStatusUpdateEvent;
+use App\Events\SessionLoggedOutEvent;
 use App\Events\SitemapRendering;
 use App\Listeners\BuildSitemap;
+use App\Listeners\MarkSessionLoggedOut;
 use App\Listeners\NotifyAdminNewUser;
 use App\Listeners\SendCommentNotification;
 use App\Listeners\SendFollowNotification;
@@ -24,10 +27,10 @@ use App\Listeners\SendPostReportNotification;
 use App\Listeners\SendProfileViewNotification;
 use App\Listeners\SendReplyNotification;
 use App\Listeners\SendReportStatusNotification;
+use App\Listeners\TouchActiveSession;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
-use Illuminate\Support\Facades\Event;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -72,6 +75,12 @@ class EventServiceProvider extends ServiceProvider
         ],
         SitemapRendering::class => [
           BuildSitemap::class,
+        ],
+        ActiveSessionActivityEvent::class => [
+          TouchActiveSession::class,
+        ],
+        SessionLoggedOutEvent::class => [
+          MarkSessionLoggedOut::class,
         ],
     ];
 

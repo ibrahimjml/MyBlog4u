@@ -19,7 +19,6 @@
         <p class="mt-1 text-sm text-muted-foreground">Review browsers signed in to your account and log out any session you do not recognize.</p>
       </div>
     </div>
-    <span class="inline-flex w-fit items-center gap-2 rounded-full bg-accent px-3 py-1.5 font-mono text-[10px] font-bold uppercase tracking-wide text-accent-foreground"><i class="fas fa-desktop"></i> {{ $sessions->count() }} {{ Str::plural('session', $sessions->count()) }}</span>
   </header>
 
   <section class="overflow-hidden rounded-2xl border border-border" aria-labelledby="active-sessions-title">
@@ -45,7 +44,11 @@
           <form method="POST" action="{{ route('active.sessions.destroy', $session) }}" class="shrink-0">
             @csrf
             @method('DELETE')
-            <button type="submit" class="inline-flex items-center gap-2 rounded-xl border border-destructive/30 bg-destructive/10 px-4 py-2.5 text-xs font-bold uppercase tracking-wide text-destructive transition-colors hover:bg-destructive/15 focus:outline-none focus:ring-2 focus:ring-destructive/40" onclick="return confirm('Log out this browser session?')"><i class="fas fa-right-from-bracket"></i> {{ $session->is_current ? 'Log out' : 'Log out browser' }}</button>
+            <button type="submit" class="self-start rounded-lg border border-border px-3 py-1.5 font-mono text-[10px] font-bold uppercase tracking-wide text-destructive transition-colors hover:border-destructive sm:self-auto" 
+                   onclick="return confirm('Log out this browser session?')">
+                   <i class="fas fa-right-from-bracket"></i> 
+                   {{ $session->is_current ? 'Log out current device' : 'Log out' }}
+              </button>
           </form>
         </article>
       @empty

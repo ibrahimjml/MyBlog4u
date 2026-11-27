@@ -2,6 +2,7 @@
 
 namespace App\Services\Auth;
 
+use App\Actions\ActiveSession\CreateActiveSessionAction;
 use App\Actions\TwoFactor\EnsureGlobalTwoFactorEnabled;
 use App\Actions\TwoFactor\PrepareTwoFactorChallenge;
 use App\Actions\TwoFactor\SkipChallengeForTrustedDevice;
@@ -30,10 +31,11 @@ class LoginUserService
                 EnsureGlobalTwoFactorEnabled::class,
                 SkipChallengeForTrustedDevice::class,
                 PrepareTwoFactorChallenge::class,
+                CreateActiveSessionAction::class,
             ])
             ->thenReturn();
 
-        return $context->result ?? LoginResults::SUCCESS;
+        return $context->result;
     }
 
     private function findUser(LoginUserDTO $dto): User
