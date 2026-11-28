@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Actions\User\UpdateProfileInfoAction;
 use App\DTOs\User\UpdateUserProfileDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Middleware\CheckIfBlocked;
 use App\Http\Requests\App\UpdateUserProfileRequest as UserInfoRequest;
 use App\Models\SocialLink;
-use App\Services\User\UpdateProfileInfoService;
 use Illuminate\Support\Facades\Storage;
 
 class InfoSettingController extends Controller
 {
     public function __construct(
-        protected UpdateProfileInfoService $service
+        protected UpdateProfileInfoAction $action
     ) {
         $this->middleware(['auth', 'verified', CheckIfBlocked::class]);
     }
@@ -35,7 +35,7 @@ class InfoSettingController extends Controller
     {
         $user = $request->user();
         $dto = UpdateUserProfileDTO::fromRequest($request);
-        $userupdated = $this->service->update($user, $dto);
+        $userupdated = $this->action->execute($user, $dto);
         if ($userupdated) {
             toastr()->success('user info updated successfuly', ['timeOut' => 1000]);
         } else {

@@ -7,7 +7,6 @@ use App\Enums\FollowerStatus;
 use App\Notifications\VerifyEmailQueued;
 use App\Traits\HasPermissionsTrait;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -87,36 +86,9 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasOne(Activation::class);
     }
 
-    public function scopeActivated($query)
-      {
-        return $query->whereHas('activation', function ($query) {
-          $query->where('completed', true);
-        });
-      }
-
     public function posts()
     {
         return $this->hasMany(Post::class);
-    }
-
-    public function scopeHasPublishedPosts($query)
-    {
-        return $query->whereHas('posts', function ($query): void {
-            $query->published();
-        });
-    }
-
-    public function scopeWithCardCounts(Builder $query): Builder
-    {
-        return $query->withCount([
-                   'followers',
-                   'followings',
-                   'posts as published_posts_count' => fn ($q) => $q->published(),
-                  ])
-             ->withSum([
-                   'posts as posts_likes_count' => fn ($q) => $q->published()],
-                   'likes_count'
-               );
     }
 
     public function TwoFactorTrustedDevice(): HasMany
@@ -137,20 +109,6 @@ class User extends Authenticatable implements MustVerifyEmail
     public function activeSessions(): HasMany
     {
         return $this->hasMany(ActiveSession::class);
-    }
-
-    public function scopePublicProfile($query)
-    {
-        return $query->whereHas('profile', function ($query): void {
-            $query->where('is_public', true);
-        });
-    }
-
-    public function scopePrivateProfile($query)
-    {
-        return $query->whereHas('profile', function ($query): void {
-            $query->where('is_public', false);
-        });
     }
 
     public function likes()

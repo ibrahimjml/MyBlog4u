@@ -3,6 +3,7 @@
 namespace App\Repositories\Caches;
 
 use App\Enums\UserActivityType;
+use App\DTOs\User\ProfileHomeDTO;
 use App\Repositories\Interfaces\UserInterface;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
@@ -20,10 +21,10 @@ class UserCacheDecorator implements UserInterface
         return Cache::tags(['users_results'])->remember($key, now()->addMinutes(10),fn () => $this->repo->getBySearch($dto, $limit));
     }
 
-    public function getPaginatedArticles(User $user, int $perPage, int $page): LengthAwarePaginator
+    public function getPaginatedArticles(User $user, ProfileHomeDTO $dto): LengthAwarePaginator
     {
-        $key = sprintf('profile_home_posts:user:%d:page:%d:perpage:%d', $user->id, $page, $perPage);
-        return Cache::tags(['users_profile_posts', "profile_home:{$user->id}"])->remember($key, now()->addDay(),fn () => $this->repo->getPaginatedArticles($user,$perPage,$page));
+        $key = sprintf('profile_home_posts:user:%d:sort:%s:page:%d:perpage:%d', $user->id, $dto->sort->value, $dto->page, $dto->perPage);
+        return Cache::tags(['users_profile_posts', "profile_home:{$user->id}"])->remember($key, now()->addDay(),fn () => $this->repo->getPaginatedArticles($user, $dto));
     }
 
       public function getUserActivities(

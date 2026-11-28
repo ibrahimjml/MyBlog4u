@@ -59,6 +59,19 @@
             <h2 class="font-display text-xl font-bold text-foreground">
                 Articles <span class="text-muted-foreground"> {{ '/ ' . $feedCount }}</span>
             </h2>
+
+            <div class="flex items-center gap-2" aria-label="Sort articles">
+                @foreach(\App\Enums\ProfileArticleSort::cases() as $option)
+                    <a href="{{ route('profile.home', array_filter(['user' => $user->username, 'sort' => $option->isDefault() ? null : $option->value])) }}"
+                        @class([
+                            'rounded-full border px-3 py-1 font-mono text-[11px] transition-colors',
+                            'border-primary bg-primary text-primary-foreground' => $sort === $option,
+                            'border-border bg-secondary text-muted-foreground hover:border-primary hover:text-primary' => $sort !== $option,
+                        ])>
+                        {{ $option->label() }}
+                    </a>
+                @endforeach
+            </div>
         </div>
 
         

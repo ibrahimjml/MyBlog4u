@@ -3,6 +3,7 @@
 namespace App\Repositories\Eloquent;
 
 use App\Enums\UserActivityType;
+use App\DTOs\User\ProfileHomeDTO;
 use App\Models\User;
 use App\Models\Post;
 use App\Models\Comment;
@@ -26,23 +27,20 @@ class UserRepository implements UserInterface
             
     }
 
-    public function getPaginatedArticles(User $user, int $perPage, int $page): LengthAwarePaginator
+    public function getPaginatedArticles(User $user, ProfileHomeDTO $dto): LengthAwarePaginator
     {
         return $user->posts()
                ->published()
-               ->selectRaw('
-                   posts.*,
-                   CASE
-                       WHEN posts.is_pinned = 1 THEN posts.pinned_at
-                       ELSE posts.created_at
-                   END AS sort_date
-               ')
-               ->with(
+               ->with([
                    'user:id,name,username,avatar',
-                   'hashtags:id,name'
-               )
-               ->orderByDesc('sort_date')
-               ->paginate($perPage, ['*'], 'home_page', $page);
+                   'hashtags:id,name',
+               ])
+               ->withCount('totalcomments')
+               ->orderByDesc('is_pinned')
+               ->orderByRaw('CASE WHEN is_pinned = 1 THEN pinned_at END DESC')
+               ->articlesSort($dto->sort)
+               ->paginate($dto->perPage, ['*'], 'home_page', $dto->page)
+               ->appends($dto->query());
     }
 
     public function getUserActivities(

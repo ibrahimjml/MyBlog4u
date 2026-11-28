@@ -3,6 +3,7 @@
 namespace App\Repositories\Interfaces;
 
 use App\DTOs\PostFilterDTO;
+use App\DTOs\User\ProfileHomeDTO;
 use App\Enums\UserActivityType;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
@@ -13,7 +14,7 @@ interface UserInterface
 {
    public function getBySearch(PostFilterDTO $dto, int $limit): Collection;
 
-   public function getPaginatedArticles(User $user, int $perPage, int $page): LengthAwarePaginator;
+   public function getPaginatedArticles(User $user, ProfileHomeDTO $dto): LengthAwarePaginator;
 
    public function getUserActivities(User $user, ?UserActivityType $type, int $perPage, int $page): LengthAwarePaginator;
 

@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests\App;
 
+use App\Builders\UserBuilder;
 use App\Models\User;
 use App\Rules\MaxImageUpload;
+use App\Rules\NotInBuiltinLinks;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 class UpdateUserProfileRequest extends FormRequest
@@ -37,9 +39,20 @@ class UpdateUserProfileRequest extends FormRequest
             'github'   => 'sometimes|nullable|url|starts_with:https',
             'linkedin' => 'sometimes|nullable|url|starts_with:https',
             'twitter'     => 'sometimes|nullable|url|starts_with:https',
-            'social_links' => 'sometimes|nullable|array',
-            'social_links.*.platform' => 'required|string',
-            'social_links.*.url' => 'required|url|starts_with:https',
+            'social_links' => 'sometimes|nullable|array|max:' . UserBuilder::MAX_CUSTOM_SOCIAL_LINKS,
+            'social_links.*.platform' => [
+                'required',
+                'string',
+                'max:50',
+                'distinct',
+                new NotInBuiltinLinks($user),
+            ],
+            'social_links.*.url' => [
+                'required',
+                'url',
+                'starts_with:https',
+                new NotInBuiltinLinks($user),
+            ],
 
         ];
     }
@@ -52,6 +65,8 @@ class UpdateUserProfileRequest extends FormRequest
             'cover.image' => 'The cover must be an image file.',
             'cover.mimes' => 'The cover must be a PNG, JPG, JPEG, or WEBP.',
             'social_links.*.platform.required' => 'the platform is required',
+            'social_links.*.platform.distinct' => 'each platform can only be added once',
+            'social_links.max' => 'you can add up to ' . UserBuilder::MAX_CUSTOM_SOCIAL_LINKS . ' custom links',
             'social_links.*.url.required' => 'the url is required',
             'social_links.*.url.url' => 'the url is not valid',
         ];

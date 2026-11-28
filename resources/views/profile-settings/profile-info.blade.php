@@ -187,9 +187,9 @@
 
     <section class="mt-8 border-t border-border pt-6">
       <h3 class="font-display text-base font-semibold text-foreground">Custom links</h3>
-      <p class="{{ $helpClass }}">Add links to your portfolio, blog, or any other platform.</p>
+      <p class="{{ $helpClass }}">Add links to your portfolio, blog, or any other platform. Up to {{ \App\Builders\UserBuilder::MAX_CUSTOM_SOCIAL_LINKS }} links.</p>
 
-      <div id="custom-links" class="mt-4 space-y-2">
+      <div id="custom-links" class="mt-4 space-y-2" data-max-links="{{ max_custom_links() }}">
         @foreach(old('social_links', $user->socialLinks ?? []) as $i => $link)
           @php
             $platform = is_array($link) ? $link['platform'] ?? '' : $link->platform ?? '';
@@ -288,6 +288,13 @@
 
     function addCustomLink() {
       const container = document.getElementById('custom-links');
+      const maxLinks = Number(container.dataset.maxLinks) || 4;
+
+      if (container.children.length >= maxLinks) {
+        toastr.info(`You can add up to ${maxLinks} custom links.`);
+        return;
+      }
+
       const index = container.children.length;
       const div = document.createElement('div');
       div.classList.add('flex', 'flex-col', 'gap-2', 'sm:flex-row');

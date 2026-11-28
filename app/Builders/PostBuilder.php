@@ -6,6 +6,7 @@ use App\DTOs\BlogFilterDTO;
 use App\Enums\Blog\BlogSort;
 use App\Enums\Blog\BlogTab;
 use App\Enums\PostStatus;
+use App\Enums\ProfileArticleSort;
 use App\Models\Hashtag;
 use Carbon\CarbonInterface;
 use DateTimeInterface;
@@ -29,6 +30,14 @@ class PostBuilder extends Builder
                             ->orWhere('username', 'like', "%$search%");
                   });
         });
+    }
+    // profile homepage articles sort (under pinned)
+    public function articlesSort(ProfileArticleSort $sort): self
+    {
+       return match ($sort) {
+            ProfileArticleSort::POPULAR => $this->orderByDesc('likes_count')->orderByDesc('totalcomments_count'),
+            ProfileArticleSort::RECENT => $this->latest(),
+        };
     }
     // hashtags | categories sort
     public function blogSort(string $sort): self
